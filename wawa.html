@@ -1,0 +1,539 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<title>WAWA 코칭센터</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:sans-serif;font-size:13px;background:#f5f6fa;color:#222;}
+button{cursor:pointer;font-family:inherit;}
+input,select,textarea{font-family:inherit;}
+.layout{display:flex;height:100vh;}
+.sidebar{width:200px;background:#fff;border-right:1px solid #eee;display:flex;flex-direction:column;flex-shrink:0;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.header{background:#fff;border-bottom:1px solid #eee;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
+.content{flex:1;overflow-y:auto;padding:24px;}
+.card{background:#fff;border-radius:12px;border:1px solid #eee;padding:20px 24px;margin-bottom:20px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.scard{border-radius:12px;padding:16px 20px;}
+.tab-btn{padding:7px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;font-size:12px;}
+.tab-btn.on{background:#1a2a4a;color:#fff;font-weight:700;}
+.subj-btn{padding:3px 8px;border-radius:12px;border:1px solid #ddd;background:#fff;color:#444;font-size:11px;}
+.subj-btn.on{background:#1a2a4a;color:#fff;}
+.stu-item{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;cursor:pointer;border-left:3px solid transparent;}
+.stu-item.on{background:#f0f4ff;border-left-color:#1a2a4a;}
+.badge{display:inline-block;border-radius:6px;padding:2px 8px;background:#e8f0fe;color:#4f8ef7;font-size:11px;}
+.gbadge{display:inline-block;border-radius:20px;padding:2px 10px;color:#fff;font-weight:700;font-size:12px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;z-index:200;}
+.modal{background:#fff;border-radius:14px;padding:28px;width:360px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);}
+.fl{font-size:12px;color:#666;display:block;margin-bottom:4px;}
+.fi{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px;margin-bottom:12px;}
+.bp{padding:8px 18px;border-radius:8px;border:none;background:#1a2a4a;color:#fff;font-weight:600;}
+.bc{padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;}
+.bs{padding:3px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;font-size:11px;}
+.bd{padding:3px 10px;border-radius:6px;border:1px solid #fdd;background:#fff5f5;font-size:11px;color:#f74f4f;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{padding:9px 10px;text-align:left;color:#888;font-weight:600;border-bottom:1px solid #eee;background:#f8f9fb;}
+td{padding:10px;border-bottom:1px solid #f5f5f5;}
+.pb{background:#f0f0f0;border-radius:4px;height:8px;}
+.pf{background:#1a2a4a;border-radius:4px;height:8px;}
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <div style="padding:14px 16px;border-bottom:1px solid #eee;">
+      <div style="background:#FF6D00;color:#fff;border-radius:8px;padding:10px;font-weight:700;font-size:14px;text-align:center;margin-bottom:12px;">WAWA<br><span style="font-size:9px;font-weight:400;">코칭센터</span></div>
+      <div style="font-size:11px;color:#888;margin-bottom:4px;">선생님</div>
+      <select class="fi" style="margin-bottom:0;">
+        <option>전체 선생님</option>
+        <option>장한성 선생님</option>
+        <option>이하림 선생님</option>
+        <option>양원철 선생님</option>
+        <option>박수권 선생님</option>
+      </select>
+    </div>
+    <div style="padding:12px 16px 8px;">
+      <div style="font-size:11px;color:#888;margin-bottom:6px;">과목</div>
+      <div id="sbjBtns" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
+    </div>
+    <div id="stuCount" style="padding:8px 16px 4px;font-size:11px;color:#888;">학생 (0명)</div>
+    <div id="stuList" style="flex:1;overflow-y:auto;"></div>
+    <div style="padding:10px 16px;">
+      <button onclick="openModal('addStu')" style="width:100%;padding:8px;border-radius:8px;border:1px dashed #bbb;background:transparent;font-size:12px;color:#666;">+ 학생 추가</button>
+    </div>
+    <div style="padding:4px 16px 10px;text-align:center;">
+      <span id="stDot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:4px;"></span>
+      <span id="stTxt" style="font-size:10px;color:#4caf50;">연결 중...</span>
+    </div>
+  </div>
+  <div class="main">
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span id="hName" style="font-size:18px;font-weight:700;">-</span>
+        <span id="hInfo" style="font-size:12px;color:#888;background:#f5f6fa;border-radius:6px;padding:3px 8px;"></span>
+        <span id="hTeacher" style="font-size:12px;color:#888;"></span>
+      </div>
+      <div id="tabBtns" style="display:flex;gap:6px;"></div>
+    </div>
+    <div id="mainContent" class="content"></div>
+  </div>
+</div>
+<div id="modalBg" class="modal-bg" style="display:none;">
+  <div id="modalBox" class="modal"></div>
+</div>
+
+<script>
+var NAVY="#1a2a4a",GOLD="#d4af37";
+var SUBJECTS=["전체","국어","영어","수학","과학"];
+var TEACHERS=["장한성 선생님","이하림 선생님","양원철 선생님","박수권 선생님"];
+var GRADES=["초1","초2","초3","초4","초5","초6","중1","중2","중3","고1","고2","고3"];
+var GC={A:"#4f8ef7",B:"#7c6fcd",C:"#f7a94f",D:"#f74f4f"};
+var PID="wawa-coaching";
+var AKEY="AIzaSyARSCvWy-4rPONDUbmecpbI1_rePtI65IU";
+var BASE="https://firestore.googleapis.com/v1/projects/"+PID+"/databases/(default)/documents";
+
+var students=[],exams={},selectedId=null,subjectFilter="전체",activeTab="상세";
+var mgmtLevel="전체",statLevel="초등",statSubLevel="";
+var myChart=null,statChart=null;
+
+function gc(g){return GC[g]||"#aaa";}
+function autoGrade(c,t){return c/t>=0.85?"A":c/t>=0.70?"B":c/t>=0.55?"C":"D";}
+function avg(a){return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:0;}
+function gl(g){return g.startsWith("초")?"초등":g.startsWith("중")?"중학":"고등";}
+function setStatus(msg,color){
+  document.getElementById("stTxt").textContent=msg;
+  document.getElementById("stTxt").style.color=color;
+  document.getElementById("stDot").style.background=color;
+}
+
+function fsGet(col){
+  return fetch(BASE+"/"+col+"?key="+AKEY+"&pageSize=300")
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d.documents)return[];
+      return d.documents.map(function(doc){
+        var id=doc.name.split("/").pop();
+        var f=doc.fields||{};
+        var o={id:id};
+        Object.keys(f).forEach(function(k){
+          var v=f[k];
+          if(v.integerValue!==undefined)o[k]=Number(v.integerValue);
+          else if(v.doubleValue!==undefined)o[k]=Number(v.doubleValue);
+          else if(v.stringValue!==undefined)o[k]=v.stringValue;
+          else if(v.booleanValue!==undefined)o[k]=v.booleanValue;
+        });
+        return o;
+      });
+    });
+}
+
+function fsPatch(col,id,data){
+  var fields={};
+  Object.keys(data).forEach(function(k){
+    var v=data[k];
+    if(typeof v==="number")fields[k]={integerValue:v};
+    else fields[k]={stringValue:String(v||"")};
+  });
+  return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{
+    method:"PATCH",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({fields:fields})
+  });
+}
+
+function fsDel(col,id){
+  return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{method:"DELETE"});
+}
+
+function loadData(){
+  return Promise.all([fsGet("students"),fsGet("exams")])
+    .then(function(results){
+      students=results[0];
+      var eList=results[1];
+      if(!selectedId&&students.length)selectedId=students[0].id;
+      exams={};
+      eList.forEach(function(ex){
+        if(!exams[ex.studentId])exams[ex.studentId]=[];
+        exams[ex.studentId].push(ex);
+      });
+      setStatus("실시간 저장 중","#4caf50");
+      render();
+    })
+    .catch(function(){setStatus("연결 오류","#f74f4f");});
+}
+
+function render(){
+  renderSidebar();
+  renderHeader();
+  renderMain();
+}
+
+function renderSidebar(){
+  var filtered=subjectFilter==="전체"?students:students.filter(function(s){return s.subject===subjectFilter;});
+  document.getElementById("sbjBtns").innerHTML=SUBJECTS.map(function(s){
+    return '<button class="subj-btn'+(subjectFilter===s?" on":"")+'" onclick="setSubject(\''+s+'\')">'+s+'</button>';
+  }).join("");
+  document.getElementById("stuCount").textContent="학생 ("+filtered.length+"명)";
+  document.getElementById("stuList").innerHTML=filtered.map(function(s){
+    var ex=exams[s.id]||[];
+    var a=ex.length?avg(ex.map(function(e){return e.correct;})).toFixed(1):"-";
+    return '<div class="stu-item'+(selectedId===s.id?" on":"")+'" onclick="selectStudent(\''+s.id+'\')">'+
+      '<div><div style="font-weight:'+(selectedId===s.id?700:400)+';">'+s.name+'</div>'+
+      '<div style="font-size:10px;color:#888;">'+s.grade+' · '+s.subject+'</div></div>'+
+      '<div style="display:flex;align-items:center;gap:4px;">'+
+      '<span style="font-size:11px;color:#4f8ef7;font-weight:600;">'+a+'</span>'+
+      '<button onclick="event.stopPropagation();delStudent(\''+s.id+'\')" style="border:none;background:none;color:#ccc;font-size:14px;cursor:pointer;">×</button>'+
+      '</div></div>';
+  }).join("");
+}
+
+function renderHeader(){
+  var s=students.find(function(x){return x.id===selectedId;});
+  document.getElementById("hName").textContent=s?s.name:"-";
+  document.getElementById("hInfo").textContent=s?s.grade+" · "+s.subject:"";
+  document.getElementById("hTeacher").textContent=s?s.teacher:"";
+  document.getElementById("tabBtns").innerHTML=["상세","보고서","관리","통계"].map(function(t){
+    return '<button class="tab-btn'+(activeTab===t?" on":"")+'" onclick="setTab(\''+t+'\')">'+t+'</button>';
+  }).join("");
+}
+
+function renderMain(){
+  if(myChart){myChart.destroy();myChart=null;}
+  if(statChart){statChart.destroy();statChart=null;}
+  var mc=document.getElementById("mainContent");
+  var s=students.find(function(x){return x.id===selectedId;});
+  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  var latest=exList[exList.length-1];
+  var myAvg=exList.length?avg(exList.map(function(e){return e.correct;})).toFixed(1):"-";
+  var clsAvg=exList.length?avg(exList.map(function(e){return e.classAvg;})).toFixed(1):"-";
+  if(activeTab==="상세")mc.innerHTML=renderDetail(exList,latest,myAvg,clsAvg);
+  else if(activeTab==="보고서")mc.innerHTML=renderReport(s,exList,latest,myAvg,clsAvg);
+  else if(activeTab==="관리")mc.innerHTML=renderMgmt();
+  else if(activeTab==="통계")mc.innerHTML=renderStat();
+  if(activeTab==="상세"&&exList.length)setTimeout(function(){drawChart(exList);},50);
+  if(activeTab==="통계")setTimeout(drawStatChart,50);
+}
+
+function renderDetail(exList,latest,myAvg,clsAvg){
+  var cards=[
+    {l:"최근 정답수",v:latest?latest.correct+"/"+latest.total:"-",bg:"#fff",bd:"#ddd"},
+    {l:"내 평균 정답수",v:myAvg+"개",bg:"#fffbec",bd:"#f5d97a"},
+    {l:"학급 평균",v:clsAvg+"개",bg:"#f0f4ff",bd:"#a0b4f7"},
+    {l:"시험 횟수",v:exList.length+"회",bg:"#fff",bd:"#ddd"}
+  ];
+  var html='<div class="grid4">';
+  cards.forEach(function(c){
+    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
+      '<div style="font-size:11px;color:#888;margin-bottom:8px;">'+c.l+'</div>'+
+      '<div style="font-size:22px;font-weight:700;">'+c.v+'</div></div>';
+  });
+  html+='</div>';
+  html+='<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:16px;">정답수 추이</div>';
+  html+=exList.length?'<canvas id="myChart" height="90"></canvas>':'<div style="text-align:center;color:#bbb;padding:40px;">시험 기록이 없습니다</div>';
+  html+='</div>';
+  html+='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
+    '<span style="font-weight:700;font-size:14px;">시험 기록</span>'+
+    '<button class="bp" onclick="openModal(\'addExam\')" style="padding:7px 16px;font-size:12px;">+ 시험 추가</button></div>';
+  html+='<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>정답수</th><th>학급평균</th><th>평균대비</th><th>등급</th><th></th></tr></thead><tbody>';
+  var rev=[].concat(exList).reverse();
+  rev.forEach(function(e){
+    var d=e.correct-e.classAvg;
+    html+='<tr><td>'+e.date+'</td>'+
+      '<td><span class="badge">'+e.subject+'</span></td>'+
+      '<td style="font-weight:500;">'+e.name+'</td>'+
+      '<td style="color:'+NAVY+';font-weight:600;">'+e.total+'개 중 '+e.correct+'개</td>'+
+      '<td style="color:'+GOLD+';font-weight:600;">'+e.classAvg+'개</td>'+
+      '<td style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-weight:600;">'+(d>0?"+"+d:d)+'</td>'+
+      '<td><span class="gbadge" style="background:'+gc(e.grade)+'">'+e.grade+'</span></td>'+
+      '<td style="white-space:nowrap;">'+
+      '<button class="bs" onclick="openModal(\'editExam\',\''+e.id+'\')" style="margin-right:4px;">수정</button>'+
+      '<button class="bd" onclick="delExam(\''+e.id+'\')">삭제</button></td></tr>';
+  });
+  if(!exList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">시험 기록이 없습니다</td></tr>';
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function renderReport(s,exList,latest,myAvg,clsAvg){
+  if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
+  var html='<div style="max-width:680px;margin:0 auto;">';
+  html+='<div class="card" style="text-align:center;">'+
+    '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
+    '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
+  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
+  [{l:"내 평균",v:myAvg+"개",bg:"#f0f4ff",bd:"#a0b4f7"},{l:"학급 평균",v:clsAvg+"개",bg:"#fffbec",bd:"#f5d97a"},{l:"최근 정답",v:latest?latest.correct+"/"+latest.total:"-",bg:"#fff",bd:"#eee"}].forEach(function(c){
+    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';text-align:center;">'+
+      '<div style="font-size:11px;color:#888;margin-bottom:6px;">'+c.l+'</div>'+
+      '<div style="font-size:20px;font-weight:700;">'+c.v+'</div></div>';
+  });
+  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">시험별 성적</div>';
+  [].concat(exList).reverse().forEach(function(e){
+    var d=e.correct-e.classAvg;
+    var pct=(e.correct/e.total*100).toFixed(0);
+    html+='<div style="margin-bottom:16px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
+      '<div><span style="font-weight:600;">'+e.name+'</span><span style="color:#888;font-size:11px;margin-left:8px;">'+e.date+' · '+e.subject+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px;"><span>'+e.total+'개 중 '+e.correct+'개</span>'+
+      '<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+")":"("+d+")")+'</span>'+
+      '<span class="gbadge" style="background:'+gc(e.grade)+';font-size:11px;">'+e.grade+'</span></div></div>'+
+      '<div class="pb"><div class="pf" style="width:'+pct+'%;"></div></div></div>';
+  });
+  if(!exList.length)html+='<div style="text-align:center;color:#bbb;padding:20px;">시험 기록이 없습니다</div>';
+  html+='</div><div class="card">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
+    '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
+    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ 자동 생성</button></div>'+
+    '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;"></textarea>'+
+    '</div></div>';
+  return html;
+}
+
+function renderMgmt(){
+  var list=students.filter(function(s){return mgmtLevel==="전체"||gl(s.grade)===mgmtLevel;});
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'+
+    '<div style="font-weight:700;font-size:16px;">관리자 대시보드</div><div style="display:flex;gap:6px;">';
+  ["전체","초등","중학","고등"].forEach(function(l){
+    html+='<button class="tab-btn'+(mgmtLevel===l?" on":"")+'" onclick="setMgmtLevel(\''+l+'\')">'+l+'</button>';
+  });
+  html+='</div></div><div class="card" style="padding:0;">'+
+    '<div style="padding:10px 16px;border-bottom:1px solid #f5f5f5;color:#888;font-size:11px;font-weight:600;">전체 학생 현황 ('+list.length+'명)</div>'+
+    '<table><thead><tr><th>이름</th><th>학년</th><th>과목</th><th>담당 선생님</th><th>시험수</th><th>평균 정답수</th><th>최근 등급</th><th></th></tr></thead><tbody>';
+  list.forEach(function(s){
+    var ex=exams[s.id]||[];
+    var a=ex.length?avg(ex.map(function(e){return e.correct;})).toFixed(1)+"개":"-";
+    var lat=ex.length?[].concat(ex).sort(function(a,b){return b.date.localeCompare(a.date);})[0]:null;
+    html+='<tr style="cursor:pointer;" onclick="selectStudent(\''+s.id+'\');setTab(\'상세\')">'+
+      '<td style="font-weight:500;">'+s.name+'</td><td>'+s.grade+'</td>'+
+      '<td><span class="badge">'+s.subject+'</span></td>'+
+      '<td style="color:#555;">'+s.teacher+'</td>'+
+      '<td>'+ex.length+'회</td>'+
+      '<td style="color:'+GOLD+';font-weight:600;">'+a+'</td>'+
+      '<td>'+(lat?'<span class="gbadge" style="background:'+gc(lat.grade)+'">'+lat.grade+'</span>':"-")+'</td>'+
+      '<td><button class="bs" onclick="event.stopPropagation();selectStudent(\''+s.id+'\');setTab(\'상세\')">수정</button></td></tr>';
+  });
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function renderStat(){
+  var lvls=statLevel==="초등"?["초1","초2","초3","초4","초5","초6"]:statLevel==="중학"?["중1","중2","중3"]:["고1","고2","고3"];
+  var sd=lvls.map(function(g){
+    var ss=students.filter(function(s){return s.grade===g;});
+    var ax=[];
+    ss.forEach(function(s){(exams[s.id]||[]).forEach(function(e){ax.push(e);});});
+    return{grade:g,count:ss.length,avg:ax.length?parseFloat(avg(ax.map(function(e){return e.correct;})).toFixed(1)):0};
+  }).filter(function(d){return d.count>0;});
+  var cur=statSubLevel||(sd[0]?sd[0].grade:"");
+  var subs=students.filter(function(s){return s.grade===cur;}).map(function(s){
+    var ex=exams[s.id]||[];
+    return{name:s.name,grade:s.grade,subject:s.subject,teacher:s.teacher,
+      av:ex.length?avg(ex.map(function(e){return e.correct;})):0,
+      avs:ex.length?avg(ex.map(function(e){return e.correct;})).toFixed(1):"-"};
+  }).sort(function(a,b){return b.av-a.av;});
+  var html='<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">'+
+    '<div style="font-weight:700;font-size:16px;">성적 통계</div>'+
+    '<div style="display:flex;gap:6px;align-items:center;"><span style="font-size:12px;color:#888;">학교급:</span>';
+  ["초등","중학","고등"].forEach(function(l){
+    html+='<button class="tab-btn'+(statLevel===l?" on":"")+'" onclick="setStatLevel(\''+l+'\')">'+l+'</button>';
+  });
+  html+='</div>';
+  if(sd.length){
+    html+='<div style="display:flex;gap:6px;align-items:center;"><span style="font-size:12px;color:#888;">학년별:</span>';
+    sd.forEach(function(d){
+      html+='<button style="padding:5px 12px;border-radius:8px;border:1px solid #ddd;background:'+(cur===d.grade?"#e8f0fe":"#fff")+';color:'+(cur===d.grade?NAVY:"#555")+';cursor:pointer;font-size:12px;" onclick="setStatSub(\''+d.grade+'\')">'+d.grade+'</button>';
+    });
+    html+='</div>';
+  }
+  html+='</div><div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px;">';
+  sd.forEach(function(d){
+    html+='<div class="card" style="min-width:160px;flex:1 1 140px;margin-bottom:0;">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'+
+      '<span style="font-weight:700;font-size:14px;">'+d.grade+'</span>'+
+      '<span style="font-size:11px;color:#888;">'+d.count+'명</span></div>'+
+      '<div style="font-size:26px;font-weight:700;color:'+NAVY+';">'+d.avg+'개</div>'+
+      '<div style="font-size:11px;color:#888;margin-top:4px;">평균 정답수</div></div>';
+  });
+  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">학년별 평균 비교</div>'+
+    '<canvas id="statChart" height="80"></canvas></div>'+
+    '<div class="card" style="padding:0;margin-top:20px;">'+
+    '<div style="padding:10px 16px;border-bottom:1px solid #f0f0f0;font-weight:700;font-size:13px;">'+cur+' 학생 현황 ('+subs.length+'명)</div>'+
+    '<table><thead><tr><th>순위</th><th>이름</th><th>학년</th><th>과목</th><th>담당</th><th>평균 정답수</th></tr></thead><tbody>';
+  subs.forEach(function(s,i){
+    html+='<tr><td style="color:#888;">'+(i+1)+'</td><td style="font-weight:500;">'+s.name+'</td>'+
+      '<td>'+s.grade+'</td><td><span class="badge">'+s.subject+'</span></td>'+
+      '<td style="color:#555;">'+s.teacher+'</td><td style="color:'+GOLD+';font-weight:600;">'+s.avs+'</td></tr>';
+  });
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function drawChart(exList){
+  var ctx=document.getElementById("myChart");
+  if(!ctx)return;
+  myChart=new Chart(ctx,{
+    type:"bar",
+    data:{
+      labels:exList.map(function(e){return e.name.replace("차 모의고사","차");}),
+      datasets:[
+        {label:"내 정답수",data:exList.map(function(e){return e.correct;}),backgroundColor:NAVY+"cc",borderRadius:4},
+        {label:"학급평균",data:exList.map(function(e){return e.classAvg;}),backgroundColor:GOLD+"99",borderRadius:4}
+      ]
+    },
+    options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},scales:{y:{beginAtZero:true}}}
+  });
+}
+
+function drawStatChart(){
+  var ctx=document.getElementById("statChart");
+  if(!ctx)return;
+  var lvls=statLevel==="초등"?["초1","초2","초3","초4","초5","초6"]:statLevel==="중학"?["중1","중2","중3"]:["고1","고2","고3"];
+  var sd=lvls.map(function(g){
+    var ax=[];
+    students.filter(function(s){return s.grade===g;}).forEach(function(s){(exams[s.id]||[]).forEach(function(e){ax.push(e);});});
+    return{grade:g,count:students.filter(function(s){return s.grade===g;}).length,avg:ax.length?parseFloat(avg(ax.map(function(e){return e.correct;})).toFixed(1)):0};
+  }).filter(function(d){return d.count>0;});
+  statChart=new Chart(ctx,{
+    type:"bar",
+    data:{labels:sd.map(function(d){return d.grade;}),datasets:[{label:"평균 정답수",data:sd.map(function(d){return d.avg;}),backgroundColor:NAVY+"cc",borderRadius:4}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+  });
+}
+
+function examFormHTML(e){
+  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
+  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
+    '<label class="fl">시험명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1차 모의고사"/>'+
+    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
+    '<label class="fl">총 문제수</label><input class="fi" id="mTotal" type="number" value="'+(e?e.total:25)+'"/>'+
+    '<label class="fl">정답수</label><input class="fi" id="mCorrect" type="number" value="'+(e?e.correct:"")+'"/>'+
+    '<label class="fl">학급 평균</label><input class="fi" id="mClassavg" type="number" value="'+(e?e.classAvg:"")+'"/>';
+}
+
+window.openModal=function(type,examId){
+  var bg=document.getElementById("modalBg");
+  var box=document.getElementById("modalBox");
+  bg.style.display="flex";
+  if(type==="addStu"){
+    var gOpts=GRADES.map(function(g){return'<option>'+g+'</option>';}).join("");
+    var tOpts=TEACHERS.map(function(t){return'<option>'+t+'</option>';}).join("");
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">학생 추가</h3>'+
+      '<label class="fl">이름</label><input class="fi" id="mName" placeholder="학생 이름"/>'+
+      '<label class="fl">학년</label><select class="fi" id="mGrade">'+gOpts+'</select>'+
+      '<label class="fl">과목</label><select class="fi" id="mSubject"><option>국어</option><option>영어</option><option>수학</option><option>과학</option></select>'+
+      '<label class="fl">담당 선생님</label><select class="fi" id="mTeacher">'+tOpts+'</select>'+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
+      '<button class="bc" onclick="closeModal()">취소</button>'+
+      '<button class="bp" onclick="addStudent()">추가</button></div>';
+  } else if(type==="addExam"){
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 추가</h3>'+
+      examFormHTML(null)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
+      '<button class="bc" onclick="closeModal()">취소</button>'+
+      '<button class="bp" onclick="saveExam(null)">저장</button></div>';
+  } else if(type==="editExam"){
+    var e=(exams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
+    if(!e)return;
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 수정</h3>'+
+      examFormHTML(e)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
+      '<button class="bc" onclick="closeModal()">취소</button>'+
+      '<button class="bp" onclick="saveExam(\''+examId+'\')">저장</button></div>';
+  }
+};
+
+window.closeModal=function(){document.getElementById("modalBg").style.display="none";};
+
+window.setSubject=function(s){subjectFilter=s;render();};
+window.setTab=function(t){activeTab=t;render();};
+window.setMgmtLevel=function(l){mgmtLevel=l;render();};
+window.setStatLevel=function(l){statLevel=l;statSubLevel="";render();};
+window.setStatSub=function(s){statSubLevel=s;render();};
+window.selectStudent=function(id){selectedId=id;render();};
+
+window.delStudent=function(id){
+  if(!confirm("학생을 삭제할까요?"))return;
+  setStatus("저장 중...","#f7a94f");
+  var ex=exams[id]||[];
+  var dels=[fsDel("students",id)];
+  ex.forEach(function(e){dels.push(fsDel("exams",e.id));});
+  Promise.all(dels).then(function(){
+    if(selectedId===id)selectedId=null;
+    loadData();
+  });
+};
+
+window.delExam=function(id){
+  if(!confirm("시험 기록을 삭제할까요?"))return;
+  setStatus("저장 중...","#f7a94f");
+  fsDel("exams",id).then(loadData);
+};
+
+window.addStudent=function(){
+  var name=document.getElementById("mName").value.trim();
+  if(!name){alert("이름을 입력해주세요!");return;}
+  var id="s_"+Date.now();
+  setStatus("저장 중...","#f7a94f");
+  fsPatch("students",id,{
+    name:name,
+    grade:document.getElementById("mGrade").value,
+    subject:document.getElementById("mSubject").value,
+    teacher:document.getElementById("mTeacher").value
+  }).then(function(){
+    selectedId=id;
+    closeModal();
+    loadData();
+  });
+};
+
+window.saveExam=function(eid){
+  var date=document.getElementById("mDate").value;
+  var name=document.getElementById("mEname").value.trim();
+  var correct=Number(document.getElementById("mCorrect").value);
+  var total=Number(document.getElementById("mTotal").value);
+  var classAvg=Number(document.getElementById("mClassavg").value);
+  if(!date||!name||!correct){alert("날짜, 시험명, 정답수를 입력해주세요!");return;}
+  var id=eid||("e_"+Date.now());
+  var grade=autoGrade(correct,total);
+  setStatus("저장 중...","#f7a94f");
+  fsPatch("exams",id,{
+    date:date,name:name,
+    subject:document.getElementById("mEsubject").value,
+    total:total,correct:correct,classAvg:classAvg,grade:grade,studentId:selectedId
+  }).then(function(){closeModal();loadData();});
+};
+
+window.generateMsg=function(){
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  if(!s||!exList.length){alert("시험 기록이 없습니다.");return;}
+  var btn=document.getElementById("genBtn");
+  if(btn)btn.textContent="생성 중...";
+  var prompt="학원 코칭센터에서 학부모에게 보내는 따뜻한 안내 메시지를 3~4문장으로 작성해줘.\n"+
+    "학생: "+s.name+" ("+s.grade+", "+s.subject+", "+s.teacher+")\n"+
+    "시험 기록: "+exList.map(function(e){return e.name+" "+e.correct+"/"+e.total+"점 등급"+e.grade;}).join(", ");
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:prompt}]})
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    var area=document.getElementById("msgArea");
+    if(area)area.value=data.content?data.content.map(function(c){return c.text||"";}).join(""):"생성 실패";
+    if(btn)btn.textContent="✦ 자동 생성";
+  }).catch(function(){
+    var area=document.getElementById("msgArea");
+    if(area)area.value="오류가 발생했습니다.";
+    if(btn)btn.textContent="✦ 자동 생성";
+  });
+};
+
+loadData();
+setInterval(loadData,5000);
+</script>
+</body>
+</html>
+</body>
+</html>
