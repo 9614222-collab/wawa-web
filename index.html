@@ -275,7 +275,6 @@ function renderReport(s, exList, latest, myAvg, clsAvg) {
   if (!s) return '<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
   var html = '<div style="max-width:680px;margin:0 auto;">';
   html += '<div class="card" style="text-align:center;">' +
-    '<div style="width:60px;height:60px;border-radius:50%;background:#e8f0fe;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:' + NAVY + ';margin:0 auto 14px;">' + s.name[0] + '</div>' +
     '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">' + s.name + ' 학생</div>' +
     '<div style="color:#888;font-size:13px;">' + s.grade + ' · ' + s.subject + ' · ' + s.teacher + '</div></div>';
   html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
@@ -596,29 +595,28 @@ window.printReport = function() {
   }).join("");
   win.document.write('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><title>' + (s ? s.name : "") + ' 성적 보고서</title>' +
     '<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Malgun Gothic",sans-serif;background:#fff;color:#222;}' +
-    '@page{margin:15mm;size:A4;}</style></head><body>' +
-    '<div style="max-width:720px;margin:0 auto;padding:30px;">' +
-    '<div style="border:3px solid #d4af37;border-radius:16px;padding:30px;margin-bottom:24px;position:relative;">' +
-    '<div style="position:absolute;top:0;left:0;right:0;bottom:0;border-radius:14px;border:1px solid #f0d98a;pointer-events:none;"></div>' +
-    '<div style="text-align:center;margin-bottom:20px;">' +
-    '<div style="font-size:11px;letter-spacing:4px;color:#b8961e;margin-bottom:8px;">WAWA COACHING CENTER</div>' +
-    '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:4px;">' + (s ? s.name : "") + ' 학생 성적 보고서</div>' +
+    '@page{margin:10mm;size:A4;}</style></head><body>' +
+    '<div style="min-height:97vh;border:6px solid #d4af37;border-radius:18px;padding:36px;margin:4px;position:relative;">' +
+    '<div style="position:absolute;inset:8px;border:1.5px solid #f0d98a;border-radius:12px;pointer-events:none;"></div>' +
+    '<div style="text-align:center;margin-bottom:24px;">' +
+    '<div style="font-size:11px;letter-spacing:5px;color:#b8961e;margin-bottom:10px;">WAWA COACHING CENTER</div>' +
+    '<div style="font-size:28px;font-weight:700;color:#1a2a4a;margin-bottom:4px;">' + (s ? s.name : "") + ' 학생 성적 보고서</div>' +
     '<div style="font-size:13px;color:#888;margin-top:6px;">' + (s ? s.grade : "") + ' · ' + (s ? s.subject : "") + ' · ' + (s ? s.teacher : "") + '</div>' +
-    '<div style="width:60px;height:2px;background:linear-gradient(to right,#d4af37,#f0d98a);margin:14px auto 0;"></div>' +
+    '<div style="width:80px;height:2px;background:#d4af37;margin:14px auto 0;"></div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;">' +
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:14px;text-align:center;">' +
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;">' +
     '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;letter-spacing:1px;">내 평균</div>' +
-    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">' + myAvg + '개</div></div>' +
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:14px;text-align:center;background:#fffbec;">' +
+    '<div style="font-size:24px;font-weight:700;color:#1a2a4a;">' + myAvg + '개</div></div>' +
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;background:#fffbec;">' +
     '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;letter-spacing:1px;">학급 평균</div>' +
-    '<div style="font-size:22px;font-weight:700;color:#b8961e;">' + clsAvg + '개</div></div>' +
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:14px;text-align:center;">' +
+    '<div style="font-size:24px;font-weight:700;color:#b8961e;">' + clsAvg + '개</div></div>' +
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;">' +
     '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;letter-spacing:1px;">최근 정답</div>' +
-    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">' + (latest ? latest.correct + "/" + latest.total : "-") + '</div></div>' +
+    '<div style="font-size:24px;font-weight:700;color:#1a2a4a;">' + (latest ? latest.correct + "/" + latest.total : "-") + '</div></div>' +
     '</div>' +
-    '<div style="margin-bottom:20px;">' +
-    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:3px solid #d4af37;padding-left:10px;margin-bottom:12px;">시험별 성적</div>' +
+    '<div style="margin-bottom:24px;">' +
+    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:12px;">시험별 성적</div>' +
     '<table style="width:100%;border-collapse:collapse;font-size:12px;">' +
     '<thead><tr style="background:#1a2a4a;">' +
     '<th style="padding:10px 14px;color:#f0d98a;font-weight:600;text-align:left;">날짜</th>' +
@@ -629,11 +627,10 @@ window.printReport = function() {
     '<th style="padding:10px 14px;color:#f0d98a;font-weight:600;text-align:left;">평균대비</th>' +
     '<th style="padding:10px 14px;color:#f0d98a;font-weight:600;text-align:left;">등급</th>' +
     '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
-    (msg ? '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;margin-top:4px;">' +
-    '<div style="font-size:11px;color:#b8961e;font-weight:600;margin-bottom:8px;letter-spacing:1px;">학부모 안내 메시지</div>' +
-    '<div style="font-size:13px;line-height:1.8;color:#333;">' + msg.replace(/\n/g,"<br>") + '</div></div>' : "") +
-    '</div>' +
-    '<div style="text-align:center;margin-top:20px;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · ' + (s ? s.teacher : "") + ' · ' + new Date().toLocaleDateString("ko-KR") + '</div>' +
+    (msg ? '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:18px;margin-top:4px;">' +
+    '<div style="font-size:11px;color:#b8961e;font-weight:600;margin-bottom:10px;letter-spacing:1px;">학부모 안내 메시지</div>' +
+    '<div style="font-size:13px;line-height:1.9;color:#333;">' + msg.replace(/\n/g,"<br>") + '</div></div>' : "") +
+    '<div style="text-align:center;margin-top:28px;padding-top:16px;border-top:1px solid #f0e8cc;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · ' + (s ? s.teacher : "") + ' · ' + new Date().toLocaleDateString("ko-KR") + '</div>' +
     '</div></body></html>');
   win.document.close();
   setTimeout(function() { win.print(); }, 500);
