@@ -466,23 +466,43 @@ window.saveExam=function(eid){
 window.generateMsg=function(){
   var s=students.filter(function(x){return x.id===selectedId;})[0];
   var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  if(!s||!exList.length){alert("시험 기록이 없습니다.");return;}
+  if(!s){alert("학생을 선택해주세요!");return;}
+  if(!exList.length){alert("시험 기록이 없습니다.");return;}
   var btn=document.getElementById("genBtn");
   if(btn)btn.textContent="생성 중...";
-  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:
-      "학원 코칭센터에서 학부모에게 보내는 따뜻한 안내 메시지를 3~4문장으로 작성해줘.\n학생: "+s.name+" ("+s.grade+", "+s.subject+", "+s.teacher+")\n시험 기록: "+exList.map(function(e){return e.name+" "+e.correct+"/"+e.total+"점 등급"+e.grade;}).join(", ")}]})
-  }).then(function(r){return r.json();})
-  .then(function(data){
-    var area=document.getElementById("msgArea");
-    if(area)area.value=data.content?data.content.map(function(c){return c.text||"";}).join(""):"생성 실패";
-    savedMsg=area?area.value:"";
-    if(btn)btn.textContent="✦ 자동 생성";
-  }).catch(function(){
-    var area=document.getElementById("msgArea");
-    if(area)area.value="오류가 발생했습니다.";
-    if(btn)btn.textContent="✦ 자동 생성";
-  });
+
+  var latest=exList[exList.length-1];
+  var myAvg=avg(exList.map(function(e){return e.correct;})).toFixed(1);
+  var clsAvg=avg(exList.map(function(e){return e.classAvg;})).toFixed(1);
+  var diff=latest.correct-latest.classAvg;
+  var trend="";
+  if(exList.length>=2){
+    var prev=exList[exList.length-2];
+    trend=latest.correct>prev.correct?"꾸준히 성장하고 있으며, ":"더욱 분발이 필요하며, ";
+  }
+  var grade=latest.grade;
+  var comment="";
+  if(grade==="A")comment="매우 우수한 성적으로, 앞으로도 이 실력을 유지할 수 있도록 지도하겠습니다.";
+  else if(grade==="B")comment="양호한 성적이며, 조금 더 노력하면 더욱 좋은 결과를 얻을 수 있을 것입니다.";
+  else if(grade==="C")comment="기초를 다지는 데 집중하여 차근차근 실력을 쌓아가도록 지도하겠습니다.";
+  else comment="현재 어려움을 겪고 있으나, 개별 지도를 통해 반드시 향상될 수 있도록 최선을 다하겠습니다.";
+
+  var diffTxt=diff>0?"학급 평균보다 "+diff+"개 높은":"학급 평균보다 Math.abs("+diff+")개 낮은";
+  if(diff>0)diffTxt="학급 평균보다 "+diff+"개 높은";
+  else if(diff<0)diffTxt="학급 평균보다 "+(diff*-1)+"개 낮은";
+  else diffTxt="학급 평균과 동일한";
+
+  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
+    "와와코칭학원 "+s.teacher+"입니다.\n\n"+
+    "최근 "+latest.name+"에서 "+latest.total+"개 중 "+latest.correct+"개를 맞혔습니다. "+
+    diffTxt+" 결과이며, "+trend+comment+"\n\n"+
+    "평균 정답수 "+myAvg+"개 (학급 평균 "+clsAvg+"개)로, "+
+    "앞으로도 최선을 다해 "+s.name+" 학생의 성장을 도울 수 있도록 노력하겠습니다.\n"+
+    "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
+
+  var area=document.getElementById("msgArea");
+  if(area){area.value=msg;savedMsg=msg;}
+  if(btn)btn.textContent="✦ 자동 생성";
 };
 window.convertMsg=function(){
   var msg=document.getElementById("msgArea");
