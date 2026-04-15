@@ -95,6 +95,7 @@ var PID="wawa-coaching",AKEY="AIzaSyARSCvWy-4rPONDUbmecpbI1_rePtI65IU";
 var BASE="https://firestore.googleapis.com/v1/projects/"+PID+"/databases/(default)/documents";
 var students=[],exams={},selectedId=null,subjectFilter="전체",activeTab="상세";
 var mgmtLevel="전체",statLevel="초등",statSubLevel="";
+var savedMsg="";
 var myChart=null,statChart=null;
 
 function gc(g){return GC[g]||"#aaa";}
@@ -267,7 +268,7 @@ function renderReport(s,exList,latest,myAvg,clsAvg){
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
     '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
     '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ 자동 생성</button></div>'+
-    '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;display:block;position:relative;z-index:1;"></textarea>'+
+    '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;display:block;position:relative;z-index:1;">'+savedMsg+'</textarea>'+
     '</div>'+
     '<div style="text-align:center;color:#888;font-size:12px;margin:8px 0 16px;">와와코칭학원 · '+s.teacher+'</div>'+
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
@@ -475,6 +476,7 @@ window.generateMsg=function(){
   .then(function(data){
     var area=document.getElementById("msgArea");
     if(area)area.value=data.content?data.content.map(function(c){return c.text||"";}).join(""):"생성 실패";
+    savedMsg=area?area.value:"";
     if(btn)btn.textContent="✦ 자동 생성";
   }).catch(function(){
     var area=document.getElementById("msgArea");
