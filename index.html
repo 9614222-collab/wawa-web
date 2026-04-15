@@ -487,9 +487,9 @@ window.generateMsg=function(){
   else if(grade==="C")comment="기초를 다지는 데 집중하여 차근차근 실력을 쌓아가도록 지도하겠습니다.";
   else comment="현재 어려움을 겪고 있으나, 개별 지도를 통해 반드시 향상될 수 있도록 최선을 다하겠습니다.";
 
-  var diffTxt=diff>0?"학급 평균보다 "+diff+"개 높은":"학급 평균보다 Math.abs("+diff+")개 낮은";
+  var diffTxt="";
   if(diff>0)diffTxt="학급 평균보다 "+diff+"개 높은";
-  else if(diff<0)diffTxt="학급 평균보다 "+(diff*-1)+"개 낮은";
+  else if(diff<0)diffTxt="학급 평균보다 "+(Math.abs(diff))+"개 낮은";
   else diffTxt="학급 평균과 동일한";
 
   var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
