@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/>
 <title>WAWA 코칭센터</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:sans-serif;font-size:13px;background:#f5f6fa;color:#222;}
@@ -635,7 +636,171 @@ window.printReport = function() {
   win.document.close();
   setTimeout(function() { win.print(); }, 500);
 };
-window.savePdf = function() { window.print(); };
+window.savePdf = function() {
+  var s = students.filter(function(x) { return x.id === selectedId; })[0];
+  if (!s) { alert("학생을 선택해주세요!"); return; }
+  var exList = (exams[selectedId] || []).slice().sort(function(a,b) { return a.date.localeCompare(b.date); });
+  var myAvg = exList.length ? avg(exList.map(function(e) { return e.correct; })).toFixed(1) : "-";
+  var clsAvg = exList.length ? avg(exList.map(function(e) { return e.classAvg; })).toFixed(1) : "-";
+  var latest = exList[exList.length - 1];
+  var msg = document.getElementById("msgArea") ? document.getElementById("msgArea").value : "";
+
+  var doc = new window.jspdf.jsPDF({ orientation:"portrait", unit:"mm", format:"a4" });
+  var W = 210, H = 297;
+  var pad = 10;
+
+  // 바깥 금색 테두리
+  doc.setDrawColor(212, 175, 55);
+  doc.setLineWidth(1.5);
+  doc.roundedRect(pad, pad, W - pad*2, H - pad*2, 6, 6);
+
+  // 안쪽 얇은 테두리
+  doc.setLineWidth(0.4);
+  doc.roundedRect(pad+4, pad+4, W - pad*2 - 8, H - pad*2 - 8, 4, 4);
+
+  var y = 28;
+
+  // WAWA COACHING CENTER
+  doc.setFontSize(8);
+  doc.setTextColor(184, 150, 30);
+  doc.setFont("helvetica", "normal");
+  doc.text("WAWA COACHING CENTER", W/2, y, {align:"center", charSpace:2});
+  y += 8;
+
+  // 학생 이름
+  doc.setFontSize(20);
+  doc.setTextColor(26, 42, 74);
+  doc.setFont("helvetica", "bold");
+  doc.text(s.name + " \u D559\uC0DD \uC131\uC801 \uBCF4\uACE0\uC11C", W/2, y, {align:"center"});
+  y += 7;
+
+  // 학생 정보
+  doc.setFontSize(10);
+  doc.setTextColor(150, 150, 150);
+  doc.setFont("helvetica", "normal");
+  doc.text(s.grade + "  /  " + s.subject + "  /  " + s.teacher, W/2, y, {align:"center"});
+  y += 5;
+
+  // 금색 구분선
+  doc.setDrawColor(212, 175, 55);
+  doc.setLineWidth(0.8);
+  doc.line(W/2 - 20, y, W/2 + 20, y);
+  y += 10;
+
+  // 통계 박스 3개
+  var boxW = 52, boxH = 20, boxGap = 5;
+  var startX = (W - boxW*3 - boxGap*2) / 2;
+  var labels = ["내 평균", "학급 평균", "최근 정답"];
+  var vals = [myAvg + "개", clsAvg + "개", latest ? latest.correct + "/" + latest.total : "-"];
+  for (var i = 0; i < 3; i++) {
+    var bx = startX + i * (boxW + boxGap);
+    doc.setDrawColor(212, 175, 55);
+    doc.setLineWidth(0.6);
+    if (i === 1) {
+      doc.setFillColor(255, 253, 240);
+      doc.roundedRect(bx, y, boxW, boxH, 4, 4, "FD");
+    } else {
+      doc.setFillColor(255, 255, 255);
+      doc.roundedRect(bx, y, boxW, boxH, 4, 4, "FD");
+    }
+    doc.setFontSize(8);
+    doc.setTextColor(184, 150, 30);
+    doc.text(labels[i], bx + boxW/2, y + 6, {align:"center"});
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(i === 1 ? 184 : 26, i === 1 ? 150 : 42, i === 1 ? 30 : 74);
+    doc.text(vals[i], bx + boxW/2, y + 15, {align:"center"});
+  }
+  y += boxH + 10;
+
+  // 시험별 성적 제목
+  doc.setFillColor(212, 175, 55);
+  doc.rect(pad + 8, y - 4, 2, 6, "F");
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(26, 42, 74);
+  doc.text("\uC2DC\uD5D8\uBCC4 \uC131\uC801", pad + 13, y + 1);
+  y += 8;
+
+  // 테이블 헤더
+  var cols = ["날짜","과목","시험명","정답수","학급평균","평균대비","등급"];
+  var colW = [28, 18, 38, 28, 22, 20, 16];
+  doc.setFillColor(26, 42, 74);
+  doc.rect(pad + 8, y, W - pad*2 - 16, 9, "F");
+  doc.setFontSize(8);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(240, 217, 138);
+  var cx = pad + 10;
+  for (var j = 0; j < cols.length; j++) {
+    doc.text(cols[j], cx, y + 6);
+    cx += colW[j];
+  }
+  y += 9;
+
+  // 테이블 데이터
+  var revEx = [].concat(exList).reverse();
+  for (var k = 0; k < revEx.length; k++) {
+    var e = revEx[k];
+    var d = e.correct - e.classAvg;
+    var rowH = 8;
+    if (k % 2 === 0) {
+      doc.setFillColor(252, 250, 244);
+      doc.rect(pad + 8, y, W - pad*2 - 16, rowH, "F");
+    }
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    cx = pad + 10;
+    var rowVals = [
+      e.date, e.subject, e.name,
+      e.total + "\uAC1C \uC911 " + e.correct + "\uAC1C",
+      e.classAvg + "\uAC1C",
+      (d > 0 ? "+" : "") + d,
+      e.grade
+    ];
+    for (var m = 0; m < rowVals.length; m++) {
+      if (m === 5) doc.setTextColor(d >= 0 ? 46 : 192, d >= 0 ? 111 : 57, d >= 0 ? 212 : 43);
+      else if (m === 6) doc.setTextColor(100, 80, 200);
+      else doc.setTextColor(60, 60, 60);
+      doc.text(String(rowVals[m]), cx, y + 5);
+      cx += colW[m];
+    }
+    doc.setDrawColor(240, 232, 204);
+    doc.setLineWidth(0.3);
+    doc.line(pad + 8, y + rowH, W - pad - 8, y + rowH);
+    y += rowH;
+  }
+  y += 8;
+
+  // 학부모 메시지
+  if (msg && msg.trim()) {
+    doc.setDrawColor(212, 175, 55);
+    doc.setFillColor(255, 253, 245);
+    doc.setLineWidth(0.6);
+    var msgLines = doc.splitTextToSize(msg, W - pad*2 - 30);
+    var msgBoxH = msgLines.length * 5 + 14;
+    doc.roundedRect(pad + 8, y, W - pad*2 - 16, msgBoxH, 4, 4, "FD");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(184, 150, 30);
+    doc.text("\uD559\uBD80\uBAA8 \uC548\uB0B4 \uBA54\uC2DC\uC9C0", pad + 14, y + 7);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(60, 60, 60);
+    doc.setFontSize(9);
+    doc.text(msgLines, pad + 14, y + 13);
+    y += msgBoxH + 6;
+  }
+
+  // 하단 구분선 + 푸터
+  doc.setDrawColor(240, 232, 204);
+  doc.setLineWidth(0.5);
+  doc.line(pad + 8, H - 18, W - pad - 8, H - 18);
+  doc.setFontSize(8);
+  doc.setTextColor(184, 150, 30);
+  doc.text("\uC640\uC640\uCF54\uCE6D\uD559\uC6D0  ·  " + s.teacher + "  ·  " + new Date().toLocaleDateString("ko-KR"), W/2, H - 13, {align:"center", charSpace:1});
+
+  doc.save(s.name + "_\uC131\uC801\uBCF4\uACE0\uC11C.pdf");
+};
 
 loadData();
 setInterval(loadData, 5000);
