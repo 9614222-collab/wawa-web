@@ -194,8 +194,8 @@ function renderMain(){
   var s=students.find(function(x){return x.id===selectedId;});
   var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
   var latest=exList[exList.length-1];
-  var myAvg=exList.length?avg(exList.map(function(e){return e.correct;})).toFixed(1):"-";
-  var clsAvg=exList.length?avg(exList.map(function(e){return e.classAvg;})).toFixed(1):"-";
+  var myAvg=exList.length?avg(exList.map(function(e){return Math.round(e.correct/e.total*100);})).toFixed(0):"-";
+  var clsAvg=exList.length?avg(exList.map(function(e){return Math.round(e.classAvg/e.total*100);})).toFixed(0):"-";
   if(activeTab==="상세")mc.innerHTML=renderDetail(exList,latest,myAvg,clsAvg);
   else if(activeTab==="보고서")mc.innerHTML=renderReport(s,exList,latest,myAvg,clsAvg);
   else if(activeTab==="관리")mc.innerHTML=renderMgmt();
@@ -241,6 +241,7 @@ function renderDetail(exList,latest,myAvg,clsAvg){
 
 function renderReport(s,exList,latest,myAvg,clsAvg){
   if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
+  var latestScore=latest?Math.round(latest.correct/latest.total*100)+"점":"-";
   var html='<div style="max-width:680px;margin:0 auto;">';
   html+='<div class="card" style="text-align:center;">'+
     '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
@@ -248,7 +249,7 @@ function renderReport(s,exList,latest,myAvg,clsAvg){
   html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
   [{l:"내 평균",v:myAvg+"점",bg:"#f0f4ff",bd:"#a0b4f7"},
    {l:"학급 평균",v:clsAvg+"점",bg:"#fffbec",bd:"#f5d97a"},
-   {l:"최근 정답",v:latest?latest.correct+"/"+latest.total:"-",bg:"#fff",bd:"#eee"}
+   {l:"최근 점수",v:latestScore,bg:"#fff",bd:"#eee"}
   ].forEach(function(c){
     html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';text-align:center;">'+
       '<div style="font-size:11px;color:#888;margin-bottom:6px;">'+c.l+'</div>'+
@@ -256,17 +257,19 @@ function renderReport(s,exList,latest,myAvg,clsAvg){
   });
   html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">시험별 성적</div>';
   [].concat(exList).reverse().forEach(function(e){
-    var d=e.correct-e.classAvg;
-    var pct=(e.correct/e.total*100).toFixed(0);
+    var score=Math.round(e.correct/e.total*100);
+    var clsScore=Math.round(e.classAvg/e.total*100);
+    var d=score-clsScore;
     html+='<div style="margin-bottom:16px;">'+
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
       '<div><span style="font-weight:600;">'+e.name+'</span>'+
       '<span style="color:#888;font-size:11px;margin-left:8px;">'+e.date+' · '+e.subject+'</span></div>'+
       '<div style="display:flex;align-items:center;gap:8px;">'+
-      '<span>'+e.total+'개 중 '+e.correct+'개</span>'+
-      '<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+")":"("+d+")")+'</span>'+
+      '<span style="font-weight:600;">'+score+'점</span>'+
+      '<span style="color:#888;font-size:11px;">(학급평균 '+clsScore+'점)</span>'+
+      '<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+"점)":"("+d+"점)")+'</span>'+
       '<span class="gbadge" style="background:'+gc(e.grade)+';font-size:11px;">'+e.grade+'</span></div></div>'+
-      '<div class="pb"><div class="pf" style="width:'+pct+'%;"></div></div></div>';
+      '<div class="pb"><div class="pf" style="width:'+score+'%;"></div></div></div>';
   });
   if(!exList.length)html+='<div style="text-align:center;color:#bbb;padding:20px;">시험 기록이 없습니다</div>';
   html+='</div><div class="card">'+
@@ -368,10 +371,10 @@ function drawChart(exList){
   myChart=new Chart(ctx,{type:"bar",data:{
     labels:exList.map(function(e){return e.name.replace("차 모의고사","차");}),
     datasets:[
-      {label:"내 정답수",data:exList.map(function(e){return e.correct;}),backgroundColor:NAVY+"cc",borderRadius:4},
-      {label:"학급평균",data:exList.map(function(e){return e.classAvg;}),backgroundColor:GOLD+"99",borderRadius:4}
+      {label:"내 점수",data:exList.map(function(e){return Math.round(e.correct/e.total*100);}),backgroundColor:NAVY+"cc",borderRadius:4},
+      {label:"학급평균",data:exList.map(function(e){return Math.round(e.classAvg/e.total*100);}),backgroundColor:GOLD+"99",borderRadius:4}
     ]
-  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},scales:{y:{beginAtZero:true}}}});
+  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}}}});
 }
 
 function drawStatChart(){
