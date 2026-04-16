@@ -207,8 +207,8 @@ function renderMain(){
 function renderDetail(exList,latest,myAvg,clsAvg){
   var html='<div class="grid4">';
   [{l:"최근 정답수",v:latest?latest.correct+"/"+latest.total:"-",bg:"#fff",bd:"#ddd"},
-   {l:"내 평균 정답수",v:myAvg+"개",bg:"#fffbec",bd:"#f5d97a"},
-   {l:"학급 평균",v:clsAvg+"개",bg:"#f0f4ff",bd:"#a0b4f7"},
+   {l:"내 평균 정답수",v:myAvg+"점",bg:"#fffbec",bd:"#f5d97a"},
+   {l:"학급 평균",v:clsAvg+"점",bg:"#f0f4ff",bd:"#a0b4f7"},
    {l:"시험 횟수",v:exList.length+"회",bg:"#fff",bd:"#ddd"}
   ].forEach(function(c){
     html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
@@ -246,8 +246,8 @@ function renderReport(s,exList,latest,myAvg,clsAvg){
     '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
     '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
   html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
-  [{l:"내 평균",v:myAvg+"개",bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"학급 평균",v:clsAvg+"개",bg:"#fffbec",bd:"#f5d97a"},
+  [{l:"내 평균",v:myAvg+"점",bg:"#f0f4ff",bd:"#a0b4f7"},
+   {l:"학급 평균",v:clsAvg+"점",bg:"#fffbec",bd:"#f5d97a"},
    {l:"최근 정답",v:latest?latest.correct+"/"+latest.total:"-",bg:"#fff",bd:"#eee"}
   ].forEach(function(c){
     html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';text-align:center;">'+
