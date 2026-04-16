@@ -538,14 +538,16 @@ window.doPrint=function(){
   var latest=exList[exList.length-1];
   var msg=document.getElementById("msgArea")?document.getElementById("msgArea").value:"";
   var rows=[].concat(exList).reverse().map(function(e){
-    var d=e.correct-e.classAvg;
+    var score=Math.round(e.correct/e.total*100);
+    var clsScore=Math.round(e.classAvg/e.total*100);
+    var d=score-clsScore;
     return'<tr>'+
       '<td>'+e.date+'</td>'+
       '<td>'+e.subject+'</td>'+
       '<td style="font-weight:600;">'+e.name+'</td>'+
-      '<td style="font-weight:700;color:#1a2a4a;">'+e.total+'개 중 '+e.correct+'개</td>'+
-      '<td style="color:#b8961e;">'+e.classAvg+'개</td>'+
-      '<td style="font-weight:600;color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(d>0?"+"+d:d)+'</td>'+
+      '<td style="font-weight:700;color:#1a2a4a;">'+score+'점</td>'+
+      '<td style="color:#b8961e;">'+clsScore+'점</td>'+
+      '<td style="font-weight:600;color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(d>0?"+"+d+"점":d+"점")+'</td>'+
       '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td>'+
       '</tr>';
   }).join("");
