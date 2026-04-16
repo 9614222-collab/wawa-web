@@ -392,12 +392,13 @@ function drawStatChart(){
 
 function examFormHTML(e){
   var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
+  var score=e?Math.round(e.correct/e.total*100):"";
+  var clsScore=e&&e.classAvg>0?Math.round(e.classAvg/e.total*100):"";
   return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
     '<label class="fl">시험명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1차 모의고사"/>'+
     '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
-    '<label class="fl">총 문제수</label><input class="fi" id="mTotal" type="number" value="'+(e?e.total:25)+'"/>'+
-    '<label class="fl">정답수</label><input class="fi" id="mCorrect" type="number" value="'+(e?e.correct:"")+'"/>'+
-    '<label class="fl">학급 평균</label><input class="fi" id="mClassavg" type="number" value="'+(e?e.classAvg:"")+'"/>';
+    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 76"/>'+
+    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 65"/>';
 }
 
 window.openModal=function(type,examId){
@@ -464,14 +465,17 @@ window.addStudent=function(){
 window.saveExam=function(eid){
   var date=document.getElementById("mDate").value;
   var name=document.getElementById("mEname").value.trim();
-  var correct=Number(document.getElementById("mCorrect").value);
-  var total=Number(document.getElementById("mTotal").value);
-  var classAvg=Number(document.getElementById("mClassavg").value);
-  if(!date||!name||!correct){alert("날짜, 시험명, 정답수를 입력해주세요!");return;}
+  var score=Number(document.getElementById("mScore").value);
+  var clsScore=Number(document.getElementById("mClsScore").value)||0;
+  if(!date||!name||!score){alert("날짜, 시험명, 점수를 입력해주세요!");return;}
   var id=eid||("e_"+Date.now());
+  var grade=score>=85?"A":score>=70?"B":score>=55?"C":"D";
+  var correct=score;
+  var classAvg=clsScore;
+  var total=100;
   setStatus("저장 중...","#f7a94f");
   fsPatch("exams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
-    total:total,correct:correct,classAvg:classAvg,grade:autoGrade(correct,total),studentId:selectedId})
+    total:total,correct:correct,classAvg:classAvg,grade:grade,studentId:selectedId})
     .then(function(){closeModal();loadData();});
 };
 window.generateMsg=function(){
