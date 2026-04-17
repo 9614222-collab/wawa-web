@@ -384,7 +384,22 @@ function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
   html+='</div><div class="card">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
     '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
-    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ 자동 생성</button>'+
+    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ AI 메시지 생성</button>'+
+    '</div>'+
+    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;">'+
+    '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
+    '<div style="margin-bottom:8px;">'+
+    '<label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
+    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '</div>'+
+    '<div style="margin-bottom:8px;">'+
+    '<label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
+    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '</div>'+
+    '<div>'+
+    '<label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
+    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '</div>'+
     '</div>'+
     '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
     '</div>'+
@@ -756,40 +771,31 @@ window.generateMsg=function(){
   var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
   if(!s){alert("학생을 선택해주세요!");return;}
   if(!exList.length){alert("시험 기록이 없습니다.");return;}
+
+  var good=document.getElementById("feedGood")?document.getElementById("feedGood").value.trim():"";
+  var improve=document.getElementById("feedImprove")?document.getElementById("feedImprove").value.trim():"";
+  var direction=document.getElementById("feedDirection")?document.getElementById("feedDirection").value.trim():"";
+
   var btn=document.getElementById("genBtn");
   if(btn)btn.textContent="생성 중...";
+
   var latest=exList[exList.length-1];
   var latestScore=toScore(latest);
   var latestClsScore=toClsScore(latest);
   var myAvgScore=Math.round(avg(exList.map(toScore)));
-  var clsAvgScore=Math.round(avg(exList.map(toClsScore)));
   var diff=latestScore-latestClsScore;
-  var trend="";
-  if(exList.length>=2){
-    var prevScore=toScore(exList[exList.length-2]);
-    trend=latestScore>prevScore?"지난 시험보다 점수가 향상되었으며, ":"더욱 분발이 필요하며, ";
-  }
-  var grade=latest.grade;
-  var comment="";
-  if(grade==="A")comment="매우 우수한 성적으로, 앞으로도 이 실력을 유지할 수 있도록 지도하겠습니다.";
-  else if(grade==="B")comment="양호한 성적이며, 조금 더 노력하면 더욱 좋은 결과를 얻을 수 있을 것입니다.";
-  else if(grade==="C")comment="기초를 다지는 데 집중하여 차근차근 실력을 쌓아가도록 지도하겠습니다.";
-  else comment="현재 어려움을 겪고 있으나, 개별 지도를 통해 반드시 향상될 수 있도록 최선을 다하겠습니다.";
-  var diffTxt="";
-  if(diff>0)diffTxt="학급 평균보다 "+diff+"점 높은";
-  else if(diff<0)diffTxt="학급 평균보다 "+Math.abs(diff)+"점 낮은";
-  else diffTxt="학급 평균과 동일한";
+
   var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
     "와와코칭학원 "+s.teacher+"입니다.\n\n"+
-    "최근 "+latest.name+"에서 "+latestScore+"점을 받았습니다."+
-    (latestClsScore>0?" (학급 평균 "+latestClsScore+"점, "+diffTxt+" 결과)":"")+"\n"+
-    trend+comment+"\n\n"+
-    "현재 평균 "+myAvgScore+"점"+(clsAvgScore>0?" (학급 평균 "+clsAvgScore+"점)":"")+
-    "으로, 앞으로도 최선을 다해 "+s.name+" 학생의 성장을 도울 수 있도록 노력하겠습니다.\n"+
+    "이번 "+latest.name+" 결과("+latestScore+"점"+(latestClsScore>0?", 학급평균 "+latestClsScore+"점":"")+")에 대해 안내드립니다.\n\n"+
+    "✅ 잘한 점\n"+(good||"꾸준히 수업에 참여하고 있습니다.")+"\n\n"+
+    "📝 보완이 필요한 부분\n"+(improve||"틀린 문제를 다시 풀어보는 복습이 필요합니다.")+"\n\n"+
+    "📚 앞으로의 학습 방향\n"+(direction||"꾸준한 예습·복습을 통해 실력을 쌓아갈 수 있도록 지도하겠습니다.")+"\n\n"+
     "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
+
   var area=document.getElementById("msgArea");
   if(area){area.value=msg;savedMsg=msg;}
-  if(btn)btn.textContent="✦ 자동 생성";
+  if(btn)btn.textContent="✦ AI 메시지 생성";
 };
 
 window.saveImg=function(){
