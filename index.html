@@ -384,14 +384,7 @@ function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
   html+='</div><div class="card">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
     '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
-    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">'+
-    '<label style="padding:7px 14px;border-radius:8px;background:#7c6fcd;color:#fff;font-size:12px;font-weight:600;cursor:pointer;display:inline-block;margin:0;">📷 시험지 분석<input type="file" accept="image/*" onchange="analyzeExam(this)" style="display:none;"/></label>'+
     '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ 자동 생성</button>'+
-    '</div></div>'+
-    '<div id="uploadPreview" style="display:none;margin-bottom:12px;padding:10px;background:#f8f0ff;border-radius:8px;border:1px solid #d4b8f0;">'+
-    '<div style="font-size:11px;color:#7c6fcd;margin-bottom:6px;font-weight:600;">📎 업로드된 시험지</div>'+
-    '<img id="previewImg" style="max-width:100%;max-height:200px;border-radius:6px;"/>'+
-    '<div id="analyzeStatus" style="font-size:12px;color:#888;margin-top:6px;"></div>'+
     '</div>'+
     '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
     '</div>'+
@@ -857,45 +850,43 @@ window.saveImg=function(){
 };
 
 window.analyzeExam=function(input){
+  if(!input.files||!input.files[0])return;
   var file=input.files[0];
-  if(!file)return;
   var s=students.filter(function(x){return x.id===selectedId;})[0];
   if(!s){alert("학생을 선택해주세요!");return;}
 
-  // 미리보기
+  var preview=document.getElementById("uploadPreview");
+  var img=document.getElementById("previewImg");
+  var status=document.getElementById("analyzeStatus");
+  var area=document.getElementById("msgArea");
+
+  // 미리보기 먼저 보여주기
   var reader=new FileReader();
   reader.onload=function(ev){
-    var preview=document.getElementById("uploadPreview");
-    var img=document.getElementById("previewImg");
-    var status=document.getElementById("analyzeStatus");
     if(preview)preview.style.display="block";
     if(img)img.src=ev.target.result;
-    if(status)status.textContent="AI가 시험지를 분석 중입니다...";
-
-    var area=document.getElementById("msgArea");
+    if(status)status.textContent="⏳ AI가 시험지를 분석 중입니다...";
     if(area)area.value="분석 중...";
 
-    // base64 추출
     var base64=ev.target.result.split(",")[1];
-    var mediaType=file.type;
+    var mediaType=file.type||"image/jpeg";
 
     var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-    var myAvgScore=exList.length?Math.round(avg(exList.map(toScore))):"-";
+    var myAvgScore=exList.length?Math.round(avg(exList.map(toScore)))+"점":"없음";
 
-    var prompt="당신은 학원 선생님입니다. 업로드된 시험지 이미지를 분석하여 학부모에게 보내는 따뜻하고 전문적인 안내 메시지를 작성해주세요.\n\n"+
+    var prompt="당신은 학원 선생님입니다. 업로드된 시험지 이미지를 보고 학부모에게 보내는 따뜻하고 전문적인 안내 메시지를 작성해주세요.\n\n"+
       "학생 정보:\n"+
       "- 이름: "+s.name+"\n"+
       "- 학년: "+s.grade+"\n"+
       "- 과목: "+s.subject+"\n"+
       "- 담당 선생님: "+s.teacher+"\n"+
-      "- 평균 점수: "+myAvgScore+"점\n\n"+
-      "시험지를 보고 다음 내용을 포함해서 3~5문장으로 작성해주세요:\n"+
-      "1. 인사말 (학부모님, 선생님 소개)\n"+
-      "2. 시험지에서 발견한 잘한 점\n"+
+      "- 평균 점수: "+myAvgScore+"\n\n"+
+      "아래 내용을 포함해서 한국어로 4~5문장으로 작성해주세요:\n"+
+      "1. 인사말 (학부모님 안녕하세요, 선생님 소개)\n"+
+      "2. 시험지에서 잘한 부분\n"+
       "3. 틀린 문제나 보완이 필요한 부분\n"+
       "4. 앞으로의 학습 방향 제안\n"+
-      "5. 마무리 인사\n\n"+
-      "한국어로 작성해주세요.";
+      "5. 마무리 인사";
 
     fetch("https://api.anthropic.com/v1/messages",{
       method:"POST",
@@ -913,13 +904,17 @@ window.analyzeExam=function(input){
       })
     }).then(function(r){return r.json();})
     .then(function(data){
-      var text=data.content?data.content.map(function(c){return c.text||"";}).join(""):"분석 실패";
+      var text=data.content?data.content.map(function(c){return c.text||"";}).join(""):"분석에 실패했습니다.";
       if(area){area.value=text;savedMsg=text;}
       if(status)status.textContent="✅ 분석 완료!";
-    }).catch(function(){
-      if(area)area.value="시험지 분석 중 오류가 발생했습니다.";
+    }).catch(function(err){
+      console.error(err);
+      if(area)area.value="시험지 분석 중 오류가 발생했습니다. 다시 시도해주세요.";
       if(status)status.textContent="❌ 오류 발생";
     });
+  };
+  reader.onerror=function(){
+    alert("파일을 읽는 중 오류가 발생했습니다.");
   };
   reader.readAsDataURL(file);
 };
