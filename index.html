@@ -386,19 +386,19 @@ function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
     '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
     '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ AI 메시지 생성</button>'+
     '</div>'+
-    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;">'+
+    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;position:relative;z-index:1;">'+
     '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
     '<div style="margin-bottom:8px;">'+
     '<label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
-    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
     '</div>'+
     '<div style="margin-bottom:8px;">'+
     '<label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
-    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
     '</div>'+
     '<div>'+
     '<label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
-    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;"/>'+
+    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
     '</div>'+
     '</div>'+
     '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
