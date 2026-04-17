@@ -99,6 +99,7 @@ var BASE="https://firestore.googleapis.com/v1/projects/"+PID+"/databases/(defaul
 var students=[], exams={}, unitExams={}, selectedId=null, subjectFilter="전체", activeTab="상세";
 var mgmtLevel="전체", statLevel="초등", statSubLevel="", teacherFilter="전체 선생님", gradeFilter="전체";
 var myChart=null, unitChart=null, statChart=null, savedMsg="", savedUnitMsg="";
+var feedGood="", feedImprove="", feedDirection="";
 
 function gc(g){return GC[g]||"#aaa";}
 function scoreGrade(s){return s>=85?"A":s>=70?"B":s>=55?"C":"D";}
@@ -390,15 +391,15 @@ function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
     '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
     '<div style="margin-bottom:8px;">'+
     '<label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
-    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
+    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" value="'+feedGood+'" onchange="feedGood=this.value" oninput="feedGood=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
     '</div>'+
     '<div style="margin-bottom:8px;">'+
     '<label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
-    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
+    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" value="'+feedImprove+'" onchange="feedImprove=this.value" oninput="feedImprove=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
     '</div>'+
     '<div>'+
     '<label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
-    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;position:relative;z-index:2;" onclick="this.focus()"/>'+
+    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" value="'+feedDirection+'" onchange="feedDirection=this.value" oninput="feedDirection=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
     '</div>'+
     '</div>'+
     '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
@@ -772,9 +773,9 @@ window.generateMsg=function(){
   if(!s){alert("학생을 선택해주세요!");return;}
   if(!exList.length){alert("시험 기록이 없습니다.");return;}
 
-  var good=document.getElementById("feedGood")?document.getElementById("feedGood").value.trim():"";
-  var improve=document.getElementById("feedImprove")?document.getElementById("feedImprove").value.trim():"";
-  var direction=document.getElementById("feedDirection")?document.getElementById("feedDirection").value.trim():"";
+  var good=feedGood.trim();
+  var improve=feedImprove.trim();
+  var direction=feedDirection.trim();
 
   var btn=document.getElementById("genBtn");
   if(btn)btn.textContent="생성 중...";
