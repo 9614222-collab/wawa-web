@@ -161,7 +161,13 @@ function loadData(){
         unitExams[ex.studentId].push(ex);
       });
       setStatus("실시간 저장 중","#4caf50");
-      render();
+      // 보고서 탭이면 사이드바/헤더만 업데이트 (메인 콘텐츠 유지)
+      if(activeTab==="보고서"){
+        renderSidebar();
+        renderHeader();
+      } else {
+        render();
+      }
     }).catch(function(){setStatus("연결 오류","#f74f4f");});
 }
 
