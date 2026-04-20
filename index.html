@@ -365,9 +365,8 @@ function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
     '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
     '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
   html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
-  [{l:"내 평균",v:myAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"학급 평균",v:clsAvg,bg:"#fffbec",bd:"#f5d97a"},
-   {l:"최근 점수",v:latestScore,bg:"#fff",bd:"#eee"}
+  [{l:"내 점수",v:myAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
+   {l:"학년 평균",v:clsAvg,bg:"#fffbec",bd:"#f5d97a"}
   ].forEach(function(c){
     html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';text-align:center;">'+
       '<div style="font-size:11px;color:#888;margin-bottom:6px;">'+c.l+'</div>'+
