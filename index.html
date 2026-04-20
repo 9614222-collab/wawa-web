@@ -738,7 +738,7 @@ window.doPrintUnit=function(){
     '<div style="font-size:10px;color:#b8961e;font-weight:600;letter-spacing:1px;margin-bottom:10px;">선생님 피드백</div>'+
     '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
     '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">'+
-    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+' &nbsp;·&nbsp; '+new Date().toLocaleDateString("ko-KR")+'</div>'+
+    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+'</div>'+
     '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
   win.document.close();
 };
@@ -846,7 +846,7 @@ window.saveImg=function(){
     (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;margin-bottom:20px;">'+
     '<div style="font-size:11px;color:#b8961e;font-weight:600;margin-bottom:8px;">학부모 안내 메시지</div>'+
     '<div style="font-size:13px;line-height:1.9;color:#333;white-space:pre-wrap;">'+msg+'</div></div>':'')+
-    '<div style="text-align:center;padding-top:14px;border-top:1px solid #f0e8cc;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+' · '+new Date().toLocaleDateString("ko-KR")+'</div>'+
+    '<div style="text-align:center;padding-top:14px;border-top:1px solid #f0e8cc;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+'</div>'+
     '</div>';
   document.body.appendChild(div);
 
@@ -986,9 +986,8 @@ window.doPrint=function(){
     '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 성적 보고서</div>'+
     '<div style="font-size:13px;color:#999;">'+s.grade+' &nbsp;·&nbsp; '+s.subject+' &nbsp;·&nbsp; '+s.teacher+'</div>'+
     '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">'+
+    '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px;">'+
     '<div class="sbox"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">내 평균</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
-    '<div class="sbox" style="background:#fffdf0;"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">학급 평균</div><div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
     '<div class="sbox"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">최근 점수</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+latestScore+'</div></div>'+
     '</div>'+
     '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">시험별 성적</div>'+
