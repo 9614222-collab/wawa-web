@@ -107,7 +107,6 @@ function avg(a){return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:
 function gl(g){return g.startsWith("초")?"초등":g.startsWith("중")?"중학":"고등";}
 function toScore(e){return Math.round(e.correct/e.total*100);}
 function toClsScore(e){return e.classAvg>0?Math.round(e.classAvg/e.total*100):0;}
-
 function setStatus(msg,color){
   document.getElementById("stTxt").textContent=msg;
   document.getElementById("stTxt").style.color=color;
@@ -132,7 +131,6 @@ function fsGet(col){
       });
     });
 }
-
 function fsPatch(col,id,data){
   var fields={};
   Object.keys(data).forEach(function(k){
@@ -142,7 +140,6 @@ function fsPatch(col,id,data){
   });
   return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({fields:fields})});
 }
-
 function fsDel(col,id){return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{method:"DELETE"});}
 
 function loadData(){
@@ -161,13 +158,8 @@ function loadData(){
         unitExams[ex.studentId].push(ex);
       });
       setStatus("실시간 저장 중","#4caf50");
-      // 보고서 탭이면 사이드바/헤더만 업데이트 (메인 콘텐츠 유지)
-      if(activeTab==="보고서"){
-        renderSidebar();
-        renderHeader();
-      } else {
-        render();
-      }
+      if(activeTab==="보고서"){renderSidebar();renderHeader();}
+      else{render();}
     }).catch(function(){setStatus("연결 오류","#f74f4f");});
 }
 
@@ -180,8 +172,6 @@ function renderSidebar(){
     var gOk=gradeFilter==="전체"||s.grade===gradeFilter;
     return tOk&&sOk&&gOk;
   });
-
-  // 학년 버튼 - 현재 선생님/과목 필터에 해당하는 학년만 표시
   var availGrades=["전체"];
   students.forEach(function(s){
     var tOk=teacherFilter==="전체 선생님"||s.teacher===teacherFilter;
@@ -196,7 +186,6 @@ function renderSidebar(){
   document.getElementById("gradeBtns").innerHTML=availGrades.map(function(g){
     return '<button class="subj-btn'+(gradeFilter===g?" on":"")+'" onclick="setGrade(\''+g+'\')">'+g+'</button>';
   }).join("");
-
   document.getElementById("sbjBtns").innerHTML=SUBJECTS.map(function(s){
     return '<button class="subj-btn'+(subjectFilter===s?" on":"")+'" onclick="setSubject(\''+s+'\')">'+s+'</button>';
   }).join("");
@@ -239,12 +228,102 @@ function renderMain(){
   var latestScore=latest?toScore(latest)+"점":"-";
   if(activeTab==="상세")mc.innerHTML=renderDetail(exList,latest,myAvg,clsAvg,latestScore);
   else if(activeTab==="단원평가")mc.innerHTML=renderUnit(s,uList);
-  else if(activeTab==="보고서")mc.innerHTML=renderReport(s,exList,latest,myAvg,clsAvg,latestScore);
+  else if(activeTab==="보고서")mc.innerHTML=renderReport(s,exList,latest,myAvg,clsAvg);
   else if(activeTab==="관리")mc.innerHTML=renderMgmt();
   else if(activeTab==="통계")mc.innerHTML=renderStat();
   if(activeTab==="상세"&&exList.length)setTimeout(function(){drawChart(exList);},50);
   if(activeTab==="단원평가"&&uList.length)setTimeout(function(){drawUnitChart(uList);},50);
   if(activeTab==="통계")setTimeout(drawStatChart,50);
+}
+
+function renderDetail(exList,latest,myAvg,clsAvg,latestScore){
+  var html='<div class="grid4">';
+  [{l:"최근 점수",v:latestScore,bg:"#fff",bd:"#ddd"},
+   {l:"내 평균 점수",v:myAvg,bg:"#fffbec",bd:"#f5d97a"},
+   {l:"학급 평균",v:clsAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
+   {l:"시험 횟수",v:exList.length+"회",bg:"#fff",bd:"#ddd"}
+  ].forEach(function(c){
+    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
+      '<div style="font-size:11px;color:#888;margin-bottom:8px;">'+c.l+'</div>'+
+      '<div style="font-size:22px;font-weight:700;">'+c.v+'</div></div>';
+  });
+  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:16px;">점수 추이</div>';
+  html+=exList.length?'<canvas id="myChart" height="90"></canvas>':'<div style="text-align:center;color:#bbb;padding:40px;">시험 기록이 없습니다</div>';
+  html+='</div><div class="card">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
+    '<span style="font-weight:700;font-size:14px;">시험 기록</span>'+
+    '<button class="bp" onclick="openModal(\'addExam\')" style="padding:7px 16px;font-size:12px;">+ 시험 추가</button></div>';
+  html+='<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th><th></th></tr></thead><tbody>';
+  [].concat(exList).reverse().forEach(function(e){
+    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
+    html+='<tr><td>'+e.date+'</td><td><span class="badge">'+e.subject+'</span></td>'+
+      '<td style="font-weight:500;">'+e.name+'</td>'+
+      '<td style="color:'+NAVY+';font-weight:600;">'+sc+'점</td>'+
+      '<td style="color:'+GOLD+';font-weight:600;">'+(cs>0?cs+"점":"-")+'</td>'+
+      '<td style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-weight:600;">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
+      '<td><span class="gbadge" style="background:'+gc(e.grade)+'">'+e.grade+'</span></td>'+
+      '<td style="white-space:nowrap;">'+
+      '<button class="bs" onclick="openModal(\'editExam\',\''+e.id+'\')" style="margin-right:4px;">수정</button>'+
+      '<button class="bd" onclick="delExam(\''+e.id+'\')">삭제</button></td></tr>';
+  });
+  if(!exList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">시험 기록이 없습니다</td></tr>';
+  html+='</tbody></table></div>';
+  return html;
+}
+
+function renderReport(s,exList,latest,myAvg,clsAvg){
+  if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
+  var html='<div style="max-width:680px;margin:0 auto;">';
+  html+='<div class="card" style="text-align:center;">'+
+    '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
+    '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
+  html+='<div class="card" style="display:flex;justify-content:center;gap:20px;">';
+  html+='<div style="background:#f0f4ff;border:1px solid #a0b4f7;border-radius:12px;padding:20px 50px;text-align:center;">'+
+    '<div style="font-size:11px;color:#888;margin-bottom:6px;">내 점수</div>'+
+    '<div style="font-size:22px;font-weight:700;">'+myAvg+'</div></div>';
+  html+='<div style="background:#fffbec;border:1px solid #f5d97a;border-radius:12px;padding:20px 50px;text-align:center;">'+
+    '<div style="font-size:11px;color:#888;margin-bottom:6px;">학년 평균</div>'+
+    '<div style="font-size:22px;font-weight:700;">'+clsAvg+'</div></div>';
+  html+='</div>';
+  html+='<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">시험별 성적</div>';
+  [].concat(exList).reverse().forEach(function(e){
+    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
+    html+='<div style="margin-bottom:16px;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
+      '<div><span style="font-weight:600;">'+e.name+'</span>'+
+      '<span style="color:#888;font-size:11px;margin-left:8px;">'+e.date+' · '+e.subject+'</span></div>'+
+      '<div style="display:flex;align-items:center;gap:8px;">'+
+      '<span style="font-weight:600;">'+sc+'점</span>'+
+      (cs>0?'<span style="color:#888;font-size:11px;">(학급평균 '+cs+'점)</span>':'')+
+      (cs>0?'<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+"점)":"("+d+"점)")+'</span>':'')+
+      '<span class="gbadge" style="background:'+gc(e.grade)+';font-size:11px;">'+e.grade+'</span></div></div>'+
+      '<div class="pb"><div class="pf" style="width:'+sc+'%;"></div></div></div>';
+  });
+  if(!exList.length)html+='<div style="text-align:center;color:#bbb;padding:20px;">시험 기록이 없습니다</div>';
+  html+='</div>';
+  html+='<div class="card">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
+    '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
+    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ AI 메시지 생성</button></div>'+
+    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;">'+
+    '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
+    '<div style="margin-bottom:8px;"><label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
+    '<input id="feedGood" value="'+feedGood+'" onchange="feedGood=this.value" oninput="feedGood=this.value" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
+    '<div style="margin-bottom:8px;"><label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
+    '<input id="feedImprove" value="'+feedImprove+'" onchange="feedImprove=this.value" oninput="feedImprove=this.value" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
+    '<div><label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
+    '<input id="feedDirection" value="'+feedDirection+'" onchange="feedDirection=this.value" oninput="feedDirection=this.value" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
+    '</div>'+
+    '<textarea id="msgArea" rows="6" placeholder="위 메모를 입력하고 AI 메시지 생성을 눌러보세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
+    '</div>'+
+    '<div style="text-align:center;color:#888;font-size:12px;margin:8px 0 16px;">와와코칭학원 · '+s.teacher+'</div>'+
+    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
+    '<button class="action-btn" onclick="convertMsg()" style="background:#1a2a4a;">✉ 문자변환</button>'+
+    '<button class="action-btn" onclick="saveTxt()" style="background:#4f8ef7;">📄 TXT</button>'+
+    '<button class="action-btn" onclick="saveImg()" style="background:#4caf50;">🖼 이미지</button>'+
+    '<button class="action-btn" onclick="doPrint()" style="background:#f7a94f;">🖨 프린트/PDF</button>'+
+    '</div></div>';
+  return html;
 }
 
 function renderUnit(s,uList){
@@ -285,8 +364,6 @@ function renderUnit(s,uList){
   });
   if(!uList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">단원평가 기록이 없습니다</td></tr>';
   html+='</tbody></table></div>';
-
-  // 선생님 피드백
   html+='<div class="card">'+
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
     '<span style="font-weight:700;font-size:14px;">선생님 피드백</span>'+
@@ -297,125 +374,8 @@ function renderUnit(s,uList){
     '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
     '<button class="action-btn" onclick="convertUnitMsg()" style="background:#1a2a4a;">✉ 문자변환</button>'+
     '<button class="action-btn" onclick="saveUnitTxt()" style="background:#4f8ef7;">📄 TXT</button>'+
-    '<button class="action-btn" onclick="doPrintUnit()" style="background:#f7a94f;">🖨 프린트 / PDF</button>'+
+    '<button class="action-btn" onclick="doPrintUnit()" style="background:#f7a94f;">🖨 프린트/PDF</button>'+
     '</div>';
-  return html;
-}
-
-function drawUnitChart(uList){
-  var ctx=document.getElementById("unitChart");if(!ctx)return;
-  var n=uList.length;
-  var barThick=n<=2?80:n<=4?60:n<=6?45:35;
-  unitChart=new Chart(ctx,{type:"bar",data:{
-    labels:uList.map(function(e){return e.name;}),
-    datasets:[
-      {label:"내 점수",data:uList.map(toScore),backgroundColor:NAVY+"cc",borderRadius:4,barThickness:barThick},
-      {label:"학급평균",data:uList.map(toClsScore),backgroundColor:GOLD+"99",borderRadius:4,barThickness:barThick}
-    ]
-  },options:{
-    responsive:true,
-    plugins:{legend:{labels:{font:{size:11}}}},
-    scales:{
-      x:{ticks:{font:{size:11}},grid:{display:false}},
-      y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}
-    },
-    layout:{padding:{left:20,right:20}}
-  }});
-}
-
-function renderDetail(exList,latest,myAvg,clsAvg,latestScore){
-  var html='<div class="grid4">';
-  [{l:"최근 점수",v:latestScore,bg:"#fff",bd:"#ddd"},
-   {l:"내 평균 점수",v:myAvg,bg:"#fffbec",bd:"#f5d97a"},
-   {l:"학급 평균",v:clsAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"시험 횟수",v:exList.length+"회",bg:"#fff",bd:"#ddd"}
-  ].forEach(function(c){
-    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
-      '<div style="font-size:11px;color:#888;margin-bottom:8px;">'+c.l+'</div>'+
-      '<div style="font-size:22px;font-weight:700;">'+c.v+'</div></div>';
-  });
-  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:16px;">점수 추이</div>';
-  html+=exList.length?'<canvas id="myChart" height="90"></canvas>':'<div style="text-align:center;color:#bbb;padding:40px;">시험 기록이 없습니다</div>';
-  html+='</div><div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
-    '<span style="font-weight:700;font-size:14px;">시험 기록</span>'+
-    '<button class="bp" onclick="openModal(\'addExam\')" style="padding:7px 16px;font-size:12px;">+ 시험 추가</button></div>';
-  html+='<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th><th></th></tr></thead><tbody>';
-  [].concat(exList).reverse().forEach(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    html+='<tr><td>'+e.date+'</td><td><span class="badge">'+e.subject+'</span></td>'+
-      '<td style="font-weight:500;">'+e.name+'</td>'+
-      '<td style="color:'+NAVY+';font-weight:600;">'+sc+'점</td>'+
-      '<td style="color:'+GOLD+';font-weight:600;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-weight:600;">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span class="gbadge" style="background:'+gc(e.grade)+'">'+e.grade+'</span></td>'+
-      '<td style="white-space:nowrap;">'+
-      '<button class="bs" onclick="openModal(\'editExam\',\''+e.id+'\')" style="margin-right:4px;">수정</button>'+
-      '<button class="bd" onclick="delExam(\''+e.id+'\')">삭제</button></td></tr>';
-  });
-  if(!exList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">시험 기록이 없습니다</td></tr>';
-  html+='</tbody></table></div>';
-  return html;
-}
-
-function renderReport(s,exList,latest,myAvg,clsAvg,latestScore){
-  if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
-  var html='<div style="max-width:680px;margin:0 auto;">';
-  html+='<div class="card" style="text-align:center;">'+
-    '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
-    '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
-  html+='<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;">';
-  [{l:"내 점수",v:myAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"학년 평균",v:clsAvg,bg:"#fffbec",bd:"#f5d97a"}
-  ].forEach(function(c){
-    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';text-align:center;">'+
-      '<div style="font-size:11px;color:#888;margin-bottom:6px;">'+c.l+'</div>'+
-      '<div style="font-size:20px;font-weight:700;">'+c.v+'</div></div>';
-  });
-  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">시험별 성적</div>';
-  [].concat(exList).reverse().forEach(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    html+='<div style="margin-bottom:16px;">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
-      '<div><span style="font-weight:600;">'+e.name+'</span>'+
-      '<span style="color:#888;font-size:11px;margin-left:8px;">'+e.date+' · '+e.subject+'</span></div>'+
-      '<div style="display:flex;align-items:center;gap:8px;">'+
-      '<span style="font-weight:600;">'+sc+'점</span>'+
-      (cs>0?'<span style="color:#888;font-size:11px;">(학급평균 '+cs+'점)</span>':'')+
-      (cs>0?'<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+"점)":"("+d+"점)")+'</span>':'')+
-      '<span class="gbadge" style="background:'+gc(e.grade)+';font-size:11px;">'+e.grade+'</span></div></div>'+
-      '<div class="pb"><div class="pf" style="width:'+sc+'%;"></div></div></div>';
-  });
-  if(!exList.length)html+='<div style="text-align:center;color:#bbb;padding:20px;">시험 기록이 없습니다</div>';
-  html+='</div><div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
-    '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
-    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ AI 메시지 생성</button>'+
-    '</div>'+
-    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;position:relative;z-index:1;">'+
-    '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
-    '<div style="margin-bottom:8px;">'+
-    '<label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
-    '<input id="feedGood" placeholder="예: 계산 문제 정확, 집중력 좋음" value="'+feedGood+'" onchange="feedGood=this.value" oninput="feedGood=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
-    '</div>'+
-    '<div style="margin-bottom:8px;">'+
-    '<label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
-    '<input id="feedImprove" placeholder="예: 서술형 문제 취약, 단위 실수" value="'+feedImprove+'" onchange="feedImprove=this.value" oninput="feedImprove=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
-    '</div>'+
-    '<div>'+
-    '<label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
-    '<input id="feedDirection" placeholder="예: 오답노트 작성, 서술형 연습" value="'+feedDirection+'" onchange="feedDirection=this.value" oninput="feedDirection=this.value" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;font-family:inherit;background:#fff;box-sizing:border-box;"/>'+
-    '</div>'+
-    '</div>'+
-    '<textarea id="msgArea" rows="6" placeholder="자동 생성 또는 직접 입력하세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
-    '</div>'+
-    '<div style="text-align:center;color:#888;font-size:12px;margin:8px 0 16px;">와와코칭학원 · '+s.teacher+'</div>'+
-    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
-    '<button class="action-btn" onclick="convertMsg()" style="background:#1a2a4a;">✉ 문자변환</button>'+
-    '<button class="action-btn" onclick="saveTxt()" style="background:#4f8ef7;">📄 TXT</button>'+
-    '<button class="action-btn" onclick="saveImg()" style="background:#4caf50;">🖼 이미지</button>'+
-    '<button class="action-btn" onclick="doPrint()" style="background:#f7a94f;">🖨 프린트 / PDF</button>'+
-    '</div></div>';
   return html;
 }
 
@@ -456,8 +416,7 @@ function renderStat(){
   var subs=students.filter(function(s){return s.grade===cur;}).map(function(s){
     var ex=exams[s.id]||[];
     return{name:s.name,grade:s.grade,subject:s.subject,teacher:s.teacher,
-      av:ex.length?avg(ex.map(toScore)):0,
-      avs:ex.length?Math.round(avg(ex.map(toScore)))+"점":"-"};
+      av:ex.length?avg(ex.map(toScore)):0,avs:ex.length?Math.round(avg(ex.map(toScore)))+"점":"-"};
   }).sort(function(a,b){return b.av-a.av;});
   var html='<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">'+
     '<div style="font-weight:700;font-size:16px;">성적 통계</div>'+
@@ -500,23 +459,30 @@ function renderStat(){
 
 function drawChart(exList){
   var ctx=document.getElementById("myChart");if(!ctx)return;
-  var n=exList.length;
-  var barThick=n<=2?80:n<=4?60:n<=6?45:35;
+  var n=exList.length, barThick=n<=2?80:n<=4?60:n<=6?45:35;
   myChart=new Chart(ctx,{type:"bar",data:{
     labels:exList.map(function(e){return e.name;}),
     datasets:[
       {label:"내 점수",data:exList.map(toScore),backgroundColor:NAVY+"cc",borderRadius:4,barThickness:barThick},
       {label:"학급평균",data:exList.map(toClsScore),backgroundColor:GOLD+"99",borderRadius:4,barThickness:barThick}
     ]
-  },options:{
-    responsive:true,
-    plugins:{legend:{labels:{font:{size:11}}}},
-    scales:{
-      x:{ticks:{font:{size:11}},grid:{display:false}},
-      y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}
-    },
-    layout:{padding:{left:20,right:20}}
-  }});
+  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},
+    scales:{x:{grid:{display:false}},y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}},
+    layout:{padding:{left:20,right:20}}}});
+}
+
+function drawUnitChart(uList){
+  var ctx=document.getElementById("unitChart");if(!ctx)return;
+  var n=uList.length, barThick=n<=2?80:n<=4?60:n<=6?45:35;
+  unitChart=new Chart(ctx,{type:"bar",data:{
+    labels:uList.map(function(e){return e.name;}),
+    datasets:[
+      {label:"내 점수",data:uList.map(toScore),backgroundColor:NAVY+"cc",borderRadius:4,barThickness:barThick},
+      {label:"학급평균",data:uList.map(toClsScore),backgroundColor:GOLD+"99",borderRadius:4,barThickness:barThick}
+    ]
+  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},
+    scales:{x:{grid:{display:false}},y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}},
+    layout:{padding:{left:20,right:20}}}});
 }
 
 function drawStatChart(){
@@ -532,289 +498,14 @@ function drawStatChart(){
     options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}}}});
 }
 
-function unitFormHTML(e){
-  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
-  var score=e?toScore(e):"";
-  var clsScore=e&&e.classAvg>0?toClsScore(e):"";
-  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
-    '<label class="fl">단원명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1단원, 2단원"/>'+
-    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
-    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 84"/>'+
-    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 72"/>';
-}
-
-window.saveUnit=function(eid){
-  var date=document.getElementById("mDate").value;
-  var name=document.getElementById("mEname").value.trim();
-  var score=Number(document.getElementById("mScore").value);
-  var clsScore=Number(document.getElementById("mClsScore").value)||0;
-  if(!date||!name||!score){alert("날짜, 단원명, 점수를 입력해주세요!");return;}
-  var id=eid||("u_"+Date.now());
-  var grade=scoreGrade(score);
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("unitExams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
-    total:100,correct:score,classAvg:clsScore,grade:grade,studentId:selectedId})
-    .then(function(){closeModal();loadData();});
-};
-
-function examFormHTML(e){
-  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
-  var score=e?toScore(e):"";
-  var clsScore=e&&e.classAvg>0?toClsScore(e):"";
-  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
-    '<label class="fl">시험명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1차 모의고사"/>'+
-    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
-    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 76"/>'+
-    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 65"/>';
-}
-
-window.openModal=function(type,examId){
-  var bg=document.getElementById("modalBg"), box=document.getElementById("modalBox");
-  bg.style.display="flex";
-  var gOpts=GRADES.map(function(g){return'<option>'+g+'</option>';}).join("");
-  var tOpts=TEACHERS.map(function(t){return'<option>'+t+'</option>';}).join("");
-  if(type==="addStu"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">학생 추가</h3>'+
-      '<label class="fl">이름</label><input class="fi" id="mName" placeholder="학생 이름"/>'+
-      '<label class="fl">학년</label><select class="fi" id="mGrade">'+gOpts+'</select>'+
-      '<label class="fl">과목</label><select class="fi" id="mSubject"><option>국어</option><option>영어</option><option>수학</option><option>과학</option></select>'+
-      '<label class="fl">담당 선생님</label><select class="fi" id="mTeacher">'+tOpts+'</select>'+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;">'+
-      '<button class="bc" onclick="closeModal()">취소</button>'+
-      '<button class="bp" onclick="addStudent()">추가</button></div>';
-  } else if(type==="addExam"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 추가</h3>'+
-      examFormHTML(null)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
-      '<button class="bc" onclick="closeModal()">취소</button>'+
-      '<button class="bp" onclick="saveExam(null)">저장</button></div>';
-  } else if(type==="editExam"){
-    var e=(exams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
-    if(!e)return;
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 수정</h3>'+
-      examFormHTML(e)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
-      '<button class="bc" onclick="closeModal()">취소</button>'+
-      '<button class="bp" onclick="saveExam(\''+examId+'\')">저장</button></div>';
-  } else if(type==="addUnit"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 추가</h3>'+
-      unitFormHTML(null)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
-      '<button class="bc" onclick="closeModal()">취소</button>'+
-      '<button class="bp" onclick="saveUnit(null)">저장</button></div>';
-  } else if(type==="editUnit"){
-    var eu=(unitExams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
-    if(!eu)return;
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 수정</h3>'+
-      unitFormHTML(eu)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;">'+
-      '<button class="bc" onclick="closeModal()">취소</button>'+
-      '<button class="bp" onclick="saveUnit(\''+examId+'\')">저장</button></div>';
-  }
-};
-
-window.closeModal=function(){document.getElementById("modalBg").style.display="none";};
-window.setGrade=function(g){gradeFilter=g;render();};
-window.setSubject=function(s){subjectFilter=s;render();};
-window.setTeacher=function(t){teacherFilter=t;render();};
-window.setTab=function(t){activeTab=t;render();};
-window.setMgmtLevel=function(l){mgmtLevel=l;render();};
-window.setStatLevel=function(l){statLevel=l;statSubLevel="";render();};
-window.setStatSub=function(s){statSubLevel=s;render();};
-window.selectStudent=function(id){selectedId=id;render();};
-
-window.delStudent=function(id){
-  if(!confirm("학생을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  var dels=[fsDel("students",id)];
-  (exams[id]||[]).forEach(function(e){dels.push(fsDel("exams",e.id));});
-  Promise.all(dels).then(function(){if(selectedId===id)selectedId=null;loadData();});
-};
-
-window.delUnit=function(id){
-  if(!confirm("단원평가 기록을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  fsDel("unitExams",id).then(loadData);
-};
-
-window.generateUnitMsg=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  if(!s){alert("학생을 선택해주세요!");return;}
-  if(!uList.length){alert("단원평가 기록이 없습니다.");return;}
-  var btn=document.getElementById("genUnitBtn");
-  if(btn)btn.textContent="생성 중...";
-  var latest=uList[uList.length-1];
-  var latestScore=toScore(latest);
-  var latestClsScore=toClsScore(latest);
-  var myAvgScore=Math.round(avg(uList.map(toScore)));
-  var diff=latestScore-latestClsScore;
-  var grade=latest.grade;
-  var comment="";
-  if(grade==="A")comment="매우 우수하게 단원 내용을 이해하고 있습니다.";
-  else if(grade==="B")comment="단원 내용을 잘 이해하고 있으며, 조금 더 노력하면 더욱 좋은 결과를 얻을 수 있습니다.";
-  else if(grade==="C")comment="일부 개념 보완이 필요하며, 집중적인 복습을 통해 실력을 키워나가겠습니다.";
-  else comment="해당 단원에 대한 추가 지도가 필요하며, 개별 지도를 통해 기초를 다질 수 있도록 하겠습니다.";
-  var diffTxt="";
-  if(diff>0)diffTxt="학급 평균보다 "+diff+"점 높은";
-  else if(diff<0)diffTxt="학급 평균보다 "+Math.abs(diff)+"점 낮은";
-  else diffTxt="학급 평균과 동일한";
-  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
-    "와와코칭학원 "+s.teacher+"입니다.\n\n"+
-    "["+latest.name+" 단원평가 결과]\n"+
-    "점수: "+latestScore+"점"+(latestClsScore>0?" (학급 평균 "+latestClsScore+"점, "+diffTxt+" 결과)":"")+"\n"+
-    comment+"\n\n"+
-    "단원평가 평균 점수 "+myAvgScore+"점으로, "+
-    "앞으로도 "+s.name+" 학생이 각 단원을 충실히 학습할 수 있도록 최선을 다하겠습니다.\n"+
-    "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
-  var area=document.getElementById("unitMsgArea");
-  if(area){area.value=msg;savedUnitMsg=msg;}
-  if(btn)btn.textContent="✦ 자동 생성";
-};
-
-window.convertUnitMsg=function(){
-  var msg=document.getElementById("unitMsgArea");
-  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
-  if(navigator.clipboard){
-    navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});
-  }
-};
-
-window.saveUnitTxt=function(){
-  var msg=document.getElementById("unitMsgArea");
-  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var blob=new Blob(["[와와코칭학원 단원평가 피드백]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download=(s?s.name:"")+"_단원평가피드백.txt";a.click();
-};
-
-window.doPrintUnit=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  if(!s){alert("학생을 선택해주세요!");return;}
-  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var uAvg=uList.length?Math.round(avg(uList.map(toScore)))+"점":"-";
-  var uClsAvg=uList.length?Math.round(avg(uList.map(toClsScore)))+"점":"-";
-  var uLatest=uList[uList.length-1];
-  var msg=document.getElementById("unitMsgArea")?document.getElementById("unitMsgArea").value:"";
-  var rows=[].concat(uList).reverse().map(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    return'<tr><td>'+e.date+'</td><td>'+e.subject+'</td>'+
-      '<td style="font-weight:600;">'+e.name+'</td>'+
-      '<td style="font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
-      '<td style="color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td></tr>';
-  }).join("");
-  var win=window.open("","_blank","width=900,height=750");
-  win.document.write('<!DOCTYPE html><html lang="ko"><head>'+
-    '<meta charset="UTF-8"/><title>'+s.name+' 단원평가 피드백</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0;}'+
-    'body{font-family:"Malgun Gothic","맑은 고딕",AppleGothic,sans-serif;background:#fff;color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
-    '@page{margin:8mm;size:A4;}'+
-    '.wrap{min-height:96vh;border:6px solid #d4af37;border-radius:16px;padding:36px 40px;margin:4px;position:relative;}'+
-    '.inner{position:absolute;inset:8px;border:1px solid #f0d98a;border-radius:10px;pointer-events:none;}'+
-    'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}'+
-    'thead{background:#1a2a4a;}thead th{padding:11px 14px;color:#f0d98a;font-weight:600;text-align:left;}'+
-    'tbody td{padding:10px 14px;border-bottom:1px solid #f0e8cc;}'+
-    'tbody tr:nth-child(even){background:#fcfaf4;}'+
-    '.sbox{border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;}'+
-    '</style></head><body><div class="wrap"><div class="inner"></div>'+
-    '<div style="text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
-    '<div style="font-size:10px;letter-spacing:5px;color:#b8961e;margin-bottom:10px;">WAWA COACHING CENTER</div>'+
-    '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 단원평가 피드백</div>'+
-    '<div style="font-size:13px;color:#999;">'+s.grade+' &nbsp;·&nbsp; '+s.subject+' &nbsp;·&nbsp; '+s.teacher+'</div>'+
-    '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">'+
-    '<div class="sbox"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">평균 점수</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+uAvg+'</div></div>'+
-    '<div class="sbox" style="background:#fffdf0;"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">학급 평균</div><div style="font-size:22px;font-weight:700;color:#b8961e;">'+uClsAvg+'</div></div>'+
-    '<div class="sbox"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">최근 점수</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+(uLatest?toScore(uLatest)+"점":"-")+'</div></div>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">단원별 성적</div>'+
-    '<table><thead><tr><th>날짜</th><th>과목</th><th>단원명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th></tr></thead>'+
-    '<tbody>'+rows+'</tbody></table>'+
-    (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:18px;margin-bottom:20px;">'+
-    '<div style="font-size:10px;color:#b8961e;font-weight:600;letter-spacing:1px;margin-bottom:10px;">선생님 피드백</div>'+
-    '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
-    '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">'+
-    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+'</div>'+
-    '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
-  win.document.close();
-};
-
-window.delExam=function(id){
-  if(!confirm("시험 기록을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  fsDel("exams",id).then(loadData);
-};
-
-window.addStudent=function(){
-  var name=document.getElementById("mName").value.trim();
-  if(!name){alert("이름을 입력해주세요!");return;}
-  var id="s_"+Date.now();
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("students",id,{name:name,grade:document.getElementById("mGrade").value,
-    subject:document.getElementById("mSubject").value,teacher:document.getElementById("mTeacher").value})
-    .then(function(){selectedId=id;closeModal();loadData();});
-};
-
-window.saveExam=function(eid){
-  var date=document.getElementById("mDate").value;
-  var name=document.getElementById("mEname").value.trim();
-  var score=Number(document.getElementById("mScore").value);
-  var clsScore=Number(document.getElementById("mClsScore").value)||0;
-  if(!date||!name||!score){alert("날짜, 시험명, 점수를 입력해주세요!");return;}
-  var id=eid||("e_"+Date.now());
-  var grade=scoreGrade(score);
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("exams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
-    total:100,correct:score,classAvg:clsScore,grade:grade,studentId:selectedId})
-    .then(function(){closeModal();loadData();});
-};
-
-window.generateMsg=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  if(!s){alert("학생을 선택해주세요!");return;}
-  if(!exList.length){alert("시험 기록이 없습니다.");return;}
-
-  var good=feedGood.trim();
-  var improve=feedImprove.trim();
-  var direction=feedDirection.trim();
-
-  var btn=document.getElementById("genBtn");
-  if(btn)btn.textContent="생성 중...";
-
-  var latest=exList[exList.length-1];
-  var latestScore=toScore(latest);
-  var latestClsScore=toClsScore(latest);
-  var myAvgScore=Math.round(avg(exList.map(toScore)));
-  var diff=latestScore-latestClsScore;
-
-  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
-    "와와코칭학원 "+s.teacher+"입니다.\n\n"+
-    "이번 "+latest.name+" 결과("+latestScore+"점"+(latestClsScore>0?", 학급평균 "+latestClsScore+"점":"")+")에 대해 안내드립니다.\n\n"+
-    "✅ 잘한 점\n"+(good||"꾸준히 수업에 참여하고 있습니다.")+"\n\n"+
-    "📝 보완이 필요한 부분\n"+(improve||"틀린 문제를 다시 풀어보는 복습이 필요합니다.")+"\n\n"+
-    "📚 앞으로의 학습 방향\n"+(direction||"꾸준한 예습·복습을 통해 실력을 쌓아갈 수 있도록 지도하겠습니다.")+"\n\n"+
-    "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
-
-  var area=document.getElementById("msgArea");
-  if(area){area.value=msg;savedMsg=msg;}
-  if(btn)btn.textContent="✦ AI 메시지 생성";
-};
-
+// 보고서 이미지 저장
 window.saveImg=function(){
   var s=students.filter(function(x){return x.id===selectedId;})[0];
   if(!s){alert("학생을 선택해주세요!");return;}
   var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
   var myAvg=exList.length?Math.round(avg(exList.map(toScore)))+"점":"-";
   var clsAvg=exList.length?Math.round(avg(exList.map(toClsScore)))+"점":"-";
-  var latest=exList[exList.length-1];
-  var latestScore=latest?toScore(latest)+"점":"-";
   var msg=document.getElementById("msgArea")?document.getElementById("msgArea").value:"";
-
-  // 이미지용 div 생성
   var div=document.createElement("div");
   div.style.cssText="position:fixed;left:-9999px;top:0;width:720px;background:#fff;padding:40px;font-family:'Malgun Gothic',sans-serif;";
   div.innerHTML=
@@ -825,10 +516,13 @@ window.saveImg=function(){
     '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 성적 보고서</div>'+
     '<div style="font-size:13px;color:#999;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div>'+
     '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;">'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;"><div style="font-size:11px;color:#b8961e;margin-bottom:6px;">내 평균</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;background:#fffdf0;"><div style="font-size:11px;color:#b8961e;margin-bottom:6px;">학급 평균</div><div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;"><div style="font-size:11px;color:#b8961e;margin-bottom:6px;">최근 점수</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+latestScore+'</div></div>'+
+    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
+    '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;">내 점수</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
+    '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;">학년 평균</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
     '</div>'+
     '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">시험별 성적</div>'+
     '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">'+
@@ -848,7 +542,6 @@ window.saveImg=function(){
     '<div style="text-align:center;padding-top:14px;border-top:1px solid #f0e8cc;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+'</div>'+
     '</div>';
   document.body.appendChild(div);
-
   html2canvas(div,{scale:2,backgroundColor:"#fff",useCORS:true}).then(function(canvas){
     var a=document.createElement("a");
     a.href=canvas.toDataURL("image/png");
@@ -861,101 +554,13 @@ window.saveImg=function(){
   });
 };
 
-window.analyzeExam=function(input){
-  if(!input.files||!input.files[0])return;
-  var file=input.files[0];
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  if(!s){alert("학생을 선택해주세요!");return;}
-
-  var preview=document.getElementById("uploadPreview");
-  var img=document.getElementById("previewImg");
-  var status=document.getElementById("analyzeStatus");
-  var area=document.getElementById("msgArea");
-
-  // 미리보기 먼저 보여주기
-  var reader=new FileReader();
-  reader.onload=function(ev){
-    if(preview)preview.style.display="block";
-    if(img)img.src=ev.target.result;
-    if(status)status.textContent="⏳ AI가 시험지를 분석 중입니다...";
-    if(area)area.value="분석 중...";
-
-    var base64=ev.target.result.split(",")[1];
-    var mediaType=file.type||"image/jpeg";
-
-    var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-    var myAvgScore=exList.length?Math.round(avg(exList.map(toScore)))+"점":"없음";
-
-    var prompt="당신은 학원 선생님입니다. 업로드된 시험지 이미지를 보고 학부모에게 보내는 따뜻하고 전문적인 안내 메시지를 작성해주세요.\n\n"+
-      "학생 정보:\n"+
-      "- 이름: "+s.name+"\n"+
-      "- 학년: "+s.grade+"\n"+
-      "- 과목: "+s.subject+"\n"+
-      "- 담당 선생님: "+s.teacher+"\n"+
-      "- 평균 점수: "+myAvgScore+"\n\n"+
-      "아래 내용을 포함해서 한국어로 4~5문장으로 작성해주세요:\n"+
-      "1. 인사말 (학부모님 안녕하세요, 선생님 소개)\n"+
-      "2. 시험지에서 잘한 부분\n"+
-      "3. 틀린 문제나 보완이 필요한 부분\n"+
-      "4. 앞으로의 학습 방향 제안\n"+
-      "5. 마무리 인사";
-
-    fetch("https://api.anthropic.com/v1/messages",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        model:"claude-sonnet-4-20250514",
-        max_tokens:1000,
-        messages:[{
-          role:"user",
-          content:[
-            {type:"image",source:{type:"base64",media_type:mediaType,data:base64}},
-            {type:"text",text:prompt}
-          ]
-        }]
-      })
-    }).then(function(r){return r.json();})
-    .then(function(data){
-      var text=data.content?data.content.map(function(c){return c.text||"";}).join(""):"분석에 실패했습니다.";
-      if(area){area.value=text;savedMsg=text;}
-      if(status)status.textContent="✅ 분석 완료!";
-    }).catch(function(err){
-      console.error(err);
-      if(area)area.value="시험지 분석 중 오류가 발생했습니다. 다시 시도해주세요.";
-      if(status)status.textContent="❌ 오류 발생";
-    });
-  };
-  reader.onerror=function(){
-    alert("파일을 읽는 중 오류가 발생했습니다.");
-  };
-  reader.readAsDataURL(file);
-};
-
-window.convertMsg=function(){
-  var msg=document.getElementById("msgArea");
-  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
-  if(navigator.clipboard){
-    navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});
-  }
-};
-
-window.saveTxt=function(){
-  var msg=document.getElementById("msgArea");
-  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var blob=new Blob(["[와와코칭학원 보고서]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download=(s?s.name:"")+"_보고서.txt";a.click();
-};
-
+// 프린트
 window.doPrint=function(){
   var s=students.filter(function(x){return x.id===selectedId;})[0];
   if(!s){alert("학생을 선택해주세요!");return;}
   var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
   var myAvg=exList.length?Math.round(avg(exList.map(toScore)))+"점":"-";
   var clsAvg=exList.length?Math.round(avg(exList.map(toClsScore)))+"점":"-";
-  var latest=exList[exList.length-1];
-  var latestScore=latest?toScore(latest)+"점":"-";
   var msg=document.getElementById("msgArea")?document.getElementById("msgArea").value:"";
   var rows=[].concat(exList).reverse().map(function(e){
     var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
@@ -963,7 +568,7 @@ window.doPrint=function(){
       '<td style="font-weight:600;">'+e.name+'</td>'+
       '<td style="font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
       '<td style="color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="font-weight:600;color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
+      '<td style="color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
       '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td></tr>';
   }).join("");
   var win=window.open("","_blank","width=900,height=750");
@@ -978,16 +583,19 @@ window.doPrint=function(){
     'thead{background:#1a2a4a;}thead th{padding:11px 14px;color:#f0d98a;font-weight:600;text-align:left;}'+
     'tbody td{padding:10px 14px;border-bottom:1px solid #f0e8cc;}'+
     'tbody tr:nth-child(even){background:#fcfaf4;}'+
-    '.sbox{border:1.5px solid #d4af37;border-radius:10px;padding:16px;text-align:center;}'+
     '</style></head><body><div class="wrap"><div class="inner"></div>'+
     '<div style="text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
     '<div style="font-size:10px;letter-spacing:5px;color:#b8961e;margin-bottom:10px;">WAWA COACHING CENTER</div>'+
     '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 성적 보고서</div>'+
     '<div style="font-size:13px;color:#999;">'+s.grade+' &nbsp;·&nbsp; '+s.subject+' &nbsp;·&nbsp; '+s.teacher+'</div>'+
     '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:24px;">'+
-    '<div class="sbox"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">내 점수</div><div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
-    '<div class="sbox" style="background:#fffdf0;"><div style="font-size:10px;color:#b8961e;letter-spacing:1px;margin-bottom:8px;">학년 평균</div><div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
+    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
+    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">내 점수</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
+    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">학년 평균</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
     '</div>'+
     '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">시험별 성적</div>'+
     '<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th></tr></thead>'+
@@ -996,7 +604,241 @@ window.doPrint=function(){
     '<div style="font-size:10px;color:#b8961e;font-weight:600;letter-spacing:1px;margin-bottom:10px;">학부모 안내 메시지</div>'+
     '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
     '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">'+
-    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+' &nbsp;·&nbsp; '+new Date().toLocaleDateString("ko-KR")+'</div>'+
+    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+'</div>'+
+    '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
+  win.document.close();
+};
+
+function examFormHTML(e){
+  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
+  var score=e?toScore(e):"", clsScore=e&&e.classAvg>0?toClsScore(e):"";
+  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
+    '<label class="fl">시험명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1차 모의고사"/>'+
+    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
+    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 76"/>'+
+    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 65"/>';
+}
+
+function unitFormHTML(e){
+  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
+  var score=e?toScore(e):"", clsScore=e&&e.classAvg>0?toClsScore(e):"";
+  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
+    '<label class="fl">단원명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1단원, 2단원"/>'+
+    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
+    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 84"/>'+
+    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 72"/>';
+}
+
+window.openModal=function(type,examId){
+  var bg=document.getElementById("modalBg"), box=document.getElementById("modalBox");
+  bg.style.display="flex";
+  var gOpts=GRADES.map(function(g){return'<option>'+g+'</option>';}).join("");
+  var tOpts=TEACHERS.map(function(t){return'<option>'+t+'</option>';}).join("");
+  if(type==="addStu"){
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">학생 추가</h3>'+
+      '<label class="fl">이름</label><input class="fi" id="mName" placeholder="학생 이름"/>'+
+      '<label class="fl">학년</label><select class="fi" id="mGrade">'+gOpts+'</select>'+
+      '<label class="fl">과목</label><select class="fi" id="mSubject"><option>국어</option><option>영어</option><option>수학</option><option>과학</option></select>'+
+      '<label class="fl">담당 선생님</label><select class="fi" id="mTeacher">'+tOpts+'</select>'+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="addStudent()">추가</button></div>';
+  } else if(type==="addExam"){
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 추가</h3>'+examFormHTML(null)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveExam(null)">저장</button></div>';
+  } else if(type==="editExam"){
+    var e=(exams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
+    if(!e)return;
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 수정</h3>'+examFormHTML(e)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveExam(\''+examId+'\')">저장</button></div>';
+  } else if(type==="addUnit"){
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 추가</h3>'+unitFormHTML(null)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveUnit(null)">저장</button></div>';
+  } else if(type==="editUnit"){
+    var eu=(unitExams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
+    if(!eu)return;
+    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 수정</h3>'+unitFormHTML(eu)+
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveUnit(\''+examId+'\')">저장</button></div>';
+  }
+};
+
+window.closeModal=function(){document.getElementById("modalBg").style.display="none";};
+window.setSubject=function(s){subjectFilter=s;render();};
+window.setTeacher=function(t){teacherFilter=t;render();};
+window.setGrade=function(g){gradeFilter=g;render();};
+window.setTab=function(t){activeTab=t;render();};
+window.setMgmtLevel=function(l){mgmtLevel=l;render();};
+window.setStatLevel=function(l){statLevel=l;statSubLevel="";render();};
+window.setStatSub=function(s){statSubLevel=s;render();};
+window.selectStudent=function(id){selectedId=id;render();};
+
+window.delStudent=function(id){
+  if(!confirm("학생을 삭제할까요?"))return;
+  setStatus("저장 중...","#f7a94f");
+  var dels=[fsDel("students",id)];
+  (exams[id]||[]).forEach(function(e){dels.push(fsDel("exams",e.id));});
+  (unitExams[id]||[]).forEach(function(e){dels.push(fsDel("unitExams",e.id));});
+  Promise.all(dels).then(function(){if(selectedId===id)selectedId=null;loadData();});
+};
+window.delExam=function(id){
+  if(!confirm("시험 기록을 삭제할까요?"))return;
+  setStatus("저장 중...","#f7a94f");
+  fsDel("exams",id).then(loadData);
+};
+window.delUnit=function(id){
+  if(!confirm("단원평가 기록을 삭제할까요?"))return;
+  setStatus("저장 중...","#f7a94f");
+  fsDel("unitExams",id).then(loadData);
+};
+window.addStudent=function(){
+  var name=document.getElementById("mName").value.trim();
+  if(!name){alert("이름을 입력해주세요!");return;}
+  var id="s_"+Date.now();
+  setStatus("저장 중...","#f7a94f");
+  fsPatch("students",id,{name:name,grade:document.getElementById("mGrade").value,
+    subject:document.getElementById("mSubject").value,teacher:document.getElementById("mTeacher").value})
+    .then(function(){selectedId=id;closeModal();loadData();});
+};
+window.saveExam=function(eid){
+  var date=document.getElementById("mDate").value;
+  var name=document.getElementById("mEname").value.trim();
+  var score=Number(document.getElementById("mScore").value);
+  var clsScore=Number(document.getElementById("mClsScore").value)||0;
+  if(!date||!name||!score){alert("날짜, 시험명, 점수를 입력해주세요!");return;}
+  var id=eid||("e_"+Date.now());
+  setStatus("저장 중...","#f7a94f");
+  fsPatch("exams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
+    total:100,correct:score,classAvg:clsScore,grade:scoreGrade(score),studentId:selectedId})
+    .then(function(){closeModal();loadData();});
+};
+window.saveUnit=function(eid){
+  var date=document.getElementById("mDate").value;
+  var name=document.getElementById("mEname").value.trim();
+  var score=Number(document.getElementById("mScore").value);
+  var clsScore=Number(document.getElementById("mClsScore").value)||0;
+  if(!date||!name||!score){alert("날짜, 단원명, 점수를 입력해주세요!");return;}
+  var id=eid||("u_"+Date.now());
+  setStatus("저장 중...","#f7a94f");
+  fsPatch("unitExams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
+    total:100,correct:score,classAvg:clsScore,grade:scoreGrade(score),studentId:selectedId})
+    .then(function(){closeModal();loadData();});
+};
+window.generateMsg=function(){
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  if(!s||!exList.length){alert("시험 기록이 없습니다.");return;}
+  var btn=document.getElementById("genBtn");
+  if(btn)btn.textContent="생성 중...";
+  var latest=exList[exList.length-1];
+  var latestScore=toScore(latest);
+  var latestClsScore=toClsScore(latest);
+  var myAvgScore=Math.round(avg(exList.map(toScore)));
+  var clsAvgScore=Math.round(avg(exList.map(toClsScore)));
+  var diff=latestScore-latestClsScore;
+  var good=feedGood.trim();
+  var improve=feedImprove.trim();
+  var direction=feedDirection.trim();
+  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
+    "와와코칭학원 "+s.teacher+"입니다.\n\n"+
+    "이번 "+latest.name+" 결과("+latestScore+"점"+(latestClsScore>0?", 학급평균 "+latestClsScore+"점":"")+")에 대해 안내드립니다.\n\n"+
+    "✅ 잘한 점\n"+(good||"꾸준히 수업에 참여하고 있습니다.")+"\n\n"+
+    "📝 보완이 필요한 부분\n"+(improve||"틀린 문제를 다시 풀어보는 복습이 필요합니다.")+"\n\n"+
+    "📚 앞으로의 학습 방향\n"+(direction||"꾸준한 예습·복습을 통해 실력을 쌓아갈 수 있도록 지도하겠습니다.")+"\n\n"+
+    "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
+  var area=document.getElementById("msgArea");
+  if(area){area.value=msg;savedMsg=msg;}
+  if(btn)btn.textContent="✦ AI 메시지 생성";
+};
+window.generateUnitMsg=function(){
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  if(!s||!uList.length){alert("단원평가 기록이 없습니다.");return;}
+  var btn=document.getElementById("genUnitBtn");
+  if(btn)btn.textContent="생성 중...";
+  var latest=uList[uList.length-1];
+  var latestScore=toScore(latest);
+  var latestClsScore=toClsScore(latest);
+  var myAvgScore=Math.round(avg(uList.map(toScore)));
+  var diff=latestScore-latestClsScore;
+  var grade=latest.grade;
+  var comment=grade==="A"?"매우 우수하게 단원 내용을 이해하고 있습니다.":grade==="B"?"단원 내용을 잘 이해하고 있으며, 조금 더 노력하면 더욱 좋은 결과를 얻을 수 있습니다.":grade==="C"?"일부 개념 보완이 필요하며, 집중적인 복습을 통해 실력을 키워나가겠습니다.":"해당 단원에 대한 추가 지도가 필요하며, 개별 지도를 통해 기초를 다질 수 있도록 하겠습니다.";
+  var diffTxt=diff>0?"학급 평균보다 "+diff+"점 높은":diff<0?"학급 평균보다 "+Math.abs(diff)+"점 낮은":"학급 평균과 동일한";
+  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n와와코칭학원 "+s.teacher+"입니다.\n\n"+
+    "["+latest.name+" 단원평가 결과]\n점수: "+latestScore+"점"+(latestClsScore>0?" (학급 평균 "+latestClsScore+"점, "+diffTxt+" 결과)":"")+"\n"+
+    comment+"\n\n단원평가 평균 점수 "+myAvgScore+"점으로, "+
+    "앞으로도 "+s.name+" 학생이 각 단원을 충실히 학습할 수 있도록 최선을 다하겠습니다.\n궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
+  var area=document.getElementById("unitMsgArea");
+  if(area){area.value=msg;savedUnitMsg=msg;}
+  if(btn)btn.textContent="✦ 자동 생성";
+};
+window.convertMsg=function(){
+  var msg=document.getElementById("msgArea");
+  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
+  if(navigator.clipboard){navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});}
+};
+window.saveTxt=function(){
+  var msg=document.getElementById("msgArea");
+  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  var blob=new Blob(["[와와코칭학원 보고서]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=(s?s.name:"")+"_보고서.txt";a.click();
+};
+window.convertUnitMsg=function(){
+  var msg=document.getElementById("unitMsgArea");
+  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
+  if(navigator.clipboard){navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});}
+};
+window.saveUnitTxt=function(){
+  var msg=document.getElementById("unitMsgArea");
+  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  var blob=new Blob(["[와와코칭학원 단원평가 피드백]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
+  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=(s?s.name:"")+"_단원평가피드백.txt";a.click();
+};
+window.doPrintUnit=function(){
+  var s=students.filter(function(x){return x.id===selectedId;})[0];
+  if(!s){alert("학생을 선택해주세요!");return;}
+  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
+  var uAvg=uList.length?Math.round(avg(uList.map(toScore)))+"점":"-";
+  var uClsAvg=uList.length?Math.round(avg(uList.map(toClsScore)))+"점":"-";
+  var msg=document.getElementById("unitMsgArea")?document.getElementById("unitMsgArea").value:"";
+  var rows=[].concat(uList).reverse().map(function(e){
+    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
+    return'<tr><td>'+e.date+'</td><td>'+e.subject+'</td><td style="font-weight:600;">'+e.name+'</td>'+
+      '<td style="font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
+      '<td style="color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
+      '<td style="color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
+      '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td></tr>';
+  }).join("");
+  var win=window.open("","_blank","width=900,height=750");
+  win.document.write('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><title>'+s.name+' 단원평가 피드백</title>'+
+    '<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Malgun Gothic",sans-serif;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
+    '@page{margin:8mm;size:A4;}.wrap{min-height:96vh;border:6px solid #d4af37;border-radius:16px;padding:36px 40px;margin:4px;position:relative;}'+
+    '.inner{position:absolute;inset:8px;border:1px solid #f0d98a;border-radius:10px;pointer-events:none;}'+
+    'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}'+
+    'thead{background:#1a2a4a;}thead th{padding:11px 14px;color:#f0d98a;font-weight:600;text-align:left;}'+
+    'tbody td{padding:10px 14px;border-bottom:1px solid #f0e8cc;}</style></head><body>'+
+    '<div class="wrap"><div class="inner"></div>'+
+    '<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
+    '<div style="font-size:10px;letter-spacing:5px;color:#b8961e;margin-bottom:8px;">WAWA COACHING CENTER</div>'+
+    '<div style="font-size:24px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 단원평가 피드백</div>'+
+    '<div style="font-size:13px;color:#999;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div>'+
+    '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
+    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
+    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">평균 점수</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+uAvg+'</div></div>'+
+    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
+    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">학급 평균</div>'+
+    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+uClsAvg+'</div></div>'+
+    '</div>'+
+    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">단원별 성적</div>'+
+    '<table><thead><tr><th>날짜</th><th>과목</th><th>단원명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th></tr></thead>'+
+    '<tbody>'+rows+'</tbody></table>'+
+    (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:18px;margin-bottom:20px;">'+
+    '<div style="font-size:10px;color:#b8961e;font-weight:600;margin-bottom:10px;">선생님 피드백</div>'+
+    '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
+    '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+'</div>'+
     '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
   win.document.close();
 };
