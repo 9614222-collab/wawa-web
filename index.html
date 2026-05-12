@@ -238,6 +238,14 @@ function nid(){const i=nextId++;localStorage.setItem('wawa_nid',nextId);return i
 function save(){localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));localStorage.setItem('wawa_students',JSON.stringify(S.students));localStorage.setItem('wawa_exams',JSON.stringify(S.exams));}
 function grade(v){if(v>=90)return'A';if(v>=80)return'B';if(v>=70)return'C';if(v>=60)return'D';return'F';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
+function toggleMemo(){
+  const box=document.getElementById('memo-box');
+  const btn=document.getElementById('memo-toggle-btn');
+  if(!box||!btn)return;
+  const open=box.style.display==='block';
+  box.style.display=open?'none':'block';
+  btn.textContent=open?'펼치기 ▼':'접기 ▲';
+}
 function memoKey(){return`memo_${S.sel?.sid}_${S.sel?.subj}`;}
 function getMemo(){return S.sel?localStorage.getItem(memoKey())||'':'';}
 function saveMemo(){const a=document.getElementById('fb-memo');if(a)localStorage.setItem(memoKey(),a.value);}
@@ -393,18 +401,25 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
-      <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#6d28d9;font-weight:700;margin-bottom:6px;">✏️ 선생님 메모</div>
-        <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;line-height:1.7;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
-        <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예) 잘한점: 집중력 좋고 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getMemo()}</textarea>
+      <div style="margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>
+          <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:4px 12px;font-size:11px;color:#7c3aed;font-weight:600;transition:all .15s;">펼치기 ▼</button>
+        </div>
+        <div id="memo-box" style="display:none;">
+          <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;">
+            <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;line-height:1.7;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
+            <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예) 잘한점: 집중력 좋고 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getMemo()}</textarea>
+          </div>
+        </div>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:16px;">
         <button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>
       </div>
       <div id="msg-result-box" style="${getMsg()?'':'display:none;'}">
         <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:22px 24px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;letter-spacing:.05em;">📋 학부모 안내 메시지</div>
-          <div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);white-space:pre-wrap;">${getMsg()}</div>
+          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ede9fe;letter-spacing:.05em;">📋 학부모 안내 메시지</div>
+          <div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);">${getMsg()?`<div style="white-space:pre-wrap;">${getMsg()}</div>`:''}</div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button class="msg-copy-btn" onclick="copyMsg()">📋 복사하기</button>
@@ -467,31 +482,59 @@ async function autoMsg(){
   const vals=exams.map(e=>e.score);const latest=vals.length?vals[vals.length-1]:null;
   const memo=document.getElementById('fb-memo')?.value||'';
   if(!memo.trim()){toast('선생님 메모를 먼저 입력해주세요!');return;}
-  const area=document.getElementById('msg-area');if(!area)return;
-  area.value='✦ AI가 정리 중...';
+  const resultBox=document.getElementById('msg-result-box');
+  const rendered=document.getElementById('msg-rendered');
+  if(rendered)rendered.innerHTML='<div style="text-align:center;padding:20px;color:#7c3aed;">✦ AI가 정리 중...</div>';
+  if(resultBox)resultBox.style.display='block';
   try{
     const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:700,
-        messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 문자를 자연스럽게 작성해줘.
-학생: ${st.name} (${st.grade||''}) / 과목: ${S.sel.subj} / 담당: ${tc?tc.name:'선생님'} / 최근 성적: ${latest??'없음'}${unit}
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,
+        messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘. 다른 말은 하지 말고 JSON만 출력해.
+학생: ${st.name} (${st.grade||''}) / 과목: ${S.sel.subj} / 담당강사: ${tc?tc.name:'선생님'} / 최근 성적: ${latest??'없음'}${unit}
 [선생님 메모] ${memo}
-위 메모에서 잘한 점, 아쉬운 점, 앞으로의 방향을 파악해서 학부모님께 전달하는 따뜻하고 전문적인 문자로 정리해줘. 이모지 포함, 2~3문단, 강사 이름으로 끝맺음.`}]})});
+
+JSON 형식:
+{
+  "greeting": "안녕하세요 인사말 (학부모님께 인사 + 강사 소개, 1~2문장)",
+  "good": "✅ 잘한 점 내용 (2~3문장)",
+  "bad": "📝 보완이 필요한 부분 내용 (2~3문장)",
+  "next": "📚 앞으로의 학습 방향 내용 (2~3문장)",
+  "closing": "마무리 인사 (강사 이름으로 끝맺음, 1문장)"
+}`}]})});
     const raw=await res.text();let d;
-    try{d=JSON.parse(raw);}catch(e){area.value='파싱오류: '+raw;return;}
-    if(d.error){area.value='API오류: '+JSON.stringify(d.error);return;}
-    const txt=d.content?.[0]?.text||'내용없음';
-    localStorage.setItem(msgKey(),txt);
-    // 결과 렌더링
-    const resultBox=document.getElementById('msg-result-box');
-    const rendered=document.getElementById('msg-rendered');
-    const textarea=document.getElementById('msg-area');
-    if(resultBox&&rendered&&textarea){
-      rendered.textContent=txt;
-      resultBox.style.display='block';
-      textarea.style.display='none';
-      textarea.value=txt;
+    try{d=JSON.parse(raw);}catch(e){if(rendered)rendered.innerHTML='파싱오류: '+raw;return;}
+    if(d.error){if(rendered)rendered.innerHTML='API오류: '+JSON.stringify(d.error);return;}
+    const txt=d.content?.[0]?.text||'';
+    let obj;
+    try{
+      const clean=txt.replace(/```json|```/g,'').trim();
+      obj=JSON.parse(clean);
+    }catch(e){
+      // JSON 파싱 실패시 텍스트 그대로
+      if(rendered)rendered.innerHTML=`<div style="white-space:pre-wrap;line-height:2;">${txt}</div>`;
+      localStorage.setItem(msgKey(),txt);
+      return;
     }
-  }catch(e){area.value='오류: '+e.message;}
+    const fullText=`${obj.greeting}\n\n✅ 잘한 점\n${obj.good}\n\n📝 보완이 필요한 부분\n${obj.bad}\n\n📚 앞으로의 학습 방향\n${obj.next}\n\n${obj.closing}`;
+    localStorage.setItem(msgKey(),fullText);
+    if(rendered) rendered.innerHTML=`
+      <div style="font-size:13px;line-height:2;color:#374151;margin-bottom:16px;">${obj.greeting.replace(/\n/g,'<br>')}</div>
+      <div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:6px;">✅ 잘한 점</div>
+        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.good.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div style="background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:6px;">📝 보완이 필요한 부분</div>
+        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.bad.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:6px;">📚 앞으로의 학습 방향</div>
+        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.next.replace(/\n/g,'<br>')}</div>
+      </div>
+      <div style="font-size:13px;line-height:2;color:#374151;">${obj.closing.replace(/\n/g,'<br>')}</div>`;
+    const textarea=document.getElementById('msg-area');
+    if(textarea){textarea.value=fullText;textarea.style.display='none';}
+  }catch(e){if(rendered)rendered.innerHTML='오류: '+e.message;}
 }
 function copyMsg(){
   const txt=document.getElementById('msg-rendered')?.textContent||document.getElementById('msg-area')?.value||'';
