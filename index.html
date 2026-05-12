@@ -401,7 +401,7 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
-      <div style="margin-bottom:16px;">
+      <div id="memo-section" style="margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>
           <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:4px 12px;font-size:11px;color:#7c3aed;font-weight:600;transition:all .15s;">펼치기 ▼</button>
@@ -413,7 +413,7 @@ function renderReport(st,subj,tc){
           </div>
         </div>
       </div>
-      <div style="display:flex;justify-content:center;margin-bottom:16px;">
+      <div id="ai-btn-wrap" style="display:flex;justify-content:center;margin-bottom:16px;">
         <button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>
       </div>
       <div id="msg-result-box" style="${getMsg()?'':'display:none;'}">
@@ -552,13 +552,10 @@ async function saveReportImage(){
   const el=document.getElementById('content');if(!el)return;
   toast('📸 이미지 생성 중...');
   const orig=el.scrollTop;el.scrollTop=0;
-  // 선생님 메모 숨기기
-  const memoSection=document.querySelector('#memo-box')?.closest('div[style]')||null;
-  const memoWrap=document.getElementById('memo-box')?.parentElement?.parentElement;
+  const memoWrap=document.getElementById('memo-section');
+  const aiWrap=document.getElementById('ai-btn-wrap');
   if(memoWrap)memoWrap.style.display='none';
-  // AI 버튼 숨기기
-  const aiBtn=document.querySelector('.msg-auto-btn');
-  if(aiBtn)aiBtn.parentElement.style.display='none';
+  if(aiWrap)aiWrap.style.display='none';
   await new Promise(r=>setTimeout(r,200));
   try{
     const canvas=await html2canvas(el,{
@@ -573,9 +570,8 @@ async function saveReportImage(){
     link.href=canvas.toDataURL('image/png');link.click();
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
-  // 다시 보이게
   if(memoWrap)memoWrap.style.display='';
-  if(aiBtn)aiBtn.parentElement.style.display='';
+  if(aiWrap)aiWrap.style.display='';
   el.scrollTop=orig;
 }
 
