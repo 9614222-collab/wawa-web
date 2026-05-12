@@ -455,17 +455,29 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title"><div class="card-title-left">학부모 안내 메시지</div></div>
+      <div class="fb-section">
+        <div class="fb-item fb-good">
+          <div class="fb-label">✅ 잘한 점</div>
+          <textarea class="fb-textarea" id="fb-good" placeholder="예: 집중력 좋음, 계산 정확" oninput="saveFb()">${getFb('good')}</textarea>
+        </div>
+        <div class="fb-item fb-bad">
+          <div class="fb-label">⚠️ 아쉬운 점</div>
+          <textarea class="fb-textarea" id="fb-bad" placeholder="예: 서술형 문제 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
+        </div>
+        <div class="fb-item fb-next">
+          <div class="fb-label">🎯 앞으로의 방향</div>
+          <textarea class="fb-textarea" id="fb-next" placeholder="예: 오답노트 작성, 응용문제 집중" oninput="saveFb()">${getFb('next')}</textarea>
+        </div>
+      </div>
+      <hr class="msg-divider"/>
       <div class="msg-header">
         <span class="msg-label">전체 메시지 (학부모 전달용)</span>
         <div class="msg-btns">
-          <button class="msg-auto-btn" onclick="autoMsg()"><span class="sparkle">✦</span> AI 자동 생성</button>
+          <button class="msg-auto-btn" onclick="autoMsg()"><span class="sparkle">✦</span> AI로 정리하기</button>
           <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
         </div>
       </div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.7;">
-        ✅ 잘한 점 / ⚠️ 보완 부분 / 🎯 학습 방향을 포함해서 작성하거나 AI 자동 생성을 눌러보세요.
-      </div>
-      <textarea class="msg-textarea" id="msg-area" style="min-height:200px;" placeholder="예시&#10;✅ 잘한 점: 집중력이 좋고 계산 문제를 정확하게 풀었습니다.&#10;⚠️ 보완 부분: 서술형 문제가 아직 취약합니다.&#10;🎯 학습 방향: 오답노트 작성을 통해 실수를 줄여나가겠습니다." oninput="saveMsg()">${getSavedMsg()}</textarea>
+      <textarea class="msg-textarea" id="msg-area" style="min-height:180px;" placeholder="위에 내용을 입력하고 'AI로 정리하기'를 눌러주세요." oninput="saveMsg()">${getSavedMsg()}</textarea>
     </div>
 
     <div class="report-footer">WAWA 코칭센터 &nbsp;·&nbsp; ${tc?tc.name+' 선생님':'담당 선생님'} &nbsp;·&nbsp; ${today}</div>`;
@@ -513,28 +525,33 @@ async function autoMsg(){
   const unit=type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);
   const latest=vals.length?vals[vals.length-1]:null;
+  const good=document.getElementById('fb-good')?.value||'';
+  const bad=document.getElementById('fb-bad')?.value||'';
+  const next=document.getElementById('fb-next')?.value||'';
+  if(!good&&!bad&&!next){toast('잘한 점, 아쉬운 점, 방향을 먼저 입력해주세요!');return;}
   const area=document.getElementById('msg-area');
   if(!area)return;
-  area.value='✦ 생성 중...';
+  area.value='✦ AI가 정리 중...';
   try{
     const res=await fetch('/api/generate',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:'claude-sonnet-4-5',max_tokens:700,
-        messages:[{role:'user',content:`학원 학부모 안내 문자를 작성해줘.
+        messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 문자를 자연스럽게 작성해줘.
+
 학생: ${st.name} (${st.grade||''})
 과목: ${S.sel.subj}
-담당강사: ${tc?tc.name:''}
-시험 횟수: ${exams.length}회
+담당강사: ${tc?tc.name:'선생님'}
 최근 성적: ${latest??'없음'}${unit}
 
-아래 세 항목을 반드시 포함해서 자연스러운 학부모 안내 메시지를 작성해줘:
-✅ 잘한 점
-⚠️ 보완이 필요한 부분
-🎯 앞으로의 학습 방향
+[선생님 메모]
+✅ 잘한 점: ${good||'없음'}
+⚠️ 아쉬운 점: ${bad||'없음'}
+🎯 앞으로의 방향: ${next||'없음'}
 
-따뜻하고 전문적인 톤, 이모지 포함, 강사 이름으로 끝맺음.`}]
+위 메모를 학부모님께 전달하는 따뜻하고 전문적인 문자로 정리해줘.
+이모지 포함, 2~3문단, 마지막에 강사 이름으로 끝맺음.`}]
       })
     });
     const raw=await res.text();
