@@ -2,848 +2,688 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>WAWA 코칭센터</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:"Malgun Gothic",sans-serif;font-size:13px;background:#f5f6fa;color:#222;}
+:root{
+  --navy:#0f1729;--navy2:#1a2540;--navy3:#253358;
+  --gold:#f5a623;--gold2:#ffc45e;
+  --accent:#6c63ff;--accent2:#8b84ff;
+  --bg:#f0f2f8;--card:#fff;
+  --text:#1a1c2e;--muted:#8a8fa8;--border:#e8eaf0;
+  --green:#2ecc71;--red:#e74c3c;--blue:#3498db;
+}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;}
 button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;}
-.layout{display:flex;height:100vh;}
-.sidebar{width:200px;background:#fff;border-right:1px solid #eee;display:flex;flex-direction:column;flex-shrink:0;}
+
+/* ── LAYOUT ── */
+.layout{display:flex;height:100vh;overflow:hidden;}
+.sidebar{width:220px;background:var(--navy);display:flex;flex-direction:column;flex-shrink:0;position:relative;}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(245,166,35,.3),transparent);}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
-.header{background:#fff;border-bottom:1px solid #eee;padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;}
-.content{flex:1;overflow-y:auto;padding:24px;}
-.card{background:#fff;border-radius:12px;border:1px solid #eee;padding:20px 24px;margin-bottom:20px;}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
-.scard{border-radius:12px;padding:16px 20px;}
-.tab-btn{padding:7px 16px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;font-size:12px;}
-.tab-btn.on{background:#1a2a4a;color:#fff;font-weight:700;}
-.subj-btn{padding:3px 8px;border-radius:12px;border:1px solid #ddd;background:#fff;color:#444;font-size:11px;}
-.subj-btn.on{background:#1a2a4a;color:#fff;}
-.stu-item{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;cursor:pointer;border-left:3px solid transparent;}
-.stu-item:hover{background:#f9f9f9;}
-.stu-item.on{background:#f0f4ff;border-left-color:#1a2a4a;}
-.badge{display:inline-block;border-radius:6px;padding:2px 8px;background:#e8f0fe;color:#4f8ef7;font-size:11px;}
-.gbadge{display:inline-block;border-radius:20px;padding:2px 10px;color:#fff;font-weight:700;font-size:12px;}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;z-index:200;}
-.modal{background:#fff;border-radius:14px;padding:28px;width:360px;max-height:90vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15);}
-.fl{font-size:12px;color:#666;display:block;margin-bottom:4px;}
-.fi{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:13px;margin-bottom:12px;}
-.bp{padding:8px 18px;border-radius:8px;border:none;background:#1a2a4a;color:#fff;font-weight:600;}
-.bc{padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;}
-.bs{padding:3px 10px;border-radius:6px;border:1px solid #ddd;background:#fff;font-size:11px;}
-.bd{padding:3px 10px;border-radius:6px;border:1px solid #fdd;background:#fff5f5;font-size:11px;color:#f74f4f;}
-table{width:100%;border-collapse:collapse;font-size:12px;}
-th{padding:9px 10px;text-align:left;color:#888;font-weight:600;border-bottom:1px solid #eee;background:#f8f9fb;}
-td{padding:10px;border-bottom:1px solid #f5f5f5;}
-.pb{background:#f0f0f0;border-radius:4px;height:8px;}
-.pf{background:#1a2a4a;border-radius:4px;height:8px;}
-.action-btn{padding:10px 20px;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;color:#fff;}
+
+/* ── SIDEBAR ── */
+.sb-brand{padding:20px 16px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{background:linear-gradient(135deg,#ff6b35,#f5a623);border-radius:10px;padding:10px 12px;text-align:center;margin-bottom:0;}
+.sb-logo-title{font-size:16px;font-weight:900;color:#fff;letter-spacing:.05em;}
+.sb-logo-sub{font-size:9px;color:rgba(255,255,255,.7);font-weight:400;letter-spacing:.1em;}
+.sb-section{padding:12px 16px 4px;font-size:9px;color:rgba(255,255,255,.25);letter-spacing:.12em;text-transform:uppercase;font-weight:600;}
+.sb-tree{flex:1;overflow-y:auto;padding:0 8px 8px;}
+.sb-tree::-webkit-scrollbar{width:3px;}
+.sb-tree::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+
+/* tree nodes */
+.t-teacher{border-radius:8px;margin-bottom:2px;overflow:hidden;}
+.t-teacher-row{display:flex;align-items:center;gap:6px;padding:8px 10px;cursor:pointer;color:rgba(255,255,255,.8);font-size:12px;font-weight:600;transition:background .15s;}
+.t-teacher-row:hover{background:rgba(255,255,255,.06);}
+.t-teacher-row.open{background:rgba(108,99,255,.15);}
+.t-teacher-icon{width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.t-chevron{margin-left:auto;transition:transform .2s;font-size:10px;color:rgba(255,255,255,.3);}
+.t-chevron.open{transform:rotate(90deg);}
+.t-del{background:none;border:none;color:rgba(255,255,255,.15);font-size:13px;padding:2px 4px;margin-left:4px;transition:color .15s;}
+.t-del:hover{color:#e74c3c;}
+
+.t-students{padding-left:8px;}
+.t-student{border-radius:7px;margin-bottom:1px;overflow:hidden;}
+.t-student-row{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;color:rgba(255,255,255,.6);font-size:11px;transition:background .15s;}
+.t-student-row:hover{background:rgba(255,255,255,.05);}
+.t-student-row.open{color:#fff;background:rgba(255,255,255,.06);}
+.t-student-icon{width:18px;height:18px;border-radius:5px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
+
+.t-subjects{padding-left:10px;}
+.t-subj-row{display:flex;align-items:center;gap:6px;padding:5px 10px;cursor:pointer;border-radius:6px;color:rgba(255,255,255,.45);font-size:11px;transition:background .15s;}
+.t-subj-row:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.7);}
+.t-subj-row.sel{background:linear-gradient(90deg,rgba(108,99,255,.3),rgba(108,99,255,.1));color:#fff;font-weight:600;}
+.t-subj-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;}
+.t-subj-row.sel .t-subj-dot{background:var(--gold);}
+.t-cnt{margin-left:auto;font-size:9px;color:rgba(255,255,255,.25);background:rgba(255,255,255,.06);padding:1px 5px;border-radius:10px;}
+
+.t-add-btn{display:flex;align-items:center;gap:6px;padding:6px 10px;width:100%;border:none;background:none;color:rgba(255,255,255,.25);font-size:11px;border-radius:7px;transition:all .15s;margin-top:2px;}
+.t-add-btn:hover{background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);}
+
+/* ── HEADER ── */
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 1px 8px rgba(0,0,0,.04);}
+.h-breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;}
+.h-name{font-size:18px;font-weight:700;color:var(--text);}
+.h-meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.h-tabs{display:flex;gap:6px;}
+.h-tab{padding:7px 18px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--muted);font-size:12px;font-weight:500;transition:all .15s;}
+.h-tab:hover{border-color:#c5c8d8;color:var(--text);}
+.h-tab.on{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 2px 8px rgba(15,23,41,.2);}
+
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:24px 28px;}
+.content::-webkit-scrollbar{width:5px;}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── WELCOME ── */
+.welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--muted);}
+.welcome-icon{font-size:48px;opacity:.3;}
+.welcome-text{font-size:14px;font-weight:500;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:22px 24px;margin-bottom:18px;box-shadow:0 1px 6px rgba(0,0,0,.03);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.card-title::before{content:'';width:3px;height:14px;background:linear-gradient(to bottom,var(--accent),var(--gold));border-radius:2px;}
+
+/* score cards */
+.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;}
+.score-card{border-radius:14px;padding:20px 22px;position:relative;overflow:hidden;}
+.score-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.08);}
+.sc-navy{background:linear-gradient(135deg,var(--navy2),var(--navy3));color:#fff;}
+.sc-gold{background:linear-gradient(135deg,#f5a623,#ffd06b);color:#fff;}
+.sc-green{background:linear-gradient(135deg,#27ae60,#2ecc71);color:#fff;}
+.sc-purple{background:linear-gradient(135deg,#6c63ff,#9b93ff);color:#fff;}
+.score-card-label{font-size:11px;opacity:.7;margin-bottom:8px;font-weight:500;}
+.score-card-val{font-size:32px;font-weight:900;line-height:1;}
+.score-card-unit{font-size:13px;opacity:.7;margin-left:4px;font-weight:400;}
+.score-card-sub{font-size:11px;opacity:.6;margin-top:6px;}
+
+/* exam list */
+.exam-list{display:flex;flex-direction:column;gap:8px;}
+.exam-item{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:10px;border:1px solid var(--border);transition:all .15s;cursor:pointer;}
+.exam-item:hover{border-color:#c5c8d8;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.exam-date{font-size:11px;color:var(--muted);width:80px;flex-shrink:0;}
+.exam-name{flex:1;font-size:13px;font-weight:600;}
+.exam-score{font-size:16px;font-weight:800;color:var(--navy);}
+.exam-unit{font-size:11px;color:var(--muted);margin-left:2px;}
+.exam-grade{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.exam-bar{height:4px;border-radius:2px;background:var(--border);margin-top:6px;overflow:hidden;}
+.exam-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent),var(--gold));}
+.exam-actions{display:flex;gap:4px;margin-left:auto;}
+.exam-edit-btn,.exam-del-btn{background:none;border:none;padding:4px 6px;border-radius:5px;font-size:11px;color:var(--muted);transition:all .15s;}
+.exam-edit-btn:hover{background:#f0f2ff;color:var(--accent);}
+.exam-del-btn:hover{background:#fff0f0;color:var(--red);}
+
+/* add exam */
+.add-exam-form{background:linear-gradient(135deg,#f8f9ff,#f0f2f8);border:2px dashed var(--border);border-radius:12px;padding:18px 20px;margin-top:10px;}
+.form-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-label{font-size:11px;color:var(--muted);font-weight:500;}
+.form-input{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;}
+.form-input:focus{border-color:var(--accent);}
+.form-select{padding:8px 12px;border:1px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;}
+.btn-primary{padding:8px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 2px 8px rgba(108,99,255,.3);transition:all .15s;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(108,99,255,.4);}
+.btn-ghost{padding:8px 14px;background:none;color:var(--muted);border:1px solid var(--border);border-radius:8px;font-size:12px;transition:all .15s;}
+.btn-ghost:hover{background:var(--bg);}
+
+/* ── REPORT ── */
+.report-hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);border-radius:16px;padding:28px 28px;margin-bottom:18px;position:relative;overflow:hidden;}
+.report-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(108,99,255,.15);}
+.report-hero::after{content:'';position:absolute;bottom:-30px;left:60px;width:120px;height:120px;border-radius:50%;background:rgba(245,166,35,.08);}
+.rh-tag{display:inline-block;background:rgba(108,99,255,.3);color:var(--accent2);border-radius:20px;padding:4px 12px;font-size:10px;font-weight:600;letter-spacing:.05em;margin-bottom:12px;}
+.rh-name{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;}
+.rh-sub{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;}
+.rh-scores{display:flex;gap:16px;}
+.rh-score-box{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 20px;backdrop-filter:blur(10px);}
+.rhs-label{font-size:10px;color:rgba(255,255,255,.45);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;}
+.rhs-val{font-size:28px;font-weight:900;color:#fff;}
+.rhs-val.gold{color:var(--gold2);}
+.rhs-val.green{color:#55efc4;}
+
+/* graph */
+.chart-wrap{position:relative;height:200px;margin:8px 0;}
+
+/* report exam rows */
+.re-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;transition:all .15s;}
+.re-item:hover{border-color:#c5c8d8;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+.re-name{font-size:13px;font-weight:600;}
+.re-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.re-score{font-size:18px;font-weight:900;color:var(--navy);margin-left:auto;}
+.grade-badge{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.gA{background:#27ae60;} .gB{background:#3498db;} .gC{background:#f39c12;} .gD{background:#e67e22;} .gF{background:#e74c3c;}
+
+/* msg section */
+.msg-area{position:relative;}
+.msg-auto-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg,#0f1729,#1a2540);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;box-shadow:0 2px 10px rgba(15,23,41,.25);transition:all .15s;}
+.msg-auto-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,23,41,.35);}
+.msg-auto-btn .sparkle{font-size:14px;}
+.msg-textarea{width:100%;min-height:140px;padding:14px 16px;border:1px solid var(--border);border-radius:10px;font-size:12px;line-height:1.8;resize:vertical;outline:none;transition:border .15s;background:#fafbff;}
+.msg-textarea:focus{border-color:var(--accent);}
+.msg-copy-btn{padding:8px 16px;background:#fff;border:1px solid var(--border);border-radius:8px;font-size:12px;color:var(--text);transition:all .15s;}
+.msg-copy-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:16px;padding:28px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.modal-title-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.modal-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:13px;outline:none;transition:border .15s;margin-bottom:12px;}
+.modal-input:focus{border-color:var(--accent);}
+.modal-label{font-size:11px;color:var(--muted);font-weight:500;margin-bottom:5px;}
+
+/* score type toggle */
+.type-toggle{display:flex;gap:8px;margin-bottom:12px;}
+.type-btn{flex:1;padding:8px;border-radius:8px;border:2px solid var(--border);background:#fff;font-size:12px;font-weight:600;transition:all .15s;color:var(--muted);}
+.type-btn.on{border-color:var(--accent);color:var(--accent);background:#f0f2ff;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy);color:#fff;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:500;opacity:0;transition:all .3s;z-index:200;pointer-events:none;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SUBJECT TYPE BADGE ── */
+.subj-type-badge{font-size:9px;padding:2px 6px;border-radius:10px;font-weight:600;margin-left:4px;}
+.badge-score{background:#eef0ff;color:var(--accent);}
+.badge-count{background:#fff8e6;color:var(--gold);}
+
+/* loading shimmer */
+.shimmer{background:linear-gradient(90deg,#f0f2f8 25%,#e8eaf0 50%,#f0f2f8 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;border-radius:8px;height:16px;margin-bottom:8px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 </style>
 </head>
 <body>
+
 <div class="layout">
+  <!-- SIDEBAR -->
   <div class="sidebar">
-    <div style="padding:14px 16px;border-bottom:1px solid #eee;">
-      <div style="background:#FF6D00;color:#fff;border-radius:8px;padding:10px;font-weight:700;font-size:14px;text-align:center;margin-bottom:12px;">WAWA<br><span style="font-size:9px;font-weight:400;">코칭센터</span></div>
-      <div style="font-size:11px;color:#888;margin-bottom:4px;">선생님</div>
-      <select class="fi" style="margin-bottom:0;" onchange="setTeacher(this.value)">
-        <option>전체 선생님</option>
-        <option>장한성 선생님</option>
-        <option>이하림 선생님</option>
-        <option>양원철 선생님</option>
-        <option>박수권 선생님</option>
-      </select>
-    </div>
-    <div style="padding:12px 16px 8px;">
-      <div style="font-size:11px;color:#888;margin-bottom:6px;">학년</div>
-      <div id="gradeBtns" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;"></div>
-      <div style="font-size:11px;color:#888;margin-bottom:6px;">과목</div>
-      <div id="sbjBtns" style="display:flex;flex-wrap:wrap;gap:4px;"></div>
-    </div>
-    <div id="stuCount" style="padding:8px 16px 4px;font-size:11px;color:#888;">학생 (0명)</div>
-    <div id="stuList" style="flex:1;overflow-y:auto;"></div>
-    <div style="padding:10px 16px;">
-      <button onclick="openModal('addStu')" style="width:100%;padding:8px;border-radius:8px;border:1px dashed #bbb;background:transparent;font-size:12px;color:#666;">+ 학생 추가</button>
-    </div>
-    <div style="padding:4px 16px 10px;text-align:center;">
-      <span id="stDot" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#4caf50;margin-right:4px;"></span>
-      <span id="stTxt" style="font-size:10px;color:#4caf50;">연결 중...</span>
-    </div>
-  </div>
-  <div class="main">
-    <div class="header">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span id="hName" style="font-size:18px;font-weight:700;">-</span>
-        <span id="hInfo" style="font-size:12px;color:#888;background:#f5f6fa;border-radius:6px;padding:3px 8px;"></span>
-        <span id="hTeacher" style="font-size:12px;color:#888;"></span>
+    <div class="sb-brand">
+      <div class="sb-logo">
+        <div class="sb-logo-title">WAWA</div>
+        <div class="sb-logo-sub">코 칭 센 터</div>
       </div>
-      <div id="tabBtns" style="display:flex;gap:6px;"></div>
     </div>
-    <div id="mainContent" class="content"></div>
+    <div class="sb-section">강사 관리</div>
+    <div class="sb-tree" id="tree"></div>
+    <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);">
+      <button class="t-add-btn" onclick="openAddTeacher()">＋ 강사 추가</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="header" id="header">
+      <div>
+        <div class="h-name" id="h-name">WAWA 코칭센터</div>
+        <div class="h-meta" id="h-meta">강사를 선택하고 학생과 과목을 선택하세요</div>
+      </div>
+      <div class="h-tabs" id="h-tabs" style="display:none;">
+        <button class="h-tab on" onclick="setTab('detail')" id="tab-detail">상세</button>
+        <button class="h-tab" onclick="setTab('report')" id="tab-report">보고서</button>
+      </div>
+    </div>
+    <div class="content" id="content">
+      <div class="welcome">
+        <div class="welcome-icon">📊</div>
+        <div class="welcome-text">왼쪽에서 강사 → 학생 → 과목을 선택하세요</div>
+      </div>
+    </div>
   </div>
 </div>
-<div id="modalBg" class="modal-bg" style="display:none;">
-  <div id="modalBox" class="modal"></div>
-</div>
+
+<div id="modal-root"></div>
+<div class="toast" id="toast"></div>
+
 <script>
-var NAVY="#1a2a4a", GOLD="#d4af37";
-var SUBJECTS=["전체","국어","영어","수학","과학"];
-var TEACHERS=["장한성 선생님","이하림 선생님","양원철 선생님","박수권 선생님"];
-var GRADES=["초1","초2","초3","초4","초5","초6","중1","중2","중3","고1","고2","고3"];
-var GC={A:"#4f8ef7",B:"#7c6fcd",C:"#f7a94f",D:"#f74f4f"};
-var PID="wawa-coaching", AKEY="AIzaSyARSCvWy-4rPONDUbmecpbI1_rePtI65IU";
-var BASE="https://firestore.googleapis.com/v1/projects/"+PID+"/databases/(default)/documents";
-var students=[], exams={}, unitExams={}, selectedId=null, subjectFilter="전체", activeTab="상세";
-var mgmtLevel="전체", statLevel="초등", statSubLevel="", teacherFilter="전체 선생님", gradeFilter="전체";
-var myChart=null, unitChart=null, statChart=null, savedMsg="", savedUnitMsg="";
-var feedGood="", feedImprove="", feedDirection="";
-
-function gc(g){return GC[g]||"#aaa";}
-function scoreGrade(s){return s>=85?"A":s>=70?"B":s>=55?"C":"D";}
-function avg(a){return a.length?a.reduce(function(s,x){return s+x;},0)/a.length:0;}
-function gl(g){return g.startsWith("초")?"초등":g.startsWith("중")?"중학":"고등";}
-function toScore(e){return Math.round(e.correct/e.total*100);}
-function toClsScore(e){return e.classAvg>0?Math.round(e.classAvg/e.total*100):0;}
-function setStatus(msg,color){
-  document.getElementById("stTxt").textContent=msg;
-  document.getElementById("stTxt").style.color=color;
-  document.getElementById("stDot").style.background=color;
+// ── STATE ──
+const S = {
+  teachers: JSON.parse(localStorage.getItem('wawa_teachers')||'[]'),
+  students: JSON.parse(localStorage.getItem('wawa_students')||'[]'),
+  exams:    JSON.parse(localStorage.getItem('wawa_exams')||'[]'),
+  openT: new Set(),
+  openS: new Set(),
+  sel: null, // {tid,sid,subj}
+  tab: 'detail',
+  chartInst: null,
+};
+let nextId = +localStorage.getItem('wawa_nid')||1;
+function nid(){const i=nextId++;localStorage.setItem('wawa_nid',nextId);return i;}
+function save(){
+  localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));
+  localStorage.setItem('wawa_students',JSON.stringify(S.students));
+  localStorage.setItem('wawa_exams',JSON.stringify(S.exams));
 }
 
-function fsGet(col){
-  return fetch(BASE+"/"+col+"?key="+AKEY+"&pageSize=300")
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(!d.documents)return[];
-      return d.documents.map(function(doc){
-        var id=doc.name.split("/").pop();
-        var f=doc.fields||{}, o={id:id};
-        Object.keys(f).forEach(function(k){
-          var v=f[k];
-          if(v.integerValue!==undefined)o[k]=Number(v.integerValue);
-          else if(v.doubleValue!==undefined)o[k]=Number(v.doubleValue);
-          else if(v.stringValue!==undefined)o[k]=v.stringValue;
-        });
-        return o;
-      });
-    });
+// ── HELPERS ──
+function grade(v,type){
+  if(type==='count') return null;
+  if(v>=90)return 'A';if(v>=80)return 'B';if(v>=70)return 'C';if(v>=60)return 'D';return 'F';
 }
-function fsPatch(col,id,data){
-  var fields={};
-  Object.keys(data).forEach(function(k){
-    var v=data[k];
-    if(typeof v==="number")fields[k]={integerValue:v};
-    else fields[k]={stringValue:String(v||"")};
+function gradeColor(g){return{A:'#27ae60',B:'#3498db',C:'#f39c12',D:'#e67e22',F:'#e74c3c'}[g]||'#aaa';}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+function scoreLabel(v,type){return type==='count'?v+'개':v+'점';}
+
+// ── TREE ──
+function renderTree(){
+  const el = document.getElementById('tree');
+  el.innerHTML = '';
+  S.teachers.forEach(t=>{
+    const open = S.openT.has(t.id);
+    const div = document.createElement('div');
+    div.className = 't-teacher';
+    const studs = S.students.filter(s=>s.tid===t.id);
+    div.innerHTML = `
+      <div class="t-teacher-row${open?' open':''}" onclick="toggleT(${t.id})">
+        <div class="t-teacher-icon">${t.name[0]}</div>
+        <span>${t.name}</span>
+        <span class="t-chevron${open?' open':''}">▶</span>
+        <button class="t-del" onclick="event.stopPropagation();delTeacher(${t.id})">✕</button>
+      </div>
+      ${open?`<div class="t-students">${studs.map(s=>renderStudent(s)).join('')}
+        <button class="t-add-btn" onclick="openAddStudent(${t.id})">＋ 학생 추가</button>
+      </div>`:''}
+    `;
+    el.appendChild(div);
   });
-  return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify({fields:fields})});
-}
-function fsDel(col,id){return fetch(BASE+"/"+col+"/"+id+"?key="+AKEY,{method:"DELETE"});}
-
-function loadData(){
-  return Promise.all([fsGet("students"),fsGet("exams"),fsGet("unitExams")])
-    .then(function(results){
-      students=results[0];
-      if(!selectedId&&students.length)selectedId=students[0].id;
-      exams={};
-      results[1].forEach(function(ex){
-        if(!exams[ex.studentId])exams[ex.studentId]=[];
-        exams[ex.studentId].push(ex);
-      });
-      unitExams={};
-      results[2].forEach(function(ex){
-        if(!unitExams[ex.studentId])unitExams[ex.studentId]=[];
-        unitExams[ex.studentId].push(ex);
-      });
-      setStatus("실시간 저장 중","#4caf50");
-      if(activeTab==="보고서"){renderSidebar();renderHeader();}
-      else{render();}
-    }).catch(function(){setStatus("연결 오류","#f74f4f");});
 }
 
-function render(){renderSidebar();renderHeader();renderMain();}
-
-function renderSidebar(){
-  var filtered=students.filter(function(s){
-    var tOk=teacherFilter==="전체 선생님"||s.teacher===teacherFilter;
-    var sOk=subjectFilter==="전체"||s.subject===subjectFilter;
-    var gOk=gradeFilter==="전체"||s.grade===gradeFilter;
-    return tOk&&sOk&&gOk;
-  });
-  var availGrades=["전체"];
-  students.forEach(function(s){
-    var tOk=teacherFilter==="전체 선생님"||s.teacher===teacherFilter;
-    var sOk=subjectFilter==="전체"||s.subject===subjectFilter;
-    if(tOk&&sOk&&availGrades.indexOf(s.grade)===-1)availGrades.push(s.grade);
-  });
-  availGrades.sort(function(a,b){
-    if(a==="전체")return -1;if(b==="전체")return 1;
-    var order=["초1","초2","초3","초4","초5","초6","중1","중2","중3","고1","고2","고3"];
-    return order.indexOf(a)-order.indexOf(b);
-  });
-  document.getElementById("gradeBtns").innerHTML=availGrades.map(function(g){
-    return '<button class="subj-btn'+(gradeFilter===g?" on":"")+'" onclick="setGrade(\''+g+'\')">'+g+'</button>';
-  }).join("");
-  document.getElementById("sbjBtns").innerHTML=SUBJECTS.map(function(s){
-    return '<button class="subj-btn'+(subjectFilter===s?" on":"")+'" onclick="setSubject(\''+s+'\')">'+s+'</button>';
-  }).join("");
-  document.getElementById("stuCount").textContent="학생 ("+filtered.length+"명)";
-  document.getElementById("stuList").innerHTML=filtered.map(function(s){
-    var ex=exams[s.id]||[];
-    var lat=ex.length?[].concat(ex).sort(function(a,b){return b.date.localeCompare(a.date);})[0]:null;
-    var score=lat?toScore(lat)+"점":"-";
-    return '<div class="stu-item'+(selectedId===s.id?" on":"")+'" onclick="selectStudent(\''+s.id+'\')">'+
-      '<div><div style="font-weight:'+(selectedId===s.id?700:400)+';">'+s.name+'</div>'+
-      '<div style="font-size:10px;color:#888;">'+s.grade+' · '+s.subject+'</div></div>'+
-      '<div style="display:flex;align-items:center;gap:4px;">'+
-      '<span style="font-size:11px;color:#4f8ef7;font-weight:600;">'+score+'</span>'+
-      '<button onclick="event.stopPropagation();delStudent(\''+s.id+'\')" style="border:none;background:none;color:#ccc;font-size:14px;">×</button>'+
-      '</div></div>';
-  }).join("");
+function renderStudent(s){
+  const open = S.openS.has(s.id);
+  const subjs = (s.subjects||[]);
+  return `
+    <div class="t-student">
+      <div class="t-student-row${open?' open':''}" onclick="toggleS(${s.id})">
+        <div class="t-student-icon">${s.name[0]}</div>
+        <span>${s.name}</span><span style="font-size:10px;color:rgba(255,255,255,.3);margin-left:3px;">${s.grade||''}</span>
+        <span class="t-chevron${open?' open':''}">▶</span>
+        <button class="t-del" onclick="event.stopPropagation();delStudent(${s.id})">✕</button>
+      </div>
+      ${open?`<div class="t-subjects">
+        ${subjs.map(subj=>{
+          const sel = S.sel&&S.sel.sid===s.id&&S.sel.subj===subj.name;
+          const cnt = S.exams.filter(e=>e.sid===s.id&&e.subj===subj.name).length;
+          const typeBadge = subj.type==='count'?'badge-count':'badge-score';
+          const typeLabel = subj.type==='count'?'개수':'점수';
+          return `<div class="t-subj-row${sel?' sel':''}" onclick="selectSubj(${s.tid||s.id_},${s.id},'${subj.name}')">
+            <div class="t-subj-dot"></div>
+            <span>${subj.name}</span>
+            <span class="subj-type-badge ${typeBadge}">${typeLabel}</span>
+            <span class="t-cnt">${cnt}</span>
+            <button class="t-del" onclick="event.stopPropagation();delSubj(${s.id},'${subj.name}')">✕</button>
+          </div>`;
+        }).join('')}
+        <button class="t-add-btn" onclick="openAddSubj(${s.id})">＋ 과목 추가</button>
+      </div>`:''}
+    </div>`;
 }
 
-function renderHeader(){
-  var s=students.find(function(x){return x.id===selectedId;});
-  document.getElementById("hName").textContent=s?s.name:"-";
-  document.getElementById("hInfo").textContent=s?s.grade+" · "+s.subject:"";
-  document.getElementById("hTeacher").textContent=s?s.teacher:"";
-  document.getElementById("tabBtns").innerHTML=["상세","단원평가","보고서","관리","통계"].map(function(t){
-    return '<button class="tab-btn'+(activeTab===t?" on":"")+'" onclick="setTab(\''+t+'\')">'+t+'</button>';
-  }).join("");
+function toggleT(tid){S.openT.has(tid)?S.openT.delete(tid):S.openT.add(tid);renderTree();}
+function toggleS(sid){S.openS.has(sid)?S.openS.delete(sid):S.openS.add(sid);renderTree();}
+
+function selectSubj(tid,sid,subj){
+  S.sel={tid,sid,subj};
+  S.tab='detail';
+  renderTree();
+  renderMain();
 }
 
+// ── MAIN ──
 function renderMain(){
-  if(myChart){myChart.destroy();myChart=null;}
-  if(unitChart){unitChart.destroy();unitChart=null;}
-  if(statChart){statChart.destroy();statChart=null;}
-  var mc=document.getElementById("mainContent");
-  var s=students.find(function(x){return x.id===selectedId;});
-  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var latest=exList[exList.length-1];
-  var myAvg=exList.length?Math.round(avg(exList.map(toScore)))+"점":"-";
-  var clsAvg=exList.length?Math.round(avg(exList.map(toClsScore)))+"점":"-";
-  var latestScore=latest?toScore(latest)+"점":"-";
-  if(activeTab==="상세")mc.innerHTML=renderDetail(exList,latest,myAvg,clsAvg,latestScore);
-  else if(activeTab==="단원평가")mc.innerHTML=renderUnit(s,uList);
-  else if(activeTab==="보고서")mc.innerHTML=renderReport(s,exList,latest,myAvg,clsAvg);
-  else if(activeTab==="관리")mc.innerHTML=renderMgmt();
-  else if(activeTab==="통계")mc.innerHTML=renderStat();
-  if(activeTab==="상세"&&exList.length)setTimeout(function(){drawChart(exList);},50);
-  if(activeTab==="단원평가"&&uList.length)setTimeout(function(){drawUnitChart(uList);},50);
-  if(activeTab==="통계")setTimeout(drawStatChart,50);
+  const tabs = document.getElementById('h-tabs');
+  if(!S.sel){
+    tabs.style.display='none';
+    document.getElementById('h-name').textContent='WAWA 코칭센터';
+    document.getElementById('h-meta').textContent='강사를 선택하고 학생과 과목을 선택하세요';
+    document.getElementById('content').innerHTML='<div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 강사 → 학생 → 과목을 선택하세요</div></div>';
+    return;
+  }
+  const st = S.students.find(s=>s.id===S.sel.sid);
+  const tc = S.teachers.find(t=>t.id===S.sel.tid);
+  const subj = (st.subjects||[]).find(s=>s.name===S.sel.subj)||{name:S.sel.subj,type:'score'};
+  tabs.style.display='flex';
+  ['detail','report'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('on',S.tab===t);
+  });
+  document.getElementById('h-name').textContent=st.name+' 학생';
+  document.getElementById('h-meta').innerHTML=`${st.grade||''} · <strong>${S.sel.subj}</strong> · ${tc?tc.name+' 선생님':''}`;
+  S.tab==='detail'?renderDetail(st,subj):renderReport(st,subj,tc);
 }
 
-function renderDetail(exList,latest,myAvg,clsAvg,latestScore){
-  var html='<div class="grid4">';
-  [{l:"최근 점수",v:latestScore,bg:"#fff",bd:"#ddd"},
-   {l:"내 평균 점수",v:myAvg,bg:"#fffbec",bd:"#f5d97a"},
-   {l:"학급 평균",v:clsAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"시험 횟수",v:exList.length+"회",bg:"#fff",bd:"#ddd"}
-  ].forEach(function(c){
-    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
-      '<div style="font-size:11px;color:#888;margin-bottom:8px;">'+c.l+'</div>'+
-      '<div style="font-size:22px;font-weight:700;">'+c.v+'</div></div>';
-  });
-  html+='</div><div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:16px;">점수 추이</div>';
-  html+=exList.length?'<canvas id="myChart" height="90"></canvas>':'<div style="text-align:center;color:#bbb;padding:40px;">시험 기록이 없습니다</div>';
-  html+='</div><div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
-    '<span style="font-weight:700;font-size:14px;">시험 기록</span>'+
-    '<button class="bp" onclick="openModal(\'addExam\')" style="padding:7px 16px;font-size:12px;">+ 시험 추가</button></div>';
-  html+='<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th><th></th></tr></thead><tbody>';
-  [].concat(exList).reverse().forEach(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    html+='<tr><td>'+e.date+'</td><td><span class="badge">'+e.subject+'</span></td>'+
-      '<td style="font-weight:500;">'+e.name+'</td>'+
-      '<td style="color:'+NAVY+';font-weight:600;">'+sc+'점</td>'+
-      '<td style="color:'+GOLD+';font-weight:600;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-weight:600;">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span class="gbadge" style="background:'+gc(e.grade)+'">'+e.grade+'</span></td>'+
-      '<td style="white-space:nowrap;">'+
-      '<button class="bs" onclick="openModal(\'editExam\',\''+e.id+'\')" style="margin-right:4px;">수정</button>'+
-      '<button class="bd" onclick="delExam(\''+e.id+'\')">삭제</button></td></tr>';
-  });
-  if(!exList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">시험 기록이 없습니다</td></tr>';
-  html+='</tbody></table></div>';
-  return html;
+function setTab(t){S.tab=t;renderMain();}
+
+// ── DETAIL ──
+function renderDetail(st,subj){
+  const exams = S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const type = subj.type||'score';
+  const vals = exams.map(e=>e.score);
+  const avg = vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  const latest = vals.length?vals[vals.length-1]:null;
+  const max = vals.length?Math.max(...vals):null;
+
+  let scoreCards='';
+  if(type==='score'){
+    scoreCards=`
+      <div class="score-card sc-gold"><div class="score-card-label">최근 점수</div><div class="score-card-val">${latest??'—'}<span class="score-card-unit">점</span></div><div class="score-card-sub">${exams.length?exams[exams.length-1].name:''}</div></div>
+      <div class="score-card sc-green"><div class="score-card-label">최고 점수</div><div class="score-card-val">${max??'—'}<span class="score-card-unit">점</span></div></div>
+      <div class="score-card sc-purple"><div class="score-card-label">시험 횟수</div><div class="score-card-val">${vals.length}<span class="score-card-unit">회</span></div></div>`;
+  } else {
+    scoreCards=`
+      <div class="score-card sc-gold"><div class="score-card-label">최근 갯수</div><div class="score-card-val">${latest??'—'}<span class="score-card-unit">개</span></div><div class="score-card-sub">${exams.length?exams[exams.length-1].name:''}</div></div>
+      <div class="score-card sc-green"><div class="score-card-label">최고 갯수</div><div class="score-card-val">${max??'—'}<span class="score-card-unit">개</span></div></div>
+      <div class="score-card sc-purple"><div class="score-card-label">시험 횟수</div><div class="score-card-val">${vals.length}<span class="score-card-unit">회</span></div></div>`;
+  }
+
+  const examRows = [...exams].reverse().map(e=>{
+    const g = type==='score'?grade(e.score,type):null;
+    const gClass = g?'g'+g:'';
+    const pct = type==='score'?e.score:Math.min(100,e.score);
+    return `<div class="exam-item">
+      <div class="exam-date">${e.date}</div>
+      <div style="flex:1"><div class="exam-name">${e.name}</div><div class="exam-bar"><div class="exam-bar-fill" style="width:${pct}%"></div></div></div>
+      <div class="exam-score">${e.score}<span class="exam-unit">${type==='count'?'개':'점'}</span></div>
+      ${g?`<div class="grade-badge ${gClass}">${g}</div>`:''}
+      <div class="exam-actions">
+        <button class="exam-edit-btn" onclick="openEditExam(${e.id})">✏️</button>
+        <button class="exam-del-btn" onclick="delExam(${e.id})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML=`
+    <div class="score-grid">${scoreCards}</div>
+    <div class="card">
+      <div class="card-title">시험 기록</div>
+      ${examRows||'<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">아직 시험 기록이 없어요</div>'}
+      <div class="add-exam-form" style="margin-top:14px;">
+        <div class="form-row">
+          <div class="form-group"><div class="form-label">시험명</div><input class="form-input" id="ei-name" placeholder="예: 4월 단원평가" style="width:160px;"/></div>
+          <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:140px;"/></div>
+          <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" placeholder="${type==='count'?'예: 23':'예: 85'}" min="0" max="${type==='count'?'999':'100'}" style="width:90px;"/></div>
+          <div class="form-group" style="justify-content:flex-end;"><button class="btn-primary" onclick="addExam()">추가</button></div>
+        </div>
+      </div>
+    </div>`;
 }
 
-function renderReport(s,exList,latest,myAvg,clsAvg){
-  if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
-  var html='<div style="max-width:680px;margin:0 auto;">';
-  html+='<div class="card" style="text-align:center;">'+
-    '<div style="font-size:20px;font-weight:700;margin-bottom:6px;">'+s.name+' 학생</div>'+
-    '<div style="color:#888;font-size:13px;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div></div>';
-  html+='<div class="card" style="display:flex;justify-content:center;gap:20px;">';
-  html+='<div style="background:#f0f4ff;border:1px solid #a0b4f7;border-radius:12px;padding:20px 50px;text-align:center;">'+
-    '<div style="font-size:11px;color:#888;margin-bottom:6px;">내 점수</div>'+
-    '<div style="font-size:22px;font-weight:700;">'+myAvg+'</div></div>';
-  html+='<div style="background:#fffbec;border:1px solid #f5d97a;border-radius:12px;padding:20px 50px;text-align:center;">'+
-    '<div style="font-size:11px;color:#888;margin-bottom:6px;">학년 평균</div>'+
-    '<div style="font-size:22px;font-weight:700;">'+clsAvg+'</div></div>';
-  html+='</div>';
-  html+='<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:14px;">시험별 성적</div>';
-  [].concat(exList).reverse().forEach(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    html+='<div style="margin-bottom:16px;">'+
-      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">'+
-      '<div><span style="font-weight:600;">'+e.name+'</span>'+
-      '<span style="color:#888;font-size:11px;margin-left:8px;">'+e.date+' · '+e.subject+'</span></div>'+
-      '<div style="display:flex;align-items:center;gap:8px;">'+
-      '<span style="font-weight:600;">'+sc+'점</span>'+
-      (cs>0?'<span style="color:#888;font-size:11px;">(학급평균 '+cs+'점)</span>':'')+
-      (cs>0?'<span style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-size:12px;">'+(d>0?"(+"+d+"점)":"("+d+"점)")+'</span>':'')+
-      '<span class="gbadge" style="background:'+gc(e.grade)+';font-size:11px;">'+e.grade+'</span></div></div>'+
-      '<div class="pb"><div class="pf" style="width:'+sc+'%;"></div></div></div>';
-  });
-  if(!exList.length)html+='<div style="text-align:center;color:#bbb;padding:20px;">시험 기록이 없습니다</div>';
-  html+='</div>';
-  html+='<div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
-    '<span style="font-weight:700;font-size:14px;">학부모 안내 메시지</span>'+
-    '<button class="bp" id="genBtn" onclick="generateMsg()" style="padding:7px 16px;font-size:12px;">✦ AI 메시지 생성</button></div>'+
-    '<div style="background:#f8f9fb;border-radius:10px;padding:16px;margin-bottom:12px;border:1px solid #eee;">'+
-    '<div style="font-size:12px;font-weight:600;color:#1a2a4a;margin-bottom:10px;">📝 선생님 메모 (간단히 입력하세요)</div>'+
-    '<div style="margin-bottom:8px;"><label style="font-size:11px;color:#4f8ef7;font-weight:600;display:block;margin-bottom:4px;">✅ 잘한 점</label>'+
-    '<input id="feedGood" value="'+feedGood+'" onchange="feedGood=this.value" oninput="feedGood=this.value" placeholder="예: 계산 문제 정확, 집중력 좋음" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
-    '<div style="margin-bottom:8px;"><label style="font-size:11px;color:#f74f4f;font-weight:600;display:block;margin-bottom:4px;">📝 보완이 필요한 부분</label>'+
-    '<input id="feedImprove" value="'+feedImprove+'" onchange="feedImprove=this.value" oninput="feedImprove=this.value" placeholder="예: 서술형 문제 취약, 단위 실수" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
-    '<div><label style="font-size:11px;color:#f7a94f;font-weight:600;display:block;margin-bottom:4px;">📚 앞으로의 학습 방향</label>'+
-    '<input id="feedDirection" value="'+feedDirection+'" onchange="feedDirection=this.value" oninput="feedDirection=this.value" placeholder="예: 오답노트 작성, 서술형 연습" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:12px;background:#fff;box-sizing:border-box;"/></div>'+
-    '</div>'+
-    '<textarea id="msgArea" rows="6" placeholder="위 메모를 입력하고 AI 메시지 생성을 눌러보세요." onchange="savedMsg=this.value" oninput="savedMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedMsg+'</textarea>'+
-    '</div>'+
-    '<div style="text-align:center;color:#888;font-size:12px;margin:8px 0 16px;">와와코칭학원 · '+s.teacher+'</div>'+
-    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
-    '<button class="action-btn" onclick="convertMsg()" style="background:#1a2a4a;">✉ 문자변환</button>'+
-    '<button class="action-btn" onclick="saveTxt()" style="background:#4f8ef7;">📄 TXT</button>'+
-    '<button class="action-btn" onclick="saveImg()" style="background:#4caf50;">🖼 이미지</button>'+
-    '<button class="action-btn" onclick="doPrint()" style="background:#f7a94f;">🖨 프린트/PDF</button>'+
-    '</div></div>';
-  return html;
+// ── REPORT ──
+function renderReport(st,subj,tc){
+  const exams = S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const type = subj.type||'score';
+  const vals = exams.map(e=>e.score);
+  const avg = vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  const latest = vals.length?vals[vals.length-1]:null;
+  const unit = type==='count'?'개':'점';
+
+  const examRows=[...exams].reverse().map(e=>{
+    const g=type==='score'?grade(e.score,type):null;
+    return `<div class="re-item">
+      <div style="flex:1"><div class="re-name">${e.name}</div><div class="re-meta">${e.date} · ${subj.name}</div></div>
+      <div class="re-score">${e.score}${unit}</div>
+      ${g?`<div class="grade-badge g${g}">${g}</div>`:''}
+    </div>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML=`
+    <div class="report-hero">
+      <div class="rh-tag">📊 학습 성과 리포트</div>
+      <div class="rh-name">${st.name} 학생</div>
+      <div class="rh-sub">${st.grade||''} · ${subj.name} · ${tc?tc.name+' 선생님':''}</div>
+      <div class="rh-scores">
+        <div class="rh-score-box"><div class="rhs-label">평균 ${unit==='개'?'갯수':'점수'}</div><div class="rhs-val gold">${avg??'—'}${unit}</div></div>
+        <div class="rh-score-box"><div class="rhs-label">최근 ${unit==='개'?'갯수':'점수'}</div><div class="rhs-val green">${latest??'—'}${unit}</div></div>
+        <div class="rh-score-box"><div class="rhs-label">시험 횟수</div><div class="rhs-val">${vals.length}회</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">성적 추이 그래프</div>
+      ${exams.length<2?'<div style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">시험 기록이 2개 이상이면 그래프가 표시됩니다</div>':'<div class="chart-wrap"><canvas id="score-chart"></canvas></div>'}
+    </div>
+
+    <div class="card">
+      <div class="card-title">시험별 성적</div>
+      ${examRows||'<div style="text-align:center;color:var(--muted);padding:30px;">시험 기록이 없습니다</div>'}
+    </div>
+
+    <div class="card">
+      <div class="card-title">학부모 안내 메시지</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-size:12px;color:var(--muted);">아래 내용을 학부모님께 전달하세요</span>
+        <div style="display:flex;gap:8px;">
+          <button class="msg-auto-btn" onclick="autoMsg()"><span class="sparkle">✦</span> AI 자동 생성</button>
+          <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
+        </div>
+      </div>
+      <textarea class="msg-textarea" id="msg-area" placeholder="메모를 입력하거나 AI 자동 생성 버튼을 눌러보세요..."></textarea>
+    </div>
+
+    <div style="text-align:center;padding:10px;color:var(--muted);font-size:11px;">
+      WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${new Date().toLocaleDateString('ko-KR')} 발행
+    </div>`;
+
+  if(exams.length>=2) drawChart(exams,type);
 }
 
-function renderUnit(s,uList){
-  if(!s)return'<div style="text-align:center;color:#bbb;padding:60px;">학생을 선택해주세요</div>';
-  var uAvg=uList.length?Math.round(avg(uList.map(toScore)))+"점":"-";
-  var uClsAvg=uList.length?Math.round(avg(uList.map(toClsScore)))+"점":"-";
-  var uLatest=uList[uList.length-1];
-  var html='<div class="grid4">';
-  [{l:"최근 단원평가",v:uLatest?toScore(uLatest)+"점":"-",bg:"#fff",bd:"#ddd"},
-   {l:"평균 점수",v:uAvg,bg:"#fffbec",bd:"#f5d97a"},
-   {l:"학급 평균",v:uClsAvg,bg:"#f0f4ff",bd:"#a0b4f7"},
-   {l:"단원 수",v:uList.length+"개",bg:"#fff",bd:"#ddd"}
-  ].forEach(function(c){
-    html+='<div class="scard" style="background:'+c.bg+';border:1px solid '+c.bd+';">'+
-      '<div style="font-size:11px;color:#888;margin-bottom:8px;">'+c.l+'</div>'+
-      '<div style="font-size:22px;font-weight:700;">'+c.v+'</div></div>';
+function drawChart(exams,type){
+  if(S.chartInst){S.chartInst.destroy();S.chartInst=null;}
+  const ctx=document.getElementById('score-chart');
+  if(!ctx)return;
+  const unit=type==='count'?'개':'점';
+  const avg=Math.round(exams.reduce((a,e)=>a+e.score,0)/exams.length);
+  S.chartInst=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:exams.map(e=>e.name),
+      datasets:[
+        {label:'성적',data:exams.map(e=>e.score),borderColor:'#6c63ff',backgroundColor:'rgba(108,99,255,.1)',borderWidth:2.5,pointBackgroundColor:'#6c63ff',pointRadius:5,pointHoverRadius:7,tension:.35,fill:true},
+        {label:'평균',data:exams.map(()=>avg),borderColor:'#f5a623',borderWidth:1.5,borderDash:[5,4],pointRadius:0,fill:false,tension:0}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:12}},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+ctx.parsed.y+unit}}},
+      scales:{y:{beginAtZero:false,grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v+unit,font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}
+    }
   });
-  html+='</div>';
-  html+='<div class="card"><div style="font-weight:700;font-size:14px;margin-bottom:16px;">단원별 점수 추이</div>';
-  html+=uList.length?'<canvas id="unitChart" height="90"></canvas>':'<div style="text-align:center;color:#bbb;padding:40px;">단원평가 기록이 없습니다</div>';
-  html+='</div>';
-  html+='<div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">'+
-    '<span style="font-weight:700;font-size:14px;">단원평가 기록</span>'+
-    '<button class="bp" onclick="openModal(\'addUnit\')" style="padding:7px 16px;font-size:12px;">+ 단원평가 추가</button></div>';
-  html+='<table><thead><tr><th>날짜</th><th>과목</th><th>단원명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th><th></th></tr></thead><tbody>';
-  [].concat(uList).reverse().forEach(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    html+='<tr><td>'+e.date+'</td><td><span class="badge">'+e.subject+'</span></td>'+
-      '<td style="font-weight:500;">'+e.name+'</td>'+
-      '<td style="color:'+NAVY+';font-weight:600;">'+sc+'점</td>'+
-      '<td style="color:'+GOLD+';font-weight:600;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#4f8ef7":"#f74f4f")+';font-weight:600;">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span class="gbadge" style="background:'+gc(e.grade)+'">'+e.grade+'</span></td>'+
-      '<td style="white-space:nowrap;">'+
-      '<button class="bs" onclick="openModal(\'editUnit\',\''+e.id+'\')" style="margin-right:4px;">수정</button>'+
-      '<button class="bd" onclick="delUnit(\''+e.id+'\')">삭제</button></td></tr>';
-  });
-  if(!uList.length)html+='<tr><td colspan="8" style="text-align:center;color:#bbb;padding:30px;">단원평가 기록이 없습니다</td></tr>';
-  html+='</tbody></table></div>';
-  html+='<div class="card">'+
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">'+
-    '<span style="font-weight:700;font-size:14px;">선생님 피드백</span>'+
-    '<button class="bp" id="genUnitBtn" onclick="generateUnitMsg()" style="padding:7px 16px;font-size:12px;">✦ 자동 생성</button></div>'+
-    '<textarea id="unitMsgArea" rows="5" placeholder="단원평가 피드백을 작성하세요." onchange="savedUnitMsg=this.value" oninput="savedUnitMsg=this.value" style="width:100%;padding:12px;border:1px solid #eee;border-radius:10px;font-size:13px;resize:vertical;line-height:1.7;">'+savedUnitMsg+'</textarea>'+
-    '</div>'+
-    '<div style="text-align:center;color:#888;font-size:12px;margin:8px 0 16px;">와와코칭학원 · '+s.teacher+'</div>'+
-    '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">'+
-    '<button class="action-btn" onclick="convertUnitMsg()" style="background:#1a2a4a;">✉ 문자변환</button>'+
-    '<button class="action-btn" onclick="saveUnitTxt()" style="background:#4f8ef7;">📄 TXT</button>'+
-    '<button class="action-btn" onclick="doPrintUnit()" style="background:#f7a94f;">🖨 프린트/PDF</button>'+
-    '</div>';
-  return html;
 }
 
-function renderMgmt(){
-  var list=students.filter(function(s){return mgmtLevel==="전체"||gl(s.grade)===mgmtLevel;});
-  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">'+
-    '<div style="font-weight:700;font-size:16px;">관리자 대시보드</div><div style="display:flex;gap:6px;">';
-  ["전체","초등","중학","고등"].forEach(function(l){
-    html+='<button class="tab-btn'+(mgmtLevel===l?" on":"")+'" onclick="setMgmtLevel(\''+l+'\')">'+l+'</button>';
-  });
-  html+='</div></div><div class="card" style="padding:0;">'+
-    '<div style="padding:10px 16px;border-bottom:1px solid #f5f5f5;color:#888;font-size:11px;font-weight:600;">전체 학생 현황 ('+list.length+'명)</div>'+
-    '<table><thead><tr><th>이름</th><th>학년</th><th>과목</th><th>담당 선생님</th><th>시험수</th><th>평균 점수</th><th>최근 등급</th><th></th></tr></thead><tbody>';
-  list.forEach(function(s){
-    var ex=exams[s.id]||[];
-    var avgScore=ex.length?Math.round(avg(ex.map(toScore)))+"점":"-";
-    var lat=ex.length?[].concat(ex).sort(function(a,b){return b.date.localeCompare(a.date);})[0]:null;
-    html+='<tr style="cursor:pointer;" onclick="selectStudent(\''+s.id+'\');setTab(\'상세\')">'+
-      '<td style="font-weight:500;">'+s.name+'</td><td>'+s.grade+'</td>'+
-      '<td><span class="badge">'+s.subject+'</span></td>'+
-      '<td style="color:#555;">'+s.teacher+'</td><td>'+ex.length+'회</td>'+
-      '<td style="color:'+GOLD+';font-weight:600;">'+avgScore+'</td>'+
-      '<td>'+(lat?'<span class="gbadge" style="background:'+gc(lat.grade)+'">'+lat.grade+'</span>':"-")+'</td>'+
-      '<td><button class="bs" onclick="event.stopPropagation();selectStudent(\''+s.id+'\');setTab(\'상세\')">수정</button></td></tr>';
-  });
-  html+='</tbody></table></div>';
-  return html;
+// ── EXAM CRUD ──
+function addExam(){
+  const name=document.getElementById('ei-name').value.trim();
+  const date=document.getElementById('ei-date').value;
+  const score=+document.getElementById('ei-score').value;
+  if(!name||!date||isNaN(score)||score<0){toast('모든 항목을 입력해주세요');return;}
+  S.exams.push({id:nid(),sid:S.sel.sid,subj:S.sel.subj,name,date,score});
+  save();renderMain();toast('✅ 추가됐어요');
 }
 
-function renderStat(){
-  var lvls=statLevel==="초등"?["초1","초2","초3","초4","초5","초6"]:statLevel==="중학"?["중1","중2","중3"]:["고1","고2","고3"];
-  var sd=lvls.map(function(g){
-    var ss=students.filter(function(s){return s.grade===g;});
-    var ax=[];ss.forEach(function(s){(exams[s.id]||[]).forEach(function(e){ax.push(e);});});
-    return{grade:g,count:ss.length,avg:ax.length?Math.round(avg(ax.map(toScore))):0};
-  }).filter(function(d){return d.count>0;});
-  var cur=statSubLevel||(sd[0]?sd[0].grade:"");
-  var subs=students.filter(function(s){return s.grade===cur;}).map(function(s){
-    var ex=exams[s.id]||[];
-    return{name:s.name,grade:s.grade,subject:s.subject,teacher:s.teacher,
-      av:ex.length?avg(ex.map(toScore)):0,avs:ex.length?Math.round(avg(ex.map(toScore)))+"점":"-"};
-  }).sort(function(a,b){return b.av-a.av;});
-  var html='<div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;flex-wrap:wrap;">'+
-    '<div style="font-weight:700;font-size:16px;">성적 통계</div>'+
-    '<div style="display:flex;gap:6px;align-items:center;"><span style="font-size:12px;color:#888;">학교급:</span>';
-  ["초등","중학","고등"].forEach(function(l){
-    html+='<button class="tab-btn'+(statLevel===l?" on":"")+'" onclick="setStatLevel(\''+l+'\')">'+l+'</button>';
-  });
-  html+='</div>';
-  if(sd.length){
-    html+='<div style="display:flex;gap:6px;align-items:center;"><span style="font-size:12px;color:#888;">학년별:</span>';
-    sd.forEach(function(d){
-      html+='<button style="padding:5px 12px;border-radius:8px;border:1px solid #ddd;background:'+(cur===d.grade?"#e8f0fe":"#fff")+';color:'+(cur===d.grade?NAVY:"#555")+';cursor:pointer;font-size:12px;" onclick="setStatSub(\''+d.grade+'\')">'+d.grade+'</button>';
+function openEditExam(id){
+  const e=S.exams.find(x=>x.id===id);
+  if(!e)return;
+  const st=S.students.find(s=>s.id===e.sid);
+  const subj=(st.subjects||[]).find(s=>s.name===e.subj)||{type:'score'};
+  const type=subj.type||'score';
+  showModal(`
+    <div class="modal-title"><div class="modal-title-icon">✏️</div>시험 수정</div>
+    <div class="modal-label">시험명</div>
+    <input class="modal-input" id="me-name" value="${e.name}"/>
+    <div class="modal-label">날짜</div>
+    <input class="modal-input" id="me-date" type="date" value="${e.date}"/>
+    <div class="modal-label">${type==='count'?'갯수':'점수'}</div>
+    <input class="modal-input" id="me-score" type="number" value="${e.score}" min="0"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="saveEditExam(${id})">저장</button>
+    </div>`);
+}
+
+function saveEditExam(id){
+  const e=S.exams.find(x=>x.id===id);
+  e.name=document.getElementById('me-name').value.trim();
+  e.date=document.getElementById('me-date').value;
+  e.score=+document.getElementById('me-score').value;
+  save();closeModal();renderMain();toast('✅ 수정됐어요');
+}
+
+function delExam(id){
+  if(!confirm('삭제할까요?'))return;
+  S.exams=S.exams.filter(e=>e.id!==id);
+  save();renderMain();toast('🗑 삭제됐어요');
+}
+
+// ── TEACHER CRUD ──
+function openAddTeacher(){
+  showModal(`
+    <div class="modal-title"><div class="modal-title-icon">👤</div>강사 추가</div>
+    <div class="modal-label">강사 이름</div>
+    <input class="modal-input" id="tn" placeholder="예: 김선생"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="addTeacher()">추가</button>
+    </div>`);
+}
+function addTeacher(){
+  const name=document.getElementById('tn').value.trim();
+  if(!name)return;
+  S.teachers.push({id:nid(),name});save();closeModal();renderTree();toast('✅ '+name+' 선생님 추가');
+}
+function delTeacher(id){
+  if(!confirm('강사와 모든 학생 데이터가 삭제됩니다'))return;
+  S.teachers=S.teachers.filter(t=>t.id!==id);
+  const sids=S.students.filter(s=>s.tid===id).map(s=>s.id);
+  S.students=S.students.filter(s=>s.tid!==id);
+  S.exams=S.exams.filter(e=>!sids.includes(e.sid));
+  if(S.sel&&sids.includes(S.sel.sid))S.sel=null;
+  save();renderTree();renderMain();
+}
+
+// ── STUDENT CRUD ──
+function openAddStudent(tid){
+  showModal(`
+    <div class="modal-title"><div class="modal-title-icon">🎓</div>학생 추가</div>
+    <div class="modal-label">학생 이름</div>
+    <input class="modal-input" id="sn" placeholder="예: 홍길동"/>
+    <div class="modal-label">학년</div>
+    <input class="modal-input" id="sg" placeholder="예: 중2"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="addStudent(${tid})">추가</button>
+    </div>`);
+}
+function addStudent(tid){
+  const name=document.getElementById('sn').value.trim();
+  const gr=document.getElementById('sg').value.trim();
+  if(!name)return;
+  S.students.push({id:nid(),tid,name,grade:gr,subjects:[]});
+  save();closeModal();S.openS.add(S.students[S.students.length-1].id);S.openT.add(tid);renderTree();toast('✅ '+name+' 추가');
+}
+function delStudent(id){
+  if(!confirm('학생과 모든 시험 데이터가 삭제됩니다'))return;
+  S.students=S.students.filter(s=>s.id!==id);
+  S.exams=S.exams.filter(e=>e.sid!==id);
+  if(S.sel&&S.sel.sid===id)S.sel=null;
+  save();renderTree();renderMain();
+}
+
+// ── SUBJECT CRUD ──
+function openAddSubj(sid){
+  showModal(`
+    <div class="modal-title"><div class="modal-title-icon">📚</div>과목 추가</div>
+    <div class="modal-label">과목명</div>
+    <input class="modal-input" id="subjn" placeholder="예: 수학, 영어"/>
+    <div class="modal-label">점수 유형</div>
+    <div class="type-toggle">
+      <button class="type-btn on" id="tb-score" onclick="selType('score')">📊 점수 (0~100점)</button>
+      <button class="type-btn" id="tb-count" onclick="selType('count')">🔢 갯수 (개수)</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">
+      · 점수: 수학처럼 100점 만점 시험<br>· 갯수: 영어 단어처럼 맞힌 개수
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="addSubj(${sid})">추가</button>
+    </div>`);
+  document.getElementById('tb-score')._type='score';
+  document.getElementById('tb-count')._type='count';
+  window._selSubjType='score';
+}
+function selType(t){
+  window._selSubjType=t;
+  document.getElementById('tb-score').classList.toggle('on',t==='score');
+  document.getElementById('tb-count').classList.toggle('on',t==='count');
+}
+function addSubj(sid){
+  const name=document.getElementById('subjn').value.trim();
+  if(!name)return;
+  const st=S.students.find(s=>s.id===sid);
+  if(!st.subjects)st.subjects=[];
+  if(st.subjects.find(s=>s.name===name)){toast('이미 있는 과목이에요');return;}
+  st.subjects.push({name,type:window._selSubjType||'score'});
+  save();closeModal();S.openS.add(sid);renderTree();toast('✅ '+name+' 과목 추가');
+}
+function delSubj(sid,subj){
+  if(!confirm(subj+' 과목과 모든 시험 데이터가 삭제됩니다'))return;
+  const st=S.students.find(s=>s.id===sid);
+  st.subjects=st.subjects.filter(s=>s.name!==subj);
+  S.exams=S.exams.filter(e=>!(e.sid===sid&&e.subj===subj));
+  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subj)S.sel=null;
+  save();renderTree();renderMain();
+}
+
+// ── MSG ──
+async function autoMsg(){
+  const st=S.students.find(s=>s.id===S.sel.sid);
+  const tc=S.teachers.find(t=>t.id===S.sel.tid);
+  const subj=(st.subjects||[]).find(s=>s.name===S.sel.subj)||{type:'score'};
+  const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
+  const type=subj.type||'score';
+  const unit=type==='count'?'개':'점';
+  const vals=exams.map(e=>e.score);
+  const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
+  const latest=vals.length?vals[vals.length-1]:null;
+  const area=document.getElementById('msg-area');
+  if(!area)return;
+  area.value='✦ 생성 중...';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:500,
+        messages:[{role:'user',content:`학원 학부모 안내 문자를 작성해줘.
+학생: ${st.name} (${st.grade||''})
+과목: ${S.sel.subj}
+담당강사: ${tc?tc.name:''}
+시험 횟수: ${exams.length}회
+평균: ${avg??'없음'}${unit}
+최근 성적: ${latest??'없음'}${unit}
+유형: ${type==='count'?'갯수(단어시험 등)':'점수(시험)'}
+짧고 따뜻하게, 2~3문단, 이모지 포함, 강사이름으로 끝맺음`}]
+      })
     });
-    html+='</div>';
-  }
-  html+='</div><div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px;">';
-  sd.forEach(function(d){
-    html+='<div class="card" style="min-width:160px;flex:1 1 140px;margin-bottom:0;">'+
-      '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'+
-      '<span style="font-weight:700;font-size:14px;">'+d.grade+'</span>'+
-      '<span style="font-size:11px;color:#888;">'+d.count+'명</span></div>'+
-      '<div style="font-size:26px;font-weight:700;color:'+NAVY+';">'+d.avg+'점</div>'+
-      '<div style="font-size:11px;color:#888;margin-top:4px;">평균 점수</div></div>';
-  });
-  html+='</div><div class="card">'+
-    '<div style="font-weight:700;font-size:14px;margin-bottom:14px;">학년별 평균 비교</div>'+
-    '<canvas id="statChart" height="80"></canvas></div>'+
-    '<div class="card" style="padding:0;margin-top:20px;">'+
-    '<div style="padding:10px 16px;border-bottom:1px solid #f0f0f0;font-weight:700;font-size:13px;">'+cur+' 학생 현황 ('+subs.length+'명)</div>'+
-    '<table><thead><tr><th>순위</th><th>이름</th><th>학년</th><th>과목</th><th>담당</th><th>평균 점수</th></tr></thead><tbody>';
-  subs.forEach(function(s,i){
-    html+='<tr><td style="color:#888;">'+(i+1)+'</td><td style="font-weight:500;">'+s.name+'</td>'+
-      '<td>'+s.grade+'</td><td><span class="badge">'+s.subject+'</span></td>'+
-      '<td style="color:#555;">'+s.teacher+'</td>'+
-      '<td style="color:'+GOLD+';font-weight:600;">'+s.avs+'</td></tr>';
-  });
-  html+='</tbody></table></div>';
-  return html;
+    const d=await res.json();
+    area.value=d.content?.[0]?.text||'생성 실패';
+  }catch(e){area.value='생성 실패: '+e.message;}
 }
 
-function drawChart(exList){
-  var ctx=document.getElementById("myChart");if(!ctx)return;
-  var n=exList.length, barThick=n<=2?80:n<=4?60:n<=6?45:35;
-  myChart=new Chart(ctx,{type:"bar",data:{
-    labels:exList.map(function(e){return e.name;}),
-    datasets:[
-      {label:"내 점수",data:exList.map(toScore),backgroundColor:NAVY+"cc",borderRadius:4,barThickness:barThick},
-      {label:"학급평균",data:exList.map(toClsScore),backgroundColor:GOLD+"99",borderRadius:4,barThickness:barThick}
-    ]
-  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},
-    scales:{x:{grid:{display:false}},y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}},
-    layout:{padding:{left:20,right:20}}}});
+function copyMsg(){
+  const a=document.getElementById('msg-area');
+  if(!a||!a.value)return;
+  navigator.clipboard.writeText(a.value).then(()=>toast('📋 복사됐어요'));
 }
 
-function drawUnitChart(uList){
-  var ctx=document.getElementById("unitChart");if(!ctx)return;
-  var n=uList.length, barThick=n<=2?80:n<=4?60:n<=6?45:35;
-  unitChart=new Chart(ctx,{type:"bar",data:{
-    labels:uList.map(function(e){return e.name;}),
-    datasets:[
-      {label:"내 점수",data:uList.map(toScore),backgroundColor:NAVY+"cc",borderRadius:4,barThickness:barThick},
-      {label:"학급평균",data:uList.map(toClsScore),backgroundColor:GOLD+"99",borderRadius:4,barThickness:barThick}
-    ]
-  },options:{responsive:true,plugins:{legend:{labels:{font:{size:11}}}},
-    scales:{x:{grid:{display:false}},y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}},
-    layout:{padding:{left:20,right:20}}}});
-}
+// ── MODAL ──
+function showModal(html){document.getElementById('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
 
-function drawStatChart(){
-  var ctx=document.getElementById("statChart");if(!ctx)return;
-  var lvls=statLevel==="초등"?["초1","초2","초3","초4","초5","초6"]:statLevel==="중학"?["중1","중2","중3"]:["고1","고2","고3"];
-  var sd=lvls.map(function(g){
-    var ax=[];
-    students.filter(function(s){return s.grade===g;}).forEach(function(s){(exams[s.id]||[]).forEach(function(e){ax.push(e);});});
-    return{grade:g,count:students.filter(function(s){return s.grade===g;}).length,avg:ax.length?Math.round(avg(ax.map(toScore))):0};
-  }).filter(function(d){return d.count>0;});
-  statChart=new Chart(ctx,{type:"bar",data:{labels:sd.map(function(d){return d.grade;}),
-    datasets:[{label:"평균 점수",data:sd.map(function(d){return d.avg;}),backgroundColor:NAVY+"cc",borderRadius:4}]},
-    options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100,ticks:{callback:function(v){return v+"점";}}}}}});
-}
-
-// 보고서 이미지 저장
-window.saveImg=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  if(!s){alert("학생을 선택해주세요!");return;}
-  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var myAvg=exList.length?Math.round(avg(exList.map(toScore)))+"점":"-";
-  var clsAvg=exList.length?Math.round(avg(exList.map(toClsScore)))+"점":"-";
-  var msg=document.getElementById("msgArea")?document.getElementById("msgArea").value:"";
-  var div=document.createElement("div");
-  div.style.cssText="position:fixed;left:-9999px;top:0;width:720px;background:#fff;padding:40px;font-family:'Malgun Gothic',sans-serif;";
-  div.innerHTML=
-    '<div style="border:6px solid #d4af37;border-radius:16px;padding:36px 40px;position:relative;">'+
-    '<div style="position:absolute;inset:8px;border:1px solid #f0d98a;border-radius:10px;"></div>'+
-    '<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
-    '<div style="font-size:11px;letter-spacing:5px;color:#b8961e;margin-bottom:8px;">WAWA COACHING CENTER</div>'+
-    '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 성적 보고서</div>'+
-    '<div style="font-size:13px;color:#999;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div>'+
-    '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
-    '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;">내 점수</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
-    '<div style="font-size:11px;color:#b8961e;margin-bottom:6px;">학년 평균</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">시험별 성적</div>'+
-    '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;">'+
-    '<thead><tr style="background:#1a2a4a;"><th style="padding:10px 14px;color:#f0d98a;text-align:left;">날짜</th><th style="padding:10px 14px;color:#f0d98a;text-align:left;">과목</th><th style="padding:10px 14px;color:#f0d98a;text-align:left;">시험명</th><th style="padding:10px 14px;color:#f0d98a;text-align:left;">점수</th><th style="padding:10px 14px;color:#f0d98a;text-align:left;">학급평균</th><th style="padding:10px 14px;color:#f0d98a;text-align:left;">등급</th></tr></thead>'+
-    '<tbody>'+[].concat(exList).reverse().map(function(e){
-      var sc=toScore(e), cs=toClsScore(e);
-      return'<tr><td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;">'+e.date+'</td>'+
-        '<td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;">'+e.subject+'</td>'+
-        '<td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;font-weight:600;">'+e.name+'</td>'+
-        '<td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
-        '<td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
-        '<td style="padding:9px 14px;border-bottom:1px solid #f0e8cc;"><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 10px;font-weight:700;">'+e.grade+'</span></td></tr>';
-    }).join('')+'</tbody></table>'+
-    (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px;margin-bottom:20px;">'+
-    '<div style="font-size:11px;color:#b8961e;font-weight:600;margin-bottom:8px;">학부모 안내 메시지</div>'+
-    '<div style="font-size:13px;line-height:1.9;color:#333;white-space:pre-wrap;">'+msg+'</div></div>':'')+
-    '<div style="text-align:center;padding-top:14px;border-top:1px solid #f0e8cc;font-size:11px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+'</div>'+
-    '</div>';
-  document.body.appendChild(div);
-  html2canvas(div,{scale:2,backgroundColor:"#fff",useCORS:true}).then(function(canvas){
-    var a=document.createElement("a");
-    a.href=canvas.toDataURL("image/png");
-    a.download=s.name+"_성적보고서.png";
-    a.click();
-    document.body.removeChild(div);
-  }).catch(function(){
-    alert("이미지 생성 중 오류가 발생했습니다.");
-    document.body.removeChild(div);
-  });
-};
-
-// 프린트
-window.doPrint=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  if(!s){alert("학생을 선택해주세요!");return;}
-  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var myAvg=exList.length?Math.round(avg(exList.map(toScore)))+"점":"-";
-  var clsAvg=exList.length?Math.round(avg(exList.map(toClsScore)))+"점":"-";
-  var msg=document.getElementById("msgArea")?document.getElementById("msgArea").value:"";
-  var rows=[].concat(exList).reverse().map(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    return'<tr><td>'+e.date+'</td><td>'+e.subject+'</td>'+
-      '<td style="font-weight:600;">'+e.name+'</td>'+
-      '<td style="font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
-      '<td style="color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td></tr>';
-  }).join("");
-  var win=window.open("","_blank","width=900,height=750");
-  win.document.write('<!DOCTYPE html><html lang="ko"><head>'+
-    '<meta charset="UTF-8"/><title>'+s.name+' 성적 보고서</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0;}'+
-    'body{font-family:"Malgun Gothic","맑은 고딕",AppleGothic,sans-serif;background:#fff;color:#222;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
-    '@page{margin:8mm;size:A4;}'+
-    '.wrap{min-height:96vh;border:6px solid #d4af37;border-radius:16px;padding:36px 40px;margin:4px;position:relative;}'+
-    '.inner{position:absolute;inset:8px;border:1px solid #f0d98a;border-radius:10px;pointer-events:none;}'+
-    'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}'+
-    'thead{background:#1a2a4a;}thead th{padding:11px 14px;color:#f0d98a;font-weight:600;text-align:left;}'+
-    'tbody td{padding:10px 14px;border-bottom:1px solid #f0e8cc;}'+
-    'tbody tr:nth-child(even){background:#fcfaf4;}'+
-    '</style></head><body><div class="wrap"><div class="inner"></div>'+
-    '<div style="text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
-    '<div style="font-size:10px;letter-spacing:5px;color:#b8961e;margin-bottom:10px;">WAWA COACHING CENTER</div>'+
-    '<div style="font-size:26px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 성적 보고서</div>'+
-    '<div style="font-size:13px;color:#999;">'+s.grade+' &nbsp;·&nbsp; '+s.subject+' &nbsp;·&nbsp; '+s.teacher+'</div>'+
-    '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
-    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">내 점수</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+myAvg+'</div></div>'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
-    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">학년 평균</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+clsAvg+'</div></div>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">시험별 성적</div>'+
-    '<table><thead><tr><th>날짜</th><th>과목</th><th>시험명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th></tr></thead>'+
-    '<tbody>'+rows+'</tbody></table>'+
-    (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:18px;margin-bottom:20px;">'+
-    '<div style="font-size:10px;color:#b8961e;font-weight:600;letter-spacing:1px;margin-bottom:10px;">학부모 안내 메시지</div>'+
-    '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
-    '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">'+
-    '와와코칭학원 &nbsp;·&nbsp; '+s.teacher+'</div>'+
-    '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
-  win.document.close();
-};
-
-function examFormHTML(e){
-  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
-  var score=e?toScore(e):"", clsScore=e&&e.classAvg>0?toClsScore(e):"";
-  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
-    '<label class="fl">시험명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1차 모의고사"/>'+
-    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
-    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 76"/>'+
-    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 65"/>';
-}
-
-function unitFormHTML(e){
-  var subOpts=["국어","영어","수학","과학"].map(function(s){return'<option'+(e&&e.subject===s?" selected":"")+'>'+s+'</option>';}).join("");
-  var score=e?toScore(e):"", clsScore=e&&e.classAvg>0?toClsScore(e):"";
-  return'<label class="fl">날짜</label><input class="fi" id="mDate" type="date" value="'+(e?e.date:"")+'"/>'+
-    '<label class="fl">단원명</label><input class="fi" id="mEname" value="'+(e?e.name:"")+'" placeholder="예: 1단원, 2단원"/>'+
-    '<label class="fl">과목</label><select class="fi" id="mEsubject">'+subOpts+'</select>'+
-    '<label class="fl">점수 (0~100)</label><input class="fi" id="mScore" type="number" min="0" max="100" value="'+score+'" placeholder="예: 84"/>'+
-    '<label class="fl">학급 평균 점수 (0~100)</label><input class="fi" id="mClsScore" type="number" min="0" max="100" value="'+clsScore+'" placeholder="예: 72"/>';
-}
-
-window.openModal=function(type,examId){
-  var bg=document.getElementById("modalBg"), box=document.getElementById("modalBox");
-  bg.style.display="flex";
-  var gOpts=GRADES.map(function(g){return'<option>'+g+'</option>';}).join("");
-  var tOpts=TEACHERS.map(function(t){return'<option>'+t+'</option>';}).join("");
-  if(type==="addStu"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">학생 추가</h3>'+
-      '<label class="fl">이름</label><input class="fi" id="mName" placeholder="학생 이름"/>'+
-      '<label class="fl">학년</label><select class="fi" id="mGrade">'+gOpts+'</select>'+
-      '<label class="fl">과목</label><select class="fi" id="mSubject"><option>국어</option><option>영어</option><option>수학</option><option>과학</option></select>'+
-      '<label class="fl">담당 선생님</label><select class="fi" id="mTeacher">'+tOpts+'</select>'+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="addStudent()">추가</button></div>';
-  } else if(type==="addExam"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 추가</h3>'+examFormHTML(null)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveExam(null)">저장</button></div>';
-  } else if(type==="editExam"){
-    var e=(exams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
-    if(!e)return;
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">시험 수정</h3>'+examFormHTML(e)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveExam(\''+examId+'\')">저장</button></div>';
-  } else if(type==="addUnit"){
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 추가</h3>'+unitFormHTML(null)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveUnit(null)">저장</button></div>';
-  } else if(type==="editUnit"){
-    var eu=(unitExams[selectedId]||[]).filter(function(x){return x.id===examId;})[0];
-    if(!eu)return;
-    box.innerHTML='<h3 style="font-size:16px;font-weight:700;margin-bottom:18px;">단원평가 수정</h3>'+unitFormHTML(eu)+
-      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px;"><button class="bc" onclick="closeModal()">취소</button><button class="bp" onclick="saveUnit(\''+examId+'\')">저장</button></div>';
-  }
-};
-
-window.closeModal=function(){document.getElementById("modalBg").style.display="none";};
-window.setSubject=function(s){subjectFilter=s;render();};
-window.setTeacher=function(t){teacherFilter=t;render();};
-window.setGrade=function(g){gradeFilter=g;render();};
-window.setTab=function(t){activeTab=t;render();};
-window.setMgmtLevel=function(l){mgmtLevel=l;render();};
-window.setStatLevel=function(l){statLevel=l;statSubLevel="";render();};
-window.setStatSub=function(s){statSubLevel=s;render();};
-window.selectStudent=function(id){selectedId=id;render();};
-
-window.delStudent=function(id){
-  if(!confirm("학생을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  var dels=[fsDel("students",id)];
-  (exams[id]||[]).forEach(function(e){dels.push(fsDel("exams",e.id));});
-  (unitExams[id]||[]).forEach(function(e){dels.push(fsDel("unitExams",e.id));});
-  Promise.all(dels).then(function(){if(selectedId===id)selectedId=null;loadData();});
-};
-window.delExam=function(id){
-  if(!confirm("시험 기록을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  fsDel("exams",id).then(loadData);
-};
-window.delUnit=function(id){
-  if(!confirm("단원평가 기록을 삭제할까요?"))return;
-  setStatus("저장 중...","#f7a94f");
-  fsDel("unitExams",id).then(loadData);
-};
-window.addStudent=function(){
-  var name=document.getElementById("mName").value.trim();
-  if(!name){alert("이름을 입력해주세요!");return;}
-  var id="s_"+Date.now();
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("students",id,{name:name,grade:document.getElementById("mGrade").value,
-    subject:document.getElementById("mSubject").value,teacher:document.getElementById("mTeacher").value})
-    .then(function(){selectedId=id;closeModal();loadData();});
-};
-window.saveExam=function(eid){
-  var date=document.getElementById("mDate").value;
-  var name=document.getElementById("mEname").value.trim();
-  var score=Number(document.getElementById("mScore").value);
-  var clsScore=Number(document.getElementById("mClsScore").value)||0;
-  if(!date||!name||!score){alert("날짜, 시험명, 점수를 입력해주세요!");return;}
-  var id=eid||("e_"+Date.now());
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("exams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
-    total:100,correct:score,classAvg:clsScore,grade:scoreGrade(score),studentId:selectedId})
-    .then(function(){closeModal();loadData();});
-};
-window.saveUnit=function(eid){
-  var date=document.getElementById("mDate").value;
-  var name=document.getElementById("mEname").value.trim();
-  var score=Number(document.getElementById("mScore").value);
-  var clsScore=Number(document.getElementById("mClsScore").value)||0;
-  if(!date||!name||!score){alert("날짜, 단원명, 점수를 입력해주세요!");return;}
-  var id=eid||("u_"+Date.now());
-  setStatus("저장 중...","#f7a94f");
-  fsPatch("unitExams",id,{date:date,name:name,subject:document.getElementById("mEsubject").value,
-    total:100,correct:score,classAvg:clsScore,grade:scoreGrade(score),studentId:selectedId})
-    .then(function(){closeModal();loadData();});
-};
-window.generateMsg=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var exList=(exams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  if(!s||!exList.length){alert("시험 기록이 없습니다.");return;}
-  var btn=document.getElementById("genBtn");
-  if(btn)btn.textContent="생성 중...";
-  var latest=exList[exList.length-1];
-  var latestScore=toScore(latest);
-  var latestClsScore=toClsScore(latest);
-  var myAvgScore=Math.round(avg(exList.map(toScore)));
-  var clsAvgScore=Math.round(avg(exList.map(toClsScore)));
-  var diff=latestScore-latestClsScore;
-  var good=feedGood.trim();
-  var improve=feedImprove.trim();
-  var direction=feedDirection.trim();
-  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n"+
-    "와와코칭학원 "+s.teacher+"입니다.\n\n"+
-    "이번 "+latest.name+" 결과("+latestScore+"점"+(latestClsScore>0?", 학급평균 "+latestClsScore+"점":"")+")에 대해 안내드립니다.\n\n"+
-    "✅ 잘한 점\n"+(good||"꾸준히 수업에 참여하고 있습니다.")+"\n\n"+
-    "📝 보완이 필요한 부분\n"+(improve||"틀린 문제를 다시 풀어보는 복습이 필요합니다.")+"\n\n"+
-    "📚 앞으로의 학습 방향\n"+(direction||"꾸준한 예습·복습을 통해 실력을 쌓아갈 수 있도록 지도하겠습니다.")+"\n\n"+
-    "궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
-  var area=document.getElementById("msgArea");
-  if(area){area.value=msg;savedMsg=msg;}
-  if(btn)btn.textContent="✦ AI 메시지 생성";
-};
-window.generateUnitMsg=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  if(!s||!uList.length){alert("단원평가 기록이 없습니다.");return;}
-  var btn=document.getElementById("genUnitBtn");
-  if(btn)btn.textContent="생성 중...";
-  var latest=uList[uList.length-1];
-  var latestScore=toScore(latest);
-  var latestClsScore=toClsScore(latest);
-  var myAvgScore=Math.round(avg(uList.map(toScore)));
-  var diff=latestScore-latestClsScore;
-  var grade=latest.grade;
-  var comment=grade==="A"?"매우 우수하게 단원 내용을 이해하고 있습니다.":grade==="B"?"단원 내용을 잘 이해하고 있으며, 조금 더 노력하면 더욱 좋은 결과를 얻을 수 있습니다.":grade==="C"?"일부 개념 보완이 필요하며, 집중적인 복습을 통해 실력을 키워나가겠습니다.":"해당 단원에 대한 추가 지도가 필요하며, 개별 지도를 통해 기초를 다질 수 있도록 하겠습니다.";
-  var diffTxt=diff>0?"학급 평균보다 "+diff+"점 높은":diff<0?"학급 평균보다 "+Math.abs(diff)+"점 낮은":"학급 평균과 동일한";
-  var msg="안녕하세요, "+s.name+" 학생 학부모님.\n와와코칭학원 "+s.teacher+"입니다.\n\n"+
-    "["+latest.name+" 단원평가 결과]\n점수: "+latestScore+"점"+(latestClsScore>0?" (학급 평균 "+latestClsScore+"점, "+diffTxt+" 결과)":"")+"\n"+
-    comment+"\n\n단원평가 평균 점수 "+myAvgScore+"점으로, "+
-    "앞으로도 "+s.name+" 학생이 각 단원을 충실히 학습할 수 있도록 최선을 다하겠습니다.\n궁금하신 점이 있으시면 언제든지 연락 주세요. 감사합니다.";
-  var area=document.getElementById("unitMsgArea");
-  if(area){area.value=msg;savedUnitMsg=msg;}
-  if(btn)btn.textContent="✦ 자동 생성";
-};
-window.convertMsg=function(){
-  var msg=document.getElementById("msgArea");
-  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
-  if(navigator.clipboard){navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});}
-};
-window.saveTxt=function(){
-  var msg=document.getElementById("msgArea");
-  if(!msg||!msg.value.trim()){alert("메시지를 먼저 작성해주세요!");return;}
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var blob=new Blob(["[와와코칭학원 보고서]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download=(s?s.name:"")+"_보고서.txt";a.click();
-};
-window.convertUnitMsg=function(){
-  var msg=document.getElementById("unitMsgArea");
-  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
-  if(navigator.clipboard){navigator.clipboard.writeText("[와와코칭학원]\n"+msg.value).then(function(){alert("클립보드에 복사됐어요!");});}
-};
-window.saveUnitTxt=function(){
-  var msg=document.getElementById("unitMsgArea");
-  if(!msg||!msg.value.trim()){alert("피드백을 먼저 작성해주세요!");return;}
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  var blob=new Blob(["[와와코칭학원 단원평가 피드백]\n"+(s?s.name:"")+" 학생\n\n"+msg.value],{type:"text/plain;charset=utf-8"});
-  var a=document.createElement("a");a.href=URL.createObjectURL(blob);
-  a.download=(s?s.name:"")+"_단원평가피드백.txt";a.click();
-};
-window.doPrintUnit=function(){
-  var s=students.filter(function(x){return x.id===selectedId;})[0];
-  if(!s){alert("학생을 선택해주세요!");return;}
-  var uList=(unitExams[selectedId]||[]).slice().sort(function(a,b){return a.date.localeCompare(b.date);});
-  var uAvg=uList.length?Math.round(avg(uList.map(toScore)))+"점":"-";
-  var uClsAvg=uList.length?Math.round(avg(uList.map(toClsScore)))+"점":"-";
-  var msg=document.getElementById("unitMsgArea")?document.getElementById("unitMsgArea").value:"";
-  var rows=[].concat(uList).reverse().map(function(e){
-    var sc=toScore(e), cs=toClsScore(e), d=sc-cs;
-    return'<tr><td>'+e.date+'</td><td>'+e.subject+'</td><td style="font-weight:600;">'+e.name+'</td>'+
-      '<td style="font-weight:700;color:#1a2a4a;">'+sc+'점</td>'+
-      '<td style="color:#b8961e;">'+(cs>0?cs+"점":"-")+'</td>'+
-      '<td style="color:'+(d>=0?"#2e6fd4":"#c0392b")+';">'+(cs>0?(d>0?"+"+d+"점":d+"점"):"-")+'</td>'+
-      '<td><span style="background:'+gc(e.grade)+';color:#fff;border-radius:20px;padding:2px 12px;font-weight:700;">'+e.grade+'</span></td></tr>';
-  }).join("");
-  var win=window.open("","_blank","width=900,height=750");
-  win.document.write('<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/><title>'+s.name+' 단원평가 피드백</title>'+
-    '<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:"Malgun Gothic",sans-serif;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact;}'+
-    '@page{margin:8mm;size:A4;}.wrap{min-height:96vh;border:6px solid #d4af37;border-radius:16px;padding:36px 40px;margin:4px;position:relative;}'+
-    '.inner{position:absolute;inset:8px;border:1px solid #f0d98a;border-radius:10px;pointer-events:none;}'+
-    'table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:20px;}'+
-    'thead{background:#1a2a4a;}thead th{padding:11px 14px;color:#f0d98a;font-weight:600;text-align:left;}'+
-    'tbody td{padding:10px 14px;border-bottom:1px solid #f0e8cc;}</style></head><body>'+
-    '<div class="wrap"><div class="inner"></div>'+
-    '<div style="text-align:center;margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid #f0e8cc;">'+
-    '<div style="font-size:10px;letter-spacing:5px;color:#b8961e;margin-bottom:8px;">WAWA COACHING CENTER</div>'+
-    '<div style="font-size:24px;font-weight:700;color:#1a2a4a;margin-bottom:6px;">'+s.name+' 학생 단원평가 피드백</div>'+
-    '<div style="font-size:13px;color:#999;">'+s.grade+' · '+s.subject+' · '+s.teacher+'</div>'+
-    '<div style="width:60px;height:2px;background:#d4af37;margin:12px auto 0;"></div></div>'+
-    '<div style="display:flex;justify-content:center;gap:16px;margin-bottom:24px;">'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;">'+
-    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">평균 점수</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#1a2a4a;">'+uAvg+'</div></div>'+
-    '<div style="border:1.5px solid #d4af37;border-radius:10px;padding:16px 40px;text-align:center;background:#fffdf0;">'+
-    '<div style="font-size:10px;color:#b8961e;margin-bottom:8px;">학급 평균</div>'+
-    '<div style="font-size:22px;font-weight:700;color:#b8961e;">'+uClsAvg+'</div></div>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:700;color:#1a2a4a;border-left:4px solid #d4af37;padding-left:10px;margin-bottom:14px;">단원별 성적</div>'+
-    '<table><thead><tr><th>날짜</th><th>과목</th><th>단원명</th><th>점수</th><th>학급평균</th><th>평균대비</th><th>등급</th></tr></thead>'+
-    '<tbody>'+rows+'</tbody></table>'+
-    (msg?'<div style="border:1.5px solid #d4af37;border-radius:10px;padding:18px;margin-bottom:20px;">'+
-    '<div style="font-size:10px;color:#b8961e;font-weight:600;margin-bottom:10px;">선생님 피드백</div>'+
-    '<div style="font-size:13px;line-height:1.9;color:#333;">'+msg.replace(/\n/g,"<br>")+'</div></div>':"") +
-    '<div style="text-align:center;padding-top:16px;border-top:1px solid #f0e8cc;font-size:10px;color:#b8961e;letter-spacing:2px;">와와코칭학원 · '+s.teacher+'</div>'+
-    '</div><script>setTimeout(function(){window.print();},400);<\/script></body></html>');
-  win.document.close();
-};
-
-loadData();
+// ── INIT ──
+renderTree();
+renderMain();
 </script>
 </body>
 </html>
