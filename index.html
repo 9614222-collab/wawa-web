@@ -409,24 +409,14 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;">
-        <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:14px 16px;">
-          <div style="font-size:10px;font-weight:700;color:#15803d;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">✅ 잘한 점</div>
-          <textarea id="fb-good" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 집중력 좋음, 계산 정확" oninput="saveFb()">${getFb('good')}</textarea>
-        </div>
-        <div style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid #fdba74;border-radius:12px;padding:14px 16px;">
-          <div style="font-size:10px;font-weight:700;color:#c2410c;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">⚠️ 아쉬운 점</div>
-          <textarea id="fb-bad" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 서술형 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
-        </div>
-        <div style="background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;">
-          <div style="font-size:10px;font-weight:700;color:#6d28d9;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">🎯 앞으로의 방향</div>
-          <textarea id="fb-next" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 오답노트, 응용문제 집중" oninput="saveFb()">${getFb('next')}</textarea>
-        </div>
+      <div style="background:linear-gradient(135deg,#f8faff,#f0f4ff);border:1.5px solid #e0e7ff;border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px;">선생님 메모를 자유롭게 입력하세요</div>
+        <textarea id="fb-memo" style="width:100%;min-height:120px;padding:12px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예&#10;잘한점: 집중력 좋음, 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getSavedMemo()}</textarea>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:14px;">
         <button class="msg-auto-btn" onclick="autoMsg()" style="padding:11px 28px;font-size:13px;border-radius:10px;gap:7px;">✦ AI로 정리하기</button>
       </div>
-      <textarea class="msg-textarea" id="msg-area" style="min-height:160px;" placeholder="위에 내용을 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getSavedMsg()}</textarea>
+      <textarea class="msg-textarea" id="msg-area" style="min-height:160px;" placeholder="위에 메모를 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getSavedMsg()}</textarea>
       <div style="display:flex;justify-content:flex-end;margin-top:8px;">
         <button class="msg-copy-btn" onclick="copyMsg()">📋 복사</button>
       </div>
@@ -462,10 +452,8 @@ async function autoMsg(){
   const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
   const type=subj.type||'score';const unit=type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);const latest=vals.length?vals[vals.length-1]:null;
-  const good=document.getElementById('fb-good')?.value||'';
-  const bad=document.getElementById('fb-bad')?.value||'';
-  const next=document.getElementById('fb-next')?.value||'';
-  if(!good&&!bad&&!next){toast('잘한 점, 아쉬운 점, 방향을 먼저 입력해주세요!');return;}
+  const memo=document.getElementById('fb-memo')?.value||'';
+  if(!memo.trim()){toast('선생님 메모를 먼저 입력해주세요!');return;}
   const area=document.getElementById('msg-area');if(!area)return;
   area.value='✦ AI가 정리 중...';
   try{
@@ -473,10 +461,12 @@ async function autoMsg(){
       body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:700,
         messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 문자를 자연스럽게 작성해줘.
 학생: ${st.name} (${st.grade||''}) / 과목: ${S.sel.subj} / 담당: ${tc?tc.name:'선생님'} / 최근 성적: ${latest??'없음'}${unit}
-✅ 잘한 점: ${good||'없음'}
-⚠️ 아쉬운 점: ${bad||'없음'}
-🎯 앞으로의 방향: ${next||'없음'}
-따뜻하고 전문적인 톤, 이모지 포함, 2~3문단, 강사 이름으로 끝맺음.`}]})});
+
+[선생님 메모]
+${memo}
+
+위 메모에서 잘한 점, 아쉬운 점, 앞으로의 방향을 파악해서 학부모님께 전달하는 따뜻하고 전문적인 문자로 정리해줘.
+이모지 포함, 2~3문단, 강사 이름으로 끝맺음.`}]})});
     const raw=await res.text();let d;
     try{d=JSON.parse(raw);}catch(e){area.value='파싱오류: '+raw;return;}
     if(d.error){area.value='API오류: '+JSON.stringify(d.error);return;}
