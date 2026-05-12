@@ -688,7 +688,7 @@ async function autoMsg(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:600,
+        model:'claude-sonnet-4-5',max_tokens:600,
         messages:[{role:'user',content:`학원 학부모 안내 문자를 작성해줘.
 학생: ${st.name} (${st.grade||''})
 과목: ${S.sel.subj}
