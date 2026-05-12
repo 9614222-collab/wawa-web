@@ -703,8 +703,12 @@ async function autoMsg(){
 짧고 따뜻하게, 2~3문단, 이모지 포함, 강사이름으로 끝맺음.`}]
       })
     });
-    const d=await res.json();
-    area.value=d.content?.[0]?.text||'생성 실패';
+    const raw=await res.text();
+    console.log('raw response:',raw);
+    let d;
+    try{d=JSON.parse(raw);}catch(e){area.value='파싱오류: '+raw;return;}
+    if(d.error) { area.value='API오류: '+JSON.stringify(d.error); return; }
+    area.value=d.content?.[0]?.text||'내용없음: '+raw;
   }catch(e){area.value='생성 실패: '+e.message;}
 }
 
