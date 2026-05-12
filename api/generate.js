@@ -9,6 +9,9 @@ export default async function handler(req, res) {
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    console.log('body:', JSON.stringify(body));
+    console.log('key exists:', !!process.env.ANTHROPIC_KEY);
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -18,9 +21,12 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(body),
     });
-    const data = await response.json();
-    res.status(200).json(data);
+
+    const text = await response.text();
+    console.log('anthropic response:', text);
+    res.status(200).send(text);
   } catch (e) {
-    res.status(500).json({ error: e.message, stack: e.stack });
+    console.error('error:', e.message);
+    res.status(500).json({ error: e.message });
   }
 }
