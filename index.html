@@ -73,7 +73,8 @@ input,select,textarea{font-family:inherit;}
 .save-header-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(10,15,30,.3);}
 
 /* CONTENT */
-.content{flex:1;overflow-y:auto;padding:24px 28px;}
+.content{flex:1;overflow-y:auto;padding:28px 0;}
+.content-inner{max-width:860px;margin:0 auto;padding:0 28px;}
 .content::-webkit-scrollbar{width:5px;}
 .content::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;}
@@ -345,7 +346,7 @@ function renderDetail(st,subj){
       <div class="exam-actions"><button class="exam-edit-btn" onclick="openEditExam(${e.id})">✏️</button><button class="exam-del-btn" onclick="delExam(${e.id})">🗑</button></div>
     </div>`;
   }).join('');
-  document.getElementById('content').innerHTML=`
+  document.getElementById('content').innerHTML=`<div class="content-inner">
     <div class="score-grid">
       <div class="score-card sc-1"><div class="score-card-label">최근 ${unit==='개'?'갯수':'점수'}</div><div class="score-card-val">${latest??'—'}<span class="score-card-unit">${unit}</span></div><div class="score-card-sub">${exams.length?exams[exams.length-1].name:''}</div></div>
       <div class="score-card sc-2"><div class="score-card-label">최고 ${unit==='개'?'갯수':'점수'}</div><div class="score-card-val">${max??'—'}<span class="score-card-unit">${unit}</span></div></div>
@@ -359,8 +360,8 @@ function renderDetail(st,subj){
         <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:138px;"/></div>
         <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="${type==='count'?'예: 23':'예: 85'}" style="width:88px;"/></div>
         <div class="form-group" style="justify-content:flex-end;"><button class="btn-primary" onclick="addExam()">+ 추가</button></div>
-      </div></div>
-    </div>`;
+      </div>      </div>
+    </div></div>`;
 }
 
 // REPORT
@@ -376,7 +377,7 @@ function renderReport(st,subj,tc){
     return`<div class="re-item"><div style="flex:1"><div class="re-name">${e.name}</div><div class="re-meta">${e.date}</div></div><div class="re-score">${e.score}${unit}</div>${g?`<div class="grade-badge g${g}">${g}</div>`:''}</div>`;
   }).join('');
 
-  document.getElementById('content').innerHTML=`
+  document.getElementById('content').innerHTML=`<div class="content-inner">
     <div class="report-hero">
       <div class="rh-glow1"></div><div class="rh-glow2"></div>
       <div class="rh-header">
@@ -408,32 +409,31 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
-      <div class="fb-grid">
-        <div class="fb-item fb-good">
-          <div class="fb-label">✅ 잘한 점</div>
-          <textarea class="fb-textarea" id="fb-good" placeholder="예: 집중력 좋음, 계산 정확" oninput="saveFb()">${getFb('good')}</textarea>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:18px;">
+        <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:14px 16px;">
+          <div style="font-size:10px;font-weight:700;color:#15803d;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">✅ 잘한 점</div>
+          <textarea id="fb-good" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 집중력 좋음, 계산 정확" oninput="saveFb()">${getFb('good')}</textarea>
         </div>
-        <div class="fb-item fb-bad">
-          <div class="fb-label">⚠️ 아쉬운 점</div>
-          <textarea class="fb-textarea" id="fb-bad" placeholder="예: 서술형 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
+        <div style="background:linear-gradient(135deg,#fff7ed,#ffedd5);border:1.5px solid #fdba74;border-radius:12px;padding:14px 16px;">
+          <div style="font-size:10px;font-weight:700;color:#c2410c;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">⚠️ 아쉬운 점</div>
+          <textarea id="fb-bad" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 서술형 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
         </div>
-        <div class="fb-item fb-next">
-          <div class="fb-label">🎯 앞으로의 방향</div>
-          <textarea class="fb-textarea" id="fb-next" placeholder="예: 오답노트, 응용문제 집중" oninput="saveFb()">${getFb('next')}</textarea>
-        </div>
-      </div>
-      <hr class="msg-divider"/>
-      <div class="msg-header">
-        <span class="msg-label">전체 메시지 (학부모 전달용)</span>
-        <div class="msg-btns">
-          <button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>
-          <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
+        <div style="background:linear-gradient(135deg,#faf5ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;">
+          <div style="font-size:10px;font-weight:700;color:#6d28d9;margin-bottom:8px;letter-spacing:.04em;text-transform:uppercase;">🎯 앞으로의 방향</div>
+          <textarea id="fb-next" style="width:100%;min-height:80px;padding:10px 12px;border:1.5px solid transparent;border-radius:8px;font-size:12px;line-height:1.7;resize:vertical;outline:none;background:rgba(255,255,255,.75);color:var(--text);font-family:inherit;" placeholder="예: 오답노트, 응용문제 집중" oninput="saveFb()">${getFb('next')}</textarea>
         </div>
       </div>
-      <textarea class="msg-textarea" id="msg-area" placeholder="위에 잘한 점, 아쉬운 점, 방향을 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getSavedMsg()}</textarea>
+      <div style="display:flex;justify-content:center;margin-bottom:14px;">
+        <button class="msg-auto-btn" onclick="autoMsg()" style="padding:11px 28px;font-size:13px;border-radius:10px;gap:7px;">✦ AI로 정리하기</button>
+      </div>
+      <textarea class="msg-textarea" id="msg-area" style="min-height:160px;" placeholder="위에 내용을 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getSavedMsg()}</textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+        <button class="msg-copy-btn" onclick="copyMsg()">📋 복사</button>
+      </div>
     </div>
 
-    <div class="report-footer">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>`;
+    <div class="report-footer">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
+  </div>`;
 
   if(exams.length>=2) drawChart(exams,type,avg);
 }
