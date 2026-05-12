@@ -394,19 +394,24 @@ function renderReport(st,subj,tc){
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
       <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#6d28d9;font-weight:600;margin-bottom:10px;">✏️ 선생님 메모</div>
+        <div style="font-size:11px;color:#6d28d9;font-weight:700;margin-bottom:6px;">✏️ 선생님 메모</div>
         <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;line-height:1.7;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
-        <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;transition:border .15s;" placeholder="예) 집중력이 좋고 계산이 정확합니다. 서술형 문제가 아직 부족합니다. 앞으로 오답노트를 작성하겠습니다." oninput="saveMemo()">${getMemo()}</textarea>
+        <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예) 잘한점: 집중력 좋고 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getMemo()}</textarea>
       </div>
       <div style="display:flex;justify-content:center;margin-bottom:16px;">
         <button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>
       </div>
-      <div style="position:relative;">
-        <textarea class="msg-textarea" id="msg-area" placeholder="위에 메모를 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getMsg()}</textarea>
-        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+      <div id="msg-result-box" style="${getMsg()?'':'display:none;'}">
+        <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:22px 24px;margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;letter-spacing:.05em;">📋 학부모 안내 메시지</div>
+          <div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);white-space:pre-wrap;">${getMsg()}</div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;">
           <button class="msg-copy-btn" onclick="copyMsg()">📋 복사하기</button>
+          <button class="msg-copy-btn" onclick="editMsg()" style="border-color:#c4b5fd;color:#7c3aed;">✏️ 직접 수정</button>
         </div>
       </div>
+      <textarea class="msg-textarea" id="msg-area" style="${getMsg()?'display:none;':''}" placeholder="위에 메모를 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getMsg()}</textarea>
     </div>
 
     <div class="report-footer">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
@@ -475,10 +480,29 @@ async function autoMsg(){
     try{d=JSON.parse(raw);}catch(e){area.value='파싱오류: '+raw;return;}
     if(d.error){area.value='API오류: '+JSON.stringify(d.error);return;}
     const txt=d.content?.[0]?.text||'내용없음';
-    area.value=txt;localStorage.setItem(msgKey(),txt);
+    localStorage.setItem(msgKey(),txt);
+    // 결과 렌더링
+    const resultBox=document.getElementById('msg-result-box');
+    const rendered=document.getElementById('msg-rendered');
+    const textarea=document.getElementById('msg-area');
+    if(resultBox&&rendered&&textarea){
+      rendered.textContent=txt;
+      resultBox.style.display='block';
+      textarea.style.display='none';
+      textarea.value=txt;
+    }
   }catch(e){area.value='오류: '+e.message;}
 }
-function copyMsg(){const a=document.getElementById('msg-area');if(!a||!a.value)return;navigator.clipboard.writeText(a.value).then(()=>toast('📋 복사됐어요'));}
+function copyMsg(){
+  const txt=document.getElementById('msg-rendered')?.textContent||document.getElementById('msg-area')?.value||'';
+  if(!txt)return;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됐어요'));
+}
+function editMsg(){
+  const resultBox=document.getElementById('msg-result-box');
+  const textarea=document.getElementById('msg-area');
+  if(resultBox&&textarea){resultBox.style.display='none';textarea.style.display='block';textarea.focus();}
+}
 
 // SAVE IMAGE
 async function saveReportImage(){
