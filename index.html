@@ -552,7 +552,14 @@ async function saveReportImage(){
   const el=document.getElementById('content');if(!el)return;
   toast('📸 이미지 생성 중...');
   const orig=el.scrollTop;el.scrollTop=0;
-  await new Promise(r=>setTimeout(r,300));
+  // 선생님 메모 숨기기
+  const memoSection=document.querySelector('#memo-box')?.closest('div[style]')||null;
+  const memoWrap=document.getElementById('memo-box')?.parentElement?.parentElement;
+  if(memoWrap)memoWrap.style.display='none';
+  // AI 버튼 숨기기
+  const aiBtn=document.querySelector('.msg-auto-btn');
+  if(aiBtn)aiBtn.parentElement.style.display='none';
+  await new Promise(r=>setTimeout(r,200));
   try{
     const canvas=await html2canvas(el,{
       backgroundColor:'#eef0f8',scale:2,useCORS:true,
@@ -566,6 +573,9 @@ async function saveReportImage(){
     link.href=canvas.toDataURL('image/png');link.click();
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
+  // 다시 보이게
+  if(memoWrap)memoWrap.style.display='';
+  if(aiBtn)aiBtn.parentElement.style.display='';
   el.scrollTop=orig;
 }
 
