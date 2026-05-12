@@ -246,9 +246,12 @@ input,select,textarea{font-family:inherit;}
         <div class="h-name" id="h-name">WAWA 코칭센터</div>
         <div class="h-meta" id="h-meta">강사 → 학생 → 과목을 선택하세요</div>
       </div>
-      <div class="h-tabs" id="h-tabs" style="display:none;">
-        <button class="h-tab on" onclick="setTab('detail')" id="tab-detail">상세</button>
-        <button class="h-tab" onclick="setTab('report')" id="tab-report">보고서</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="h-tabs" id="h-tabs" style="display:none;">
+          <button class="h-tab on" onclick="setTab('detail')" id="tab-detail">상세</button>
+          <button class="h-tab" onclick="setTab('report')" id="tab-report">보고서</button>
+        </div>
+        <button id="save-img-header" style="display:none;" onclick="saveReportImage()" class="btn-primary" style="padding:8px 16px;font-size:12px;">📥 이미지 저장</button>
       </div>
     </div>
     <div class="content" id="content">
@@ -345,6 +348,8 @@ function renderMain(){
   const tc=S.teachers.find(t=>t.id===S.sel.tid);
   const subj=(st.subjects||[]).find(s=>s.name===S.sel.subj)||{name:S.sel.subj,type:'score'};
   tabs.style.display='flex';
+  const saveBtn=document.getElementById('save-img-header');
+  if(saveBtn) saveBtn.style.display=S.tab==='report'?'flex':'none';
   ['detail','report'].forEach(t=>document.getElementById('tab-'+t).classList.toggle('on',S.tab===t));
   document.getElementById('h-name').textContent=st.name+' 학생';
   document.getElementById('h-meta').innerHTML=`${st.grade||''}<span class="h-meta-dot"></span><strong>${S.sel.subj}</strong><span class="h-meta-dot"></span>${tc?tc.name+' 선생님':''}`;
@@ -421,6 +426,10 @@ function renderReport(st,subj,tc){
     <div class="report-hero">
       <div class="rh-bg1"></div><div class="rh-bg2"></div>
       <div class="rh-top">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:var(--navy);box-shadow:0 4px 12px rgba(245,158,11,.4);">W</div>
+          <div><div style="font-size:13px;font-weight:800;color:#fff;letter-spacing:.02em;">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.12em;">코 칭 센 터</div></div>
+        </div>
         <div class="rh-badge">✦ 학습 성과 리포트</div>
         <div class="rh-date">${today} 발행</div>
       </div>
@@ -470,8 +479,7 @@ function renderReport(st,subj,tc){
       <textarea class="msg-textarea" id="msg-area" placeholder="피드백을 입력하거나 AI 자동 생성 버튼을 눌러보세요..."></textarea>
     </div>
 
-    <div class="report-footer">WAWA 코칭센터 &nbsp;·&nbsp; ${tc?tc.name+' 선생님':'담당 선생님'} &nbsp;·&nbsp; ${today}</div>
-    <button class="save-img-btn" onclick="saveReportImage()">📥 보고서 이미지 저장</button>`;
+    <div class="report-footer">WAWA 코칭센터 &nbsp;·&nbsp; ${tc?tc.name+' 선생님':'담당 선생님'} &nbsp;·&nbsp; ${today}</div>`;
 
   if(exams.length>=2) drawChart(exams,type,avg);
 }
