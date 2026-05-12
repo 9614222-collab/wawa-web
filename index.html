@@ -558,12 +558,21 @@ function copyMsg(){const a=document.getElementById('msg-area');if(!a||!a.value)r
 async function saveReportImage(){
   const el=document.getElementById('content');if(!el)return;
   toast('📸 이미지 생성 중...');
+  const origScroll=el.scrollTop;
+  el.scrollTop=0;
+  await new Promise(r=>setTimeout(r,300));
   try{
     const canvas=await html2canvas(el,{
-      backgroundColor:'#f8f9fc',scale:2,useCORS:true,
-      scrollY:-window.scrollY,scrollX:0,
-      windowWidth:el.scrollWidth,windowHeight:el.scrollHeight,
-      width:el.scrollWidth,height:el.scrollHeight,
+      backgroundColor:'#f8f9fc',
+      scale:2,
+      useCORS:true,
+      scrollX:0,
+      scrollY:0,
+      x:0,y:0,
+      width:el.clientWidth,
+      height:el.scrollHeight,
+      windowWidth:el.clientWidth,
+      windowHeight:el.scrollHeight,
     });
     const st=S.students.find(s=>s.id===S.sel?.sid);
     const link=document.createElement('a');
@@ -572,6 +581,7 @@ async function saveReportImage(){
     link.click();
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
+  el.scrollTop=origScroll;
 }
 
 // ── EXAM CRUD ──
