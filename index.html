@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>WAWA 코칭센터</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -480,6 +481,11 @@ function renderReport(st,subj,tc){
 
     <div style="text-align:center;padding:10px;color:var(--muted);font-size:11px;">
       WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${new Date().toLocaleDateString('ko-KR')} 발행
+    </div>
+    <div style="display:flex;justify-content:center;padding-bottom:20px;">
+      <button class="msg-auto-btn" onclick="saveReportImage()" style="gap:8px;padding:10px 24px;font-size:13px;">
+        <span>📥</span> 보고서 이미지 저장
+      </button>
     </div>`;
 
   if(exams.length>=2) drawChart(exams,type);
@@ -670,8 +676,10 @@ async function autoMsg(){
   const type=subj.type||'score';
   const unit=type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);
-  const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
   const latest=vals.length?vals[vals.length-1]:null;
+  const good=document.getElementById('fb-good')?.value||'';
+  const bad=document.getElementById('fb-bad')?.value||'';
+  const next=document.getElementById('fb-next')?.value||'';
   const area=document.getElementById('msg-area');
   if(!area)return;
   area.value='✦ 생성 중...';
@@ -680,16 +688,19 @@ async function autoMsg(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:500,
+        model:'claude-sonnet-4-20250514',max_tokens:600,
         messages:[{role:'user',content:`학원 학부모 안내 문자를 작성해줘.
 학생: ${st.name} (${st.grade||''})
 과목: ${S.sel.subj}
 담당강사: ${tc?tc.name:''}
 시험 횟수: ${exams.length}회
-평균: ${avg??'없음'}${unit}
 최근 성적: ${latest??'없음'}${unit}
-유형: ${type==='count'?'갯수(단어시험 등)':'점수(시험)'}
-짧고 따뜻하게, 2~3문단, 이모지 포함, 강사이름으로 끝맺음`}]
+✅ 잘한 점: ${good||'없음'}
+⚠️ 보완이 필요한 부분: ${bad||'없음'}
+🎯 앞으로의 학습 방향: ${next||'없음'}
+---
+위 피드백 내용을 자연스럽게 녹여서 학부모 안내 문자를 써줘.
+짧고 따뜻하게, 2~3문단, 이모지 포함, 강사이름으로 끝맺음.`}]
       })
     });
     const d=await res.json();
@@ -701,6 +712,29 @@ function copyMsg(){
   const a=document.getElementById('msg-area');
   if(!a||!a.value)return;
   navigator.clipboard.writeText(a.value).then(()=>toast('📋 복사됐어요'));
+}
+
+// ── SAVE IMAGE ──
+async function saveReportImage(){
+  const el=document.getElementById('content');
+  if(!el)return;
+  toast('📸 이미지 생성 중...');
+  try{
+    const canvas=await html2canvas(el,{
+      backgroundColor:'#f0f2f8',
+      scale:2,
+      useCORS:true,
+      scrollY:0,
+      windowWidth:el.scrollWidth,
+      height:el.scrollHeight,
+    });
+    const link=document.createElement('a');
+    const st=S.students.find(s=>s.id===S.sel?.sid);
+    link.download=`WAWA_${st?st.name:'보고서'}_${S.sel?.subj||''}_${new Date().toLocaleDateString('ko-KR').replace(/\./g,'').replace(/ /g,'')}.png`;
+    link.href=canvas.toDataURL('image/png');
+    link.click();
+    toast('✅ 저장됐어요');
+  }catch(e){toast('저장 실패: '+e.message);}
 }
 
 // ── MODAL ──
