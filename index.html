@@ -684,7 +684,7 @@ async function autoMsg(){
   if(!area)return;
   area.value='✦ 생성 중...';
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    const res=await fetch('/api/generate',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
