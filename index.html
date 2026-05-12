@@ -455,21 +455,6 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title"><div class="card-title-left">학부모 안내 메시지</div></div>
-      <div class="fb-section">
-        <div class="fb-item fb-good">
-          <div class="fb-label">✅ 잘한 점</div>
-          <textarea class="fb-textarea" id="fb-good" placeholder="예: 계산 문제 정확, 집중력 좋음" oninput="saveFb()">${fbGood}</textarea>
-        </div>
-        <div class="fb-item fb-bad">
-          <div class="fb-label">⚠️ 보완이 필요한 부분</div>
-          <textarea class="fb-textarea" id="fb-bad" placeholder="예: 서술형 문제 취약, 단위 실수" oninput="saveFb()">${fbBad}</textarea>
-        </div>
-        <div class="fb-item fb-next">
-          <div class="fb-label">🎯 앞으로의 학습 방향</div>
-          <textarea class="fb-textarea" id="fb-next" placeholder="예: 응용문제 집중 훈련, 오답 노트 작성" oninput="saveFb()">${fbNext}</textarea>
-        </div>
-      </div>
-      <hr class="msg-divider"/>
       <div class="msg-header">
         <span class="msg-label">전체 메시지 (학부모 전달용)</span>
         <div class="msg-btns">
@@ -477,7 +462,10 @@ function renderReport(st,subj,tc){
           <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
         </div>
       </div>
-      <textarea class="msg-textarea" id="msg-area" placeholder="피드백을 입력하거나 AI 자동 생성 버튼을 눌러보세요..."></textarea>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.7;">
+        ✅ 잘한 점 / ⚠️ 보완 부분 / 🎯 학습 방향을 포함해서 작성하거나 AI 자동 생성을 눌러보세요.
+      </div>
+      <textarea class="msg-textarea" id="msg-area" style="min-height:200px;" placeholder="예시&#10;✅ 잘한 점: 집중력이 좋고 계산 문제를 정확하게 풀었습니다.&#10;⚠️ 보완 부분: 서술형 문제가 아직 취약합니다.&#10;🎯 학습 방향: 오답노트 작성을 통해 실수를 줄여나가겠습니다." oninput="saveMsg()">${getSavedMsg()}</textarea>
     </div>
 
     <div class="report-footer">WAWA 코칭센터 &nbsp;·&nbsp; ${tc?tc.name+' 선생님':'담당 선생님'} &nbsp;·&nbsp; ${today}</div>`;
@@ -511,6 +499,10 @@ function fbKey(t){return`fb_${S.sel.sid}_${S.sel.subj}_${t}`;}
 function getFb(t){return localStorage.getItem(fbKey(t))||'';}
 function saveFb(){['good','bad','next'].forEach(t=>{const el=document.getElementById('fb-'+t);if(el)localStorage.setItem(fbKey(t),el.value);});}
 
+function msgKey(){return`msg_${S.sel.sid}_${S.sel.subj}`;}
+function getSavedMsg(){return S.sel?localStorage.getItem(msgKey())||''  :'';}
+function saveMsg(){const a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
+
 // ── AI MSG ──
 async function autoMsg(){
   const st=S.students.find(s=>s.id===S.sel.sid);
@@ -521,9 +513,6 @@ async function autoMsg(){
   const unit=type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);
   const latest=vals.length?vals[vals.length-1]:null;
-  const good=document.getElementById('fb-good')?.value||'';
-  const bad=document.getElementById('fb-bad')?.value||'';
-  const next=document.getElementById('fb-next')?.value||'';
   const area=document.getElementById('msg-area');
   if(!area)return;
   area.value='✦ 생성 중...';
@@ -532,24 +521,28 @@ async function autoMsg(){
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-5',max_tokens:600,
+        model:'claude-sonnet-4-5',max_tokens:700,
         messages:[{role:'user',content:`학원 학부모 안내 문자를 작성해줘.
 학생: ${st.name} (${st.grade||''})
 과목: ${S.sel.subj}
 담당강사: ${tc?tc.name:''}
 시험 횟수: ${exams.length}회
 최근 성적: ${latest??'없음'}${unit}
-✅ 잘한 점: ${good||'없음'}
-⚠️ 보완이 필요한 부분: ${bad||'없음'}
-🎯 앞으로의 학습 방향: ${next||'없음'}
-위 피드백을 자연스럽게 녹여서 학부모 안내 문자를 써줘.
-짧고 따뜻하게, 2~3문단, 이모지 포함, 강사이름으로 끝맺음.`}]
+
+아래 세 항목을 반드시 포함해서 자연스러운 학부모 안내 메시지를 작성해줘:
+✅ 잘한 점
+⚠️ 보완이 필요한 부분
+🎯 앞으로의 학습 방향
+
+따뜻하고 전문적인 톤, 이모지 포함, 강사 이름으로 끝맺음.`}]
       })
     });
     const raw=await res.text();
     let d;try{d=JSON.parse(raw);}catch(e){area.value='파싱오류: '+raw;return;}
     if(d.error){area.value='API오류: '+JSON.stringify(d.error);return;}
-    area.value=d.content?.[0]?.text||'내용없음';
+    const txt=d.content?.[0]?.text||'내용없음';
+    area.value=txt;
+    localStorage.setItem(msgKey(),txt);
   }catch(e){area.value='오류: '+e.message;}
 }
 function copyMsg(){const a=document.getElementById('msg-area');if(!a||!a.value)return;navigator.clipboard.writeText(a.value).then(()=>toast('📋 복사됐어요'));}
