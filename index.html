@@ -451,33 +451,31 @@ function renderReport(st,subj,tc){
     </div>
 
     <div class="card">
-      <div class="card-title">피드백</div>
-      <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card-title">학부모 안내 메시지</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px;">
         <div>
           <div style="font-size:11px;font-weight:600;color:#27ae60;margin-bottom:5px;">✅ 잘한 점</div>
-          <textarea class="msg-textarea" id="fb-good" style="min-height:80px;" placeholder="예: 계산 문제 정확, 집중력 좋음" oninput="saveFb()">${getFb('good')}</textarea>
+          <textarea class="msg-textarea" id="fb-good" style="min-height:72px;" placeholder="예: 계산 문제 정확, 집중력 좋음" oninput="saveFb()">${getFb('good')}</textarea>
         </div>
         <div>
           <div style="font-size:11px;font-weight:600;color:#e74c3c;margin-bottom:5px;">⚠️ 보완이 필요한 부분</div>
-          <textarea class="msg-textarea" id="fb-bad" style="min-height:80px;" placeholder="예: 서술형 문제 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
+          <textarea class="msg-textarea" id="fb-bad" style="min-height:72px;" placeholder="예: 서술형 문제 취약, 단위 실수" oninput="saveFb()">${getFb('bad')}</textarea>
         </div>
         <div>
           <div style="font-size:11px;font-weight:600;color:#6c63ff;margin-bottom:5px;">🎯 앞으로의 학습 방향</div>
-          <textarea class="msg-textarea" id="fb-next" style="min-height:80px;" placeholder="예: 응용문제 집중 훈련, 오답 노트 작성" oninput="saveFb()">${getFb('next')}</textarea>
+          <textarea class="msg-textarea" id="fb-next" style="min-height:72px;" placeholder="예: 응용문제 집중 훈련, 오답 노트 작성" oninput="saveFb()">${getFb('next')}</textarea>
         </div>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">학부모 안내 메시지</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <span style="font-size:12px;color:var(--muted);">아래 내용을 학부모님께 전달하세요</span>
-        <div style="display:flex;gap:8px;">
-          <button class="msg-auto-btn" onclick="autoMsg()"><span class="sparkle">✦</span> AI 자동 생성</button>
-          <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
+      <div style="border-top:1px solid var(--border);padding-top:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+          <span style="font-size:12px;color:var(--muted);">전체 메시지 (학부모 전달용)</span>
+          <div style="display:flex;gap:8px;">
+            <button class="msg-auto-btn" onclick="autoMsg()"><span class="sparkle">✦</span> AI 자동 생성</button>
+            <button class="msg-copy-btn" onclick="copyMsg()">복사</button>
+          </div>
         </div>
+        <textarea class="msg-textarea" id="msg-area" placeholder="피드백을 입력하거나 AI 자동 생성 버튼을 눌러보세요..."></textarea>
       </div>
-      <textarea class="msg-textarea" id="msg-area" placeholder="메모를 입력하거나 AI 자동 생성 버튼을 눌러보세요..."></textarea>
     </div>
 
     <div style="text-align:center;padding:10px;color:var(--muted);font-size:11px;">
