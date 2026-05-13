@@ -551,7 +551,6 @@ function editMsg(){
 async function saveReportImage(){
   const content=document.getElementById('content');if(!content)return;
   toast('📸 이미지 생성 중...');
-  const orig=content.scrollTop;content.scrollTop=0;
 
   // 숨길 요소들
   const memoWrap=document.getElementById('memo-section');
@@ -560,19 +559,33 @@ async function saveReportImage(){
   if(memoWrap)memoWrap.style.display='none';
   if(aiWrap)aiWrap.style.display='none';
   if(copyWrap)copyWrap.style.display='none';
-  await new Promise(r=>setTimeout(r,200));
+  await new Promise(r=>setTimeout(r,150));
+
+  // 사이드바 임시 숨김
+  const sidebar=document.querySelector('.sidebar');
+  const header=document.querySelector('.header');
+  const origSidebar=sidebar?sidebar.style.display:'';
+  const origHeader=header?header.style.display:'';
+  if(sidebar)sidebar.style.display='none';
+  if(header)header.style.display='none';
+
+  // content 스타일 임시 변경
+  const origScroll=content.scrollTop;
+  content.scrollTop=0;
+  const origOverflow=content.style.overflow;
+  const origHeight=content.style.height;
+  content.style.overflow='visible';
+  content.style.height='auto';
+  await new Promise(r=>setTimeout(r,150));
 
   try{
-    const inner=document.querySelector('.content-inner');
-    const el=inner||content;
-    const rect=el.getBoundingClientRect();
-    const canvas=await html2canvas(el,{
+    const canvas=await html2canvas(content,{
       backgroundColor:'#eef0f8',scale:2,useCORS:true,
-      x:rect.left,y:rect.top+content.scrollTop,
-      width:rect.width,height:el.scrollHeight,
-      scrollX:-rect.left,scrollY:-(rect.top+content.scrollTop),
-      windowWidth:document.documentElement.clientWidth,
-      windowHeight:document.documentElement.clientHeight,
+      scrollX:0,scrollY:0,
+      width:content.offsetWidth,
+      height:content.scrollHeight,
+      windowWidth:content.offsetWidth,
+      windowHeight:content.scrollHeight,
     });
     const st=S.students.find(s=>s.id===S.sel?.sid);
     const link=document.createElement('a');
@@ -581,10 +594,15 @@ async function saveReportImage(){
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
 
+  // 원상복구
+  if(sidebar)sidebar.style.display=origSidebar;
+  if(header)header.style.display=origHeader;
+  content.style.overflow=origOverflow;
+  content.style.height=origHeight;
+  content.scrollTop=origScroll;
   if(memoWrap)memoWrap.style.display='';
   if(aiWrap)aiWrap.style.display='';
   if(copyWrap)copyWrap.style.display='';
-  content.scrollTop=orig;
 }
 
 // EXAM CRUD
