@@ -466,7 +466,7 @@ function drawChart(exams,type){
       },
       scales:{
         y:{min:yMin,max:yMax,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+unit,font:{size:11}}},
-        x:{grid:{display:false},ticks:{font:{size:11}}}
+        x:{grid:{display:false},ticks:{font:{size:11},maxRotation:0,autoSkip:false}}
       }
     }
   });
@@ -564,8 +564,8 @@ async function saveReportImage(){
   const inner=document.querySelector('.content-inner');
   const origPadding=content.style.padding;
   const origAlign=inner?inner.style.margin:'';
-  if(inner){inner.style.margin='0';inner.style.maxWidth='100%';}
-  content.style.padding='0';
+  if(inner){inner.style.margin='0 auto';inner.style.maxWidth='100%';inner.style.padding='0 20px';}
+  content.style.padding='28px 0';
 
   await new Promise(r=>setTimeout(r,250));
 
