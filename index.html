@@ -559,23 +559,22 @@ async function saveReportImage(){
   if(memoWrap)memoWrap.style.display='none';
   if(aiWrap)aiWrap.style.display='none';
   if(copyWrap)copyWrap.style.display='none';
+
+  // content-inner를 화면 가득 채우도록 임시 스타일
+  const inner=document.querySelector('.content-inner');
+  const origPadding=content.style.padding;
+  const origAlign=inner?inner.style.margin:'';
+  if(inner){inner.style.margin='0';inner.style.maxWidth='100%';}
+  content.style.padding='0';
+
   await new Promise(r=>setTimeout(r,250));
 
-  // 임시 래퍼 생성
-  const el=document.querySelector('.content-inner');if(!el)return;
-  const w=880;
-  const wrapper=document.createElement('div');
-  wrapper.style.cssText=`position:fixed;left:-9999px;top:0;width:${w}px;background:#eef0f8;padding:28px;`;
-  const clone=el.cloneNode(true);
-  wrapper.appendChild(clone);
-  document.body.appendChild(wrapper);
-  await new Promise(r=>setTimeout(r,100));
-
   try{
-    const canvas=await html2canvas(wrapper,{
+    const canvas=await html2canvas(content,{
       backgroundColor:'#eef0f8',scale:2,useCORS:true,
-      width:wrapper.offsetWidth,height:wrapper.scrollHeight,
-      windowWidth:wrapper.offsetWidth,windowHeight:wrapper.scrollHeight,
+      scrollX:0,scrollY:0,
+      width:content.clientWidth,height:content.scrollHeight,
+      windowWidth:content.clientWidth,windowHeight:content.scrollHeight,
     });
     const st=S.students.find(s=>s.id===S.sel?.sid);
     const link=document.createElement('a');
@@ -584,7 +583,9 @@ async function saveReportImage(){
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
 
-  document.body.removeChild(wrapper);
+  // 원상복구
+  if(inner){inner.style.margin=origAlign;inner.style.maxWidth='';}
+  content.style.padding=origPadding;
   if(memoWrap)memoWrap.style.display='';
   if(aiWrap)aiWrap.style.display='';
   if(copyWrap)copyWrap.style.display='';
