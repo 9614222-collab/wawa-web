@@ -549,24 +549,33 @@ function editMsg(){
 
 // SAVE IMAGE
 async function saveReportImage(){
-  const el=document.querySelector('.content-inner');if(!el)return;
+  const content=document.getElementById('content');if(!content)return;
   toast('📸 이미지 생성 중...');
-  const content=document.getElementById('content');
-  const orig=content?content.scrollTop:0;
-  if(content)content.scrollTop=0;
+  const orig=content.scrollTop;content.scrollTop=0;
+
   const memoWrap=document.getElementById('memo-section');
   const aiWrap=document.getElementById('ai-btn-wrap');
   const copyWrap=document.querySelector('#msg-result-box > div:last-child');
   if(memoWrap)memoWrap.style.display='none';
   if(aiWrap)aiWrap.style.display='none';
   if(copyWrap)copyWrap.style.display='none';
-  await new Promise(r=>setTimeout(r,200));
+  await new Promise(r=>setTimeout(r,250));
+
+  // 임시 래퍼 생성
+  const el=document.querySelector('.content-inner');if(!el)return;
+  const w=880;
+  const wrapper=document.createElement('div');
+  wrapper.style.cssText=`position:fixed;left:-9999px;top:0;width:${w}px;background:#eef0f8;padding:28px;`;
+  const clone=el.cloneNode(true);
+  wrapper.appendChild(clone);
+  document.body.appendChild(wrapper);
+  await new Promise(r=>setTimeout(r,100));
+
   try{
-    const canvas=await html2canvas(el,{
+    const canvas=await html2canvas(wrapper,{
       backgroundColor:'#eef0f8',scale:2,useCORS:true,
-      scrollX:0,scrollY:0,x:0,y:0,
-      width:el.offsetWidth,height:el.scrollHeight,
-      windowWidth:el.offsetWidth,windowHeight:el.scrollHeight,
+      width:wrapper.offsetWidth,height:wrapper.scrollHeight,
+      windowWidth:wrapper.offsetWidth,windowHeight:wrapper.scrollHeight,
     });
     const st=S.students.find(s=>s.id===S.sel?.sid);
     const link=document.createElement('a');
@@ -574,10 +583,12 @@ async function saveReportImage(){
     link.href=canvas.toDataURL('image/png');link.click();
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
+
+  document.body.removeChild(wrapper);
   if(memoWrap)memoWrap.style.display='';
   if(aiWrap)aiWrap.style.display='';
   if(copyWrap)copyWrap.style.display='';
-  if(content)content.scrollTop=orig;
+  content.scrollTop=orig;
 }
 
 // EXAM CRUD
