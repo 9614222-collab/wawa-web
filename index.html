@@ -443,8 +443,8 @@ function drawChart(exams,type){
   const vals=exams.map(e=>e.score);
   const minVal=Math.min(...vals);
   const maxVal=Math.max(...vals);
-  const pad=Math.max(2,Math.round((maxVal-minVal)*0.2));
-  const yMin=minVal-pad;
+  const pad=Math.max(2,Math.round(maxVal*0.1));
+  const yMin=0;
   const yMax=maxVal+pad;  const barColors=exams.map((_,i)=>{
     const r=i/(exams.length-1||1);
     return`rgba(${Math.round(124+(59-124)*r)},${Math.round(58+(130-58)*r)},${Math.round(237+(246-237)*r)},0.85)`;
