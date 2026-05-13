@@ -553,28 +553,26 @@ async function saveReportImage(){
   toast('📸 이미지 생성 중...');
   const orig=content.scrollTop;content.scrollTop=0;
 
+  // 숨길 요소들
   const memoWrap=document.getElementById('memo-section');
   const aiWrap=document.getElementById('ai-btn-wrap');
   const copyWrap=document.querySelector('#msg-result-box > div:last-child');
   if(memoWrap)memoWrap.style.display='none';
   if(aiWrap)aiWrap.style.display='none';
   if(copyWrap)copyWrap.style.display='none';
-
-  // content-inner를 화면 가득 채우도록 임시 스타일
-  const inner=document.querySelector('.content-inner');
-  const origPadding=content.style.padding;
-  const origAlign=inner?inner.style.margin:'';
-  if(inner){inner.style.margin='0 auto';inner.style.maxWidth='100%';inner.style.padding='0 20px';}
-  content.style.padding='28px 0';
-
-  await new Promise(r=>setTimeout(r,250));
+  await new Promise(r=>setTimeout(r,200));
 
   try{
-    const canvas=await html2canvas(content,{
+    const inner=document.querySelector('.content-inner');
+    const el=inner||content;
+    const rect=el.getBoundingClientRect();
+    const canvas=await html2canvas(el,{
       backgroundColor:'#eef0f8',scale:2,useCORS:true,
-      scrollX:0,scrollY:0,
-      width:content.clientWidth,height:content.scrollHeight,
-      windowWidth:content.clientWidth,windowHeight:content.scrollHeight,
+      x:rect.left,y:rect.top+content.scrollTop,
+      width:rect.width,height:el.scrollHeight,
+      scrollX:-rect.left,scrollY:-(rect.top+content.scrollTop),
+      windowWidth:document.documentElement.clientWidth,
+      windowHeight:document.documentElement.clientHeight,
     });
     const st=S.students.find(s=>s.id===S.sel?.sid);
     const link=document.createElement('a');
@@ -583,9 +581,6 @@ async function saveReportImage(){
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
 
-  // 원상복구
-  if(inner){inner.style.margin=origAlign;inner.style.maxWidth='';}
-  content.style.padding=origPadding;
   if(memoWrap)memoWrap.style.display='';
   if(aiWrap)aiWrap.style.display='';
   if(copyWrap)copyWrap.style.display='';
