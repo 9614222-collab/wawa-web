@@ -494,13 +494,23 @@ function openAddStudentSelect(){
     <div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addStudentFromSidebar()">추가</button></div>`);
 }
 function addStudentFromSidebar(){
-  const tid=+document.getElementById('sel-tid').value;
-  const n=document.getElementById('sn').value.trim();
-  const g=document.getElementById('sg').value.trim();
-  const sc=document.getElementById('ss').value.trim();
-  if(!n)return;
-  S.students.push({id:nid(),tid,name:n,grade:g,school:sc,subjects:[]});
-  save();closeModal();renderSidebar();toast('✅ '+n+' 추가');
+  const tidEl=document.getElementById('sel-tid');
+  const nEl=document.getElementById('sn');
+  const gEl=document.getElementById('sg');
+  const scEl=document.getElementById('ss');
+  if(!tidEl||!nEl){toast('입력 오류');return;}
+  const tid=+tidEl.value;
+  const n=nEl.value.trim();
+  const g=gEl?gEl.value.trim():'';
+  const sc=scEl?scEl.value.trim():'';
+  if(!n){toast('이름을 입력해주세요');return;}
+  if(!tid){toast('강사를 선택해주세요');return;}
+  const newStudent={id:nid(),tid,name:n,grade:g,school:sc,subjects:[]};
+  S.students.push(newStudent);
+  save();
+  closeModal();
+  renderSidebar();
+  toast('✅ '+n+' 추가됐어요');
 }
 
 // 사이드바 탭 - 학생 필터 (과목 기준)
