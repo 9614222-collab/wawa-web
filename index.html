@@ -752,13 +752,23 @@ function openAddStudent(){
     </div>`);
 }
 function addStudent(){
-  const tid=+document.getElementById('new-tid').value;
-  const name=document.getElementById('new-name').value.trim();
-  const grade_=document.getElementById('new-grade').value.trim();
-  const school=document.getElementById('new-school').value.trim();
+  const tidEl=document.getElementById('new-tid');
+  const nameEl=document.getElementById('new-name');
+  const gradeEl=document.getElementById('new-grade');
+  const schoolEl=document.getElementById('new-school');
+  if(!tidEl||!nameEl){toast('오류가 발생했어요');return;}
+  const tid=+tidEl.value;
+  const name=nameEl.value.trim();
+  const grade_=gradeEl?gradeEl.value.trim():'';
+  const school=schoolEl?schoolEl.value.trim():'';
   if(!name){toast('이름을 입력해주세요');return;}
-  S.students.push({id:nid(),tid,name,grade:grade_,school,subjects:[]});
-  save();closeModal();renderSidebar();toast('✅ '+name+' 추가됐어요');
+  if(!tid){toast('강사를 선택해주세요');return;}
+  S.students.push({id:nid(),tid:tid,name:name,grade:grade_,school:school,subjects:[]});
+  save();
+  closeModal();
+  SB.teacherF='all'; // 전체 선생님으로 리셋해서 추가된 학생 보이게
+  renderSidebar();
+  toast('✅ '+name+' 추가됐어요');
 }
 function delStudent(id){
   if(!confirm('학생과 모든 데이터가 삭제됩니다'))return;
