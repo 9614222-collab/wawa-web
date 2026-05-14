@@ -182,7 +182,13 @@ input,select,textarea{font-family:inherit;}
 .type-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;transition:all .15s;color:var(--muted);}
 .type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
 
-/* 전체 현황 */
+/* 휴회 탭 */
+.sb-tabs{display:flex;gap:3px;padding:8px 10px 4px;border-bottom:1px solid rgba(255,255,255,.06);}
+.sb-tab{flex:1;padding:5px;border-radius:7px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;transition:all .15s;cursor:pointer;}
+.sb-tab.on{background:rgba(124,58,237,.35);color:#fff;}
+.sb-tab.paused-tab.on{background:rgba(239,68,68,.25);color:#fca5a5;}
+.pause-badge{display:inline-block;background:rgba(239,68,68,.2);color:#fca5a5;font-size:8px;padding:1px 5px;border-radius:5px;margin-left:3px;font-weight:700;}
+.pause-reason{font-size:9px;color:rgba(255,255,255,.3);margin-top:1px;}
 .ov-filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
 .ov-filter-group{display:flex;gap:4px;background:#f1f5f9;padding:3px;border-radius:10px;}
 .ov-btn{padding:5px 14px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;cursor:pointer;}
@@ -219,6 +225,10 @@ input,select,textarea{font-family:inherit;}
       </div>
     </div>
     <div class="sb-section">강사 관리</div>
+    <div class="sb-tabs">
+      <button class="sb-tab on" id="sb-tab-active" onclick="setSbTab('active')">재원</button>
+      <button class="sb-tab paused-tab" id="sb-tab-paused" onclick="setSbTab('paused')">휴회</button>
+    </div>
     <div class="sb-tree" id="tree"></div>
     <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);">
       <button class="t-add-btn" onclick="openAddTeacher()">＋ 강사 추가</button>
@@ -253,7 +263,8 @@ const S={
   students:JSON.parse(localStorage.getItem('wawa_students')||'[]'),
   exams:JSON.parse(localStorage.getItem('wawa_exams')||'[]'),
   openT:new Set(),openS:new Set(),sel:null,tab:'detail',chartInst:null,
-  examFilter:'all', // 'all' | 'school' | 'academy'
+  examFilter:'all',
+  sbTab:'active', // 'active' | 'paused'
 };
 let nextId=+localStorage.getItem('wawa_nid')||1;
 function nid(){const i=nextId++;localStorage.setItem('wawa_nid',nextId);return i;}
@@ -268,6 +279,37 @@ function msgKey(){return`msg_${S.sel?.sid}_${S.sel?.subj}`;}
 function getMsg(){return S.sel?localStorage.getItem(msgKey())||'':'';}
 function saveMsg(){const a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
 
+function openPauseStudent(id){
+  const st=S.students.find(s=>s.id===id);
+  showModal(`<div class="modal-title"><div class="modal-icon">⏸</div>휴회 처리</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;"><strong>${st.name}</strong> 학생을 휴회 처리합니다.</div>
+    <div class="modal-label">휴회 사유</div>
+    <input class="modal-input" id="pause-reason" placeholder="예: 이사, 개인 사정, 학교 시험 등"/>
+    <div class="modal-label">휴회 날짜</div>
+    <input class="modal-input" id="pause-date" type="date" value="${new Date().toISOString().slice(0,10)}"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="pauseStudent(${id})">휴회 처리</button>
+    </div>`);
+}
+function pauseStudent(id){
+  const reason=document.getElementById('pause-reason').value.trim();
+  const date=document.getElementById('pause-date').value;
+  const st=S.students.find(s=>s.id===id);
+  st.paused=true;
+  st.pauseReason=reason||'사유 없음';
+  st.pauseDate=date;
+  if(S.sel&&S.sel.sid===id)S.sel=null;
+  save();closeModal();renderTree();renderMain();
+  toast('⏸ '+st.name+' 학생 휴회 처리됐어요');
+}
+function resumeStudent(id){
+  const st=S.students.find(s=>s.id===id);
+  if(!confirm(st.name+' 학생을 재원으로 복귀시킬까요?'))return;
+  st.paused=false;st.pauseReason='';st.pauseDate='';
+  save();renderTree();toast('✅ '+st.name+' 학생 재원 복귀됐어요');
+}
+
 // 시험 구분 필터
 function setExamFilter(f){
   S.examFilter=f;
@@ -278,12 +320,23 @@ function filteredExams(allExams){
   return allExams.filter(e=>(e.examType||'academy')===S.examFilter);
 }
 
+// 사이드바 탭
+function setSbTab(t){
+  S.sbTab=t;
+  document.getElementById('sb-tab-active').classList.toggle('on',t==='active');
+  document.getElementById('sb-tab-paused').classList.toggle('on',t==='paused');
+  renderTree();
+}
+
 // TREE
 function renderTree(){
   const el=document.getElementById('tree');el.innerHTML='';
   S.teachers.forEach(t=>{
     const open=S.openT.has(t.id);const div=document.createElement('div');
-    const studs=S.students.filter(s=>s.tid===t.id);
+    const studs=S.students.filter(s=>s.tid===t.id&&(S.sbTab==='paused'?s.paused:!s.paused));
+    if(studs.length===0&&!open) {
+      // 해당 탭에 학생이 없어도 강사는 표시
+    }
     div.innerHTML=`
       <div class="t-teacher-row${open?' open':''}" onclick="toggleT(${t.id})">
         <div class="t-teacher-icon">${t.name[0]}</div><span>${t.name}</span>
@@ -291,21 +344,26 @@ function renderTree(){
         <button class="t-del" onclick="event.stopPropagation();delTeacher(${t.id})">✕</button>
       </div>
       ${open?`<div class="t-students">${studs.map(s=>renderStudent(s)).join('')}
-        <button class="t-add-btn" onclick="openAddStudent(${t.id})">＋ 학생 추가</button>
+        ${S.sbTab==='active'?`<button class="t-add-btn" onclick="openAddStudent(${t.id})">＋ 학생 추가</button>`:''}
       </div>`:''}`;
     el.appendChild(div);
   });
 }
 function renderStudent(s){
   const open=S.openS.has(s.id);
+  const pauseBtn=s.paused
+    ?`<button class="t-add-btn" style="color:#34d399;margin-top:4px;" onclick="resumeStudent(${s.id})">↩ 재원 복귀</button>`
+    :`<button class="t-add-btn" style="color:#fca5a5;margin-top:4px;" onclick="openPauseStudent(${s.id})">⏸ 휴회 처리</button>`;
   return`<div>
     <div class="t-student-row${open?' open':''}" onclick="toggleS(${s.id})">
       <div class="t-student-icon">${s.name[0]}</div>
       <span>${s.name}</span><span style="font-size:9px;color:rgba(255,255,255,.2);margin-left:2px;">${s.grade||''}</span>
+      ${s.paused?`<span class="pause-badge">휴회</span>`:''}
       <span class="t-chevron${open?' open':''}">▶</span>
       <button class="t-del" onclick="event.stopPropagation();delStudent(${s.id})">✕</button>
     </div>
     ${open?`<div class="t-subjects">
+      ${s.paused?`<div style="font-size:10px;color:rgba(255,255,255,.3);padding:4px 10px 6px;">사유: ${s.pauseReason||'없음'}</div>`:''}
       ${(s.subjects||[]).map(subj=>{
         const sel=S.sel&&S.sel.sid===s.id&&S.sel.subj===subj.name;
         const cnt=S.exams.filter(e=>e.sid===s.id&&e.subj===subj.name).length;
@@ -316,7 +374,8 @@ function renderStudent(s){
           <button class="t-del" onclick="event.stopPropagation();delSubj(${s.id},'${subj.name}')">✕</button>
         </div>`;
       }).join('')}
-      <button class="t-add-btn" onclick="openAddSubj(${s.id})">＋ 과목 추가</button>
+      ${!s.paused?`<button class="t-add-btn" onclick="openAddSubj(${s.id})">＋ 과목 추가</button>`:''}
+      ${pauseBtn}
     </div>`:''}
   </div>`;
 }
