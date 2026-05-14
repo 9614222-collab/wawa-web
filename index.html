@@ -458,10 +458,11 @@ function quickDelSubjMenu(sid,subjName,isPaused){
         ?`<button class="btn-primary" style="background:linear-gradient(135deg,#059669,#34d399);" onclick="resumeSubj(${sid},'${subjName}');closeModal()">↩ 재원 복귀</button>`
         :`<button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="closeModal();openPauseSubj(${sid},'${subjName}')">⏸ 휴회 처리</button>`
       }
-      <button class="btn-ghost" onclick="if(confirm('삭제할까요?')){delSubj(${sid},'${subjName}');closeModal()}" style="border-color:#fca5a5;color:#dc2626;">🗑 과목 삭제</button>
+      <button class="btn-ghost" onclick="if(confirm('${subjName} 과목을 삭제할까요?')){delSubj(${sid},'${subjName}');closeModal()}" style="border-color:#fca5a5;color:#dc2626;">🗑 과목 삭제</button>
+      <button class="btn-ghost" onclick="if(confirm('${st.name} 학생과 모든 데이터를 삭제할까요?')){delStudent(${sid});closeModal()}" style="border-color:#dc2626;color:#dc2626;font-weight:700;">⚠️ 학생 전체 삭제</button>
       <button class="btn-ghost" onclick="closeModal()">취소</button>
-    </div>`);
-}
+    </div>`);}
+
 
 function openAddTeacherOrStudent(){
   // 선생님이 있으면 학생 추가, 없으면 강사 추가
