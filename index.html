@@ -182,6 +182,28 @@ input,select,textarea{font-family:inherit;}
 .type-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;transition:all .15s;color:var(--muted);}
 .type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
 
+/* 전체 현황 */
+.ov-filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.ov-filter-group{display:flex;gap:4px;background:#f1f5f9;padding:3px;border-radius:10px;}
+.ov-btn{padding:5px 14px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;cursor:pointer;}
+.ov-btn:hover{color:var(--text);}
+.ov-btn.on{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.ov-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.ov-table th{padding:12px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);background:#f8f9fc;border-bottom:1px solid var(--border);white-space:nowrap;}
+.ov-table th.sortable{cursor:pointer;user-select:none;}
+.ov-table th.sortable:hover{color:var(--accent);}
+.ov-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.ov-table tr:last-child td{border-bottom:none;}
+.ov-table tr:hover td{background:#fafbff;}
+.ov-subj-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#ede9fe;color:#5b21b6;}
+.ov-score{font-size:14px;font-weight:800;color:var(--navy);}
+.ov-score-sub{font-size:10px;color:var(--muted);margin-left:3px;font-weight:400;}
+.ov-grade{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+.ov-edit-btn{padding:4px 12px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;}
+.ov-edit-btn:hover{border-color:#7c3aed;color:#7c3aed;}
+.ov-empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;}
+.th-school{background:linear-gradient(90deg,#eff6ff,#f8f9fc)!important;}
+
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:#111827;color:#fff;padding:11px 22px;border-radius:12px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:200;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.22);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
@@ -214,6 +236,7 @@ input,select,textarea{font-family:inherit;}
           <button class="h-tab" onclick="setTab('report')" id="tab-report">보고서</button>
         </div>
         <button class="save-header-btn" id="save-btn" style="display:none;" onclick="saveReportImage()">📥 이미지 저장</button>
+        <button class="save-header-btn" onclick="showOverview()" style="background:linear-gradient(135deg,#059669,#34d399);">👥 전체 현황</button>
       </div>
     </div>
     <div class="content" id="content">
@@ -709,6 +732,143 @@ function openAddSubj(sid){
 function selType(t){window._selSubjType=t;document.getElementById('tb-score').classList.toggle('on',t==='score');document.getElementById('tb-count').classList.toggle('on',t==='count');}
 function addSubj(sid){const n=document.getElementById('subjn').value.trim();if(!n)return;const st=S.students.find(s=>s.id===sid);if(!st.subjects)st.subjects=[];if(st.subjects.find(s=>s.name===n)){toast('이미 있는 과목이에요');return;}st.subjects.push({name:n,type:window._selSubjType||'score'});save();closeModal();S.openS.add(sid);renderTree();toast('✅ '+n+' 과목 추가');}
 function delSubj(sid,subj){if(!confirm(subj+' 과목 데이터가 삭제됩니다'))return;const st=S.students.find(s=>s.id===sid);st.subjects=st.subjects.filter(s=>s.name!==subj);S.exams=S.exams.filter(e=>!(e.sid===sid&&e.subj===subj));if(S.sel&&S.sel.sid===sid&&S.sel.subj===subj)S.sel=null;save();renderTree();renderMain();}
+
+// 전체 현황
+const OV={gradeF:'all',subjF:'all',sort:{key:'grade',dir:1}};
+const GRADES_ORDER=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
+function gradeOrder(g){const i=GRADES_ORDER.indexOf(g);return i>=0?i:99;}
+
+function showOverview(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='전체 학생 현황';
+  document.getElementById('h-meta').textContent='모든 강사 · 학생 · 과목 통합 보기';
+  renderOverview();
+}
+
+function renderOverview(){
+  // 모든 학생-과목 조합 수집
+  let rows=[];
+  S.students.forEach(st=>{
+    const tc=S.teachers.find(t=>t.id===st.tid);
+    (st.subjects||[]).forEach(subj=>{
+      const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name);
+      const academyExams=exams.filter(e=>(e.examType||'academy')==='academy');
+      const schoolExams=exams.filter(e=>e.examType==='school');
+      const avgOf=arr=>arr.length?Math.round(arr.reduce((a,e)=>a+e.score,0)/arr.length):null;
+      const acAvg=avgOf(academyExams);
+      const scAvg=avgOf(schoolExams);
+      const allAvg=avgOf(exams);
+      rows.push({st,tc,subj,exams,academyExams,schoolExams,acAvg,scAvg,allAvg,
+        gradeOrder:gradeOrder(st.grade||''),cnt:exams.length});
+    });
+  });
+
+  // 필터
+  const gf=OV.gradeF;
+  const sf=OV.subjF;
+  if(gf!=='all') rows=rows.filter(r=>r.st.grade&&r.st.grade.startsWith(gf));
+  if(sf!=='all') rows=rows.filter(r=>r.subj.name===sf);
+
+  // 정렬
+  const {key,dir}=OV.sort;
+  rows.sort((a,b)=>{
+    let va,vb;
+    if(key==='grade'){va=a.gradeOrder;vb=b.gradeOrder;}
+    else if(key==='name'){va=a.st.name;vb=b.st.name;}
+    else if(key==='acAvg'){va=a.acAvg??-1;vb=b.acAvg??-1;}
+    else if(key==='scAvg'){va=a.scAvg??-1;vb=b.scAvg??-1;}
+    else if(key==='gradeLabel'){va=a.acAvg??-1;vb=b.acAvg??-1;}
+    if(typeof va==='string') return dir*(va.localeCompare(vb));
+    return dir*(va-vb);
+  });
+
+  // 학년 필터 목록
+  const allGrades=[...new Set(S.students.map(s=>s.grade||'').filter(Boolean))].sort((a,b)=>gradeOrder(a)-gradeOrder(b));
+  const gradeGroups=[...new Set(allGrades.map(g=>g.replace(/[0-9]/g,'')))];
+
+  // 과목 목록
+  const allSubjs=[...new Set(S.students.flatMap(s=>(s.subjects||[]).map(x=>x.name)))];
+
+  const total=rows.length;
+
+  function sortIcon(k){
+    if(OV.sort.key!==k) return'<span style="color:#ddd;font-size:9px;">⇅</span>';
+    return OV.sort.dir===1?'↑':'↓';
+  }
+  function setSort(k){
+    if(OV.sort.key===k) OV.sort.dir*=-1;
+    else{OV.sort.key=k;OV.sort.dir=1;}
+    renderOverview();
+  }
+
+  const tableRows=rows.map(r=>{
+    const g=r.acAvg!=null?grade(r.acAvg):null;
+    const gradeColor={A:'#059669',B:'#2563eb',C:'#d97706',D:'#ea580c',F:'#dc2626'};
+    const diff=r.acAvg!=null&&r.scAvg!=null?r.acAvg-r.scAvg:null;
+    const diffTxt=diff!=null?(diff>0?`+${diff}`:diff===0?'±0':`${diff}`):'—';
+    const diffColor=diff==null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
+    return`<tr>
+      <td style="color:var(--muted);font-size:12px;">${r.st.grade||'—'}</td>
+      <td style="font-weight:700;">${r.st.name}</td>
+      <td><span class="ov-subj-badge">${r.subj.name}</span></td>
+      <td style="font-size:12px;color:var(--muted);">${r.tc?r.tc.name+' 선생님':'—'}</td>
+      <td><span class="ov-score">${r.acAvg!=null?r.acAvg+'점':'—'}</span><span class="ov-score-sub">${r.academyExams.length>0?'('+r.academyExams.length+'회)':''}</span></td>
+      <td class="th-school"><span class="ov-score" style="color:#2563eb;">${r.scAvg!=null?r.scAvg+'점':'—'}</span><span class="ov-score-sub">${r.schoolExams.length>0?'('+r.schoolExams.length+'회)':''}</span></td>
+      <td style="font-weight:700;color:${diffColor};">${diffTxt}</td>
+      <td>${g?`<span class="ov-grade g${g}">${g}</span>`:'<span style="color:#ddd;">—</span>'}</td>
+      <td><button class="ov-edit-btn" onclick="goToStudent(${r.st.tid},${r.st.id},'${r.subj.name}')">상세 →</button></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('content').innerHTML=`<div class="content-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-size:14px;font-weight:700;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(${total}건)</span></div>
+    </div>
+    <div class="ov-filter-bar">
+      <div class="ov-filter-group">
+        <button class="ov-btn${OV.gradeF==='all'?' on':''}" onclick="setOvFilter('grade','all')">전체</button>
+        ${gradeGroups.map(g=>`<button class="ov-btn${OV.gradeF===g?' on':''}" onclick="setOvFilter('grade','${g}')">${g==='초'?'초등':g==='중'?'중학':g==='고'?'고등':g}</button>`).join('')}
+      </div>
+      <div class="ov-filter-group">
+        <button class="ov-btn${OV.subjF==='all'?' on':''}" onclick="setOvFilter('subj','all')">전체</button>
+        ${allSubjs.map(s=>`<button class="ov-btn${OV.subjF===s?' on':''}" onclick="setOvFilter('subj','${s}')">${s}</button>`).join('')}
+      </div>
+    </div>
+    ${rows.length===0?`<div class="ov-empty">📭 해당하는 학생이 없어요</div>`:`
+    <table class="ov-table">
+      <thead><tr>
+        <th class="sortable" onclick="setSort('grade')">학년 ${sortIcon('grade')}</th>
+        <th class="sortable" onclick="setSort('name')">이름 ${sortIcon('name')}</th>
+        <th>과목</th>
+        <th>선생님</th>
+        <th class="sortable" onclick="setSort('acAvg')">🏫 학원 평균 ${sortIcon('acAvg')}</th>
+        <th class="sortable th-school" onclick="setSort('scAvg')">📚 학교 평균 ${sortIcon('scAvg')}</th>
+        <th>비교</th>
+        <th class="sortable" onclick="setSort('gradeLabel')">등급 ${sortIcon('gradeLabel')}</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>`}
+  </div>`;
+}
+
+function setOvFilter(type,val){
+  if(type==='grade') OV.gradeF=val;
+  else OV.subjF=val;
+  renderOverview();
+}
+function setSort(k){
+  if(OV.sort.key===k) OV.sort.dir*=-1;
+  else{OV.sort.key=k;OV.sort.dir=1;}
+  renderOverview();
+}
+function goToStudent(tid,sid,subj){
+  S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';
+  S.openT.add(tid);S.openS.add(sid);
+  renderTree();renderMain();
+}
 
 // MODAL
 function showModal(html){document.getElementById('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;}
