@@ -22,232 +22,206 @@ button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;}
 
 .layout{display:flex;height:100vh;overflow:hidden;}
-.sidebar{width:232px;background:linear-gradient(180deg,#0a0f1e 0%,#111827 60%,#1a2340 100%);display:flex;flex-direction:column;flex-shrink:0;box-shadow:4px 0 24px rgba(0,0,0,.3);}
+.sidebar{width:240px;background:linear-gradient(180deg,#0a0f1e,#111827 60%,#1a2340);display:flex;flex-direction:column;flex-shrink:0;box-shadow:4px 0 24px rgba(0,0,0,.3);}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
-.sb-brand{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
-.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;box-shadow:0 4px 12px rgba(245,158,11,.4);}
+/* SIDEBAR */
+.sb-brand{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;}
 .sb-logo-title{font-size:15px;font-weight:800;color:#fff;}
 .sb-logo-sub{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.12em;}
-.sb-section{padding:16px 18px 5px;font-size:9px;color:rgba(255,255,255,.18);letter-spacing:.15em;text-transform:uppercase;font-weight:700;}
-.sb-tree{flex:1;overflow-y:auto;padding:4px 10px 8px;}
-.sb-tree::-webkit-scrollbar{width:3px;}
-.sb-tree::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px;}
-.t-teacher-row{display:flex;align-items:center;gap:7px;padding:9px 10px;cursor:pointer;color:rgba(255,255,255,.72);font-size:12px;font-weight:600;border-radius:10px;margin-bottom:2px;transition:all .15s;}
-.t-teacher-row:hover{background:rgba(255,255,255,.06);}
-.t-teacher-row.open{background:rgba(124,58,237,.22);color:#fff;}
-.t-teacher-icon{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
-.t-chevron{margin-left:auto;transition:transform .2s;font-size:9px;color:rgba(255,255,255,.22);}
-.t-chevron.open{transform:rotate(90deg);}
-.t-del{background:none;border:none;color:rgba(255,255,255,.1);font-size:12px;padding:2px 5px;margin-left:2px;border-radius:4px;transition:all .15s;}
-.t-del:hover{color:#ef4444;background:rgba(239,68,68,.12);}
-.t-students{padding-left:6px;}
-.t-student-row{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;color:rgba(255,255,255,.48);font-size:11px;border-radius:8px;margin-bottom:1px;transition:all .15s;}
-.t-student-row:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.78);}
-.t-student-row.open{color:rgba(255,255,255,.9);}
-.t-student-icon{width:19px;height:19px;border-radius:5px;background:rgba(255,255,255,.07);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;}
-.t-subjects{padding-left:8px;}
-.t-subj-row{display:flex;align-items:center;gap:6px;padding:6px 10px;cursor:pointer;border-radius:7px;color:rgba(255,255,255,.36);font-size:11px;margin-bottom:1px;transition:all .15s;}
-.t-subj-row:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);}
-.t-subj-row.sel{background:linear-gradient(90deg,rgba(124,58,237,.32),rgba(124,58,237,.08));color:#fff;font-weight:600;border-left:2px solid #a78bfa;padding-left:8px;}
-.t-subj-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.18);flex-shrink:0;}
-.t-subj-row.sel .t-subj-dot{background:#f59e0b;}
-.t-cnt{margin-left:auto;font-size:9px;color:rgba(255,255,255,.18);background:rgba(255,255,255,.05);padding:1px 6px;border-radius:8px;}
-.t-add-btn{display:flex;align-items:center;gap:5px;padding:7px 10px;width:100%;border:none;background:none;color:rgba(255,255,255,.18);font-size:11px;border-radius:8px;transition:all .15s;margin-top:2px;}
-.t-add-btn:hover{background:rgba(255,255,255,.04);color:rgba(255,255,255,.42);}
-.badge-score{font-size:8px;padding:1px 5px;border-radius:7px;font-weight:700;margin-left:2px;background:rgba(124,58,237,.2);color:#a78bfa;}
-.badge-count{font-size:8px;padding:1px 5px;border-radius:7px;font-weight:700;margin-left:2px;background:rgba(245,158,11,.15);color:#fbbf24;}
 
-.header{background:linear-gradient(135deg,#fff 0%,#f8f9ff 100%);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:64px;box-shadow:0 2px 12px rgba(124,58,237,.06);}
-.h-name{font-size:17px;font-weight:800;color:var(--text);}
+.sb-tabs{display:flex;gap:4px;padding:10px 12px 0;}
+.sb-tab{flex:1;padding:6px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-tab.on{background:rgba(124,58,237,.4);color:#fff;}
+.sb-tab.paused-on{background:rgba(239,68,68,.3);color:#fca5a5;}
+
+.sb-filter{padding:10px 12px 0;}
+.sb-filter-label{font-size:9px;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.sb-select{width:100%;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;cursor:pointer;}
+.sb-select option{background:#1a2340;color:#fff;}
+
+.sb-subj-wrap{padding:8px 12px 0;}
+.sb-subj-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.sb-subj-btn{padding:3px 10px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-subj-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.sb-subj-btn.on{background:#f59e0b;border-color:#f59e0b;color:#0a0f1e;}
+
+.sb-sort{display:flex;gap:6px;padding:8px 12px 4px;}
+.sb-sort-btn{flex:1;padding:5px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-sort-btn.on{background:rgba(255,255,255,.12);color:#fff;}
+
+.sb-count{padding:4px 14px;font-size:11px;color:rgba(255,255,255,.3);}
+.sb-list{flex:1;overflow-y:auto;padding:2px 10px 4px;}
+.sb-list::-webkit-scrollbar{width:3px;}
+.sb-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px;}
+
+.sb-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;cursor:pointer;transition:all .15s;margin-bottom:2px;}
+.sb-item:hover{background:rgba(255,255,255,.05);}
+.sb-item.sel{background:rgba(124,58,237,.25);}
+.sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sb-dot.active{background:#34d399;}
+.sb-dot.paused{background:#ef4444;}
+.sb-info{flex:1;min-width:0;}
+.sb-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);}
+.sb-meta{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
+.sb-avg{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;}
+.sb-more{background:none;border:none;color:rgba(255,255,255,.2);font-size:13px;padding:2px 5px;border-radius:4px;transition:all .15s;}
+.sb-more:hover{background:rgba(255,255,255,.08);color:#fff;}
+
+.sb-bottom{padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:6px;}
+.sb-add-btn{flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-add-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+/* HEADER */
+.header{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:64px;box-shadow:0 2px 12px rgba(124,58,237,.06);}
+.h-name{font-size:17px;font-weight:800;}
 .h-meta{font-size:11px;color:var(--muted);margin-top:2px;}
-.h-right{display:flex;align-items:center;gap:10px;}
+.h-right{display:flex;align-items:center;gap:8px;}
 .h-tabs{display:flex;gap:3px;background:#ede9fe;padding:3px;border-radius:10px;}
-.h-tab{padding:6px 20px;border-radius:8px;border:none;background:transparent;color:#7c3aed;font-size:12px;font-weight:600;transition:all .15s;opacity:.6;}
-.h-tab:hover{opacity:.9;}
+.h-tab{padding:6px 18px;border-radius:7px;border:none;background:transparent;color:#7c3aed;font-size:12px;font-weight:600;opacity:.6;cursor:pointer;transition:all .15s;}
 .h-tab.on{background:#fff;color:#5b21b6;box-shadow:0 1px 6px rgba(124,58,237,.15);opacity:1;}
-.save-header-btn{display:flex;align-items:center;gap:5px;padding:8px 16px;background:linear-gradient(135deg,#0a0f1e,#1e2d4a);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;box-shadow:0 2px 10px rgba(10,15,30,.2);transition:all .15s;}
-.save-header-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(10,15,30,.3);}
+.btn-save{display:flex;align-items:center;gap:5px;padding:8px 14px;background:linear-gradient(135deg,#0a0f1e,#1e2d4a);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-overview{display:flex;align-items:center;gap:5px;padding:8px 14px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
 
+/* CONTENT */
 .content{flex:1;overflow-y:auto;padding:28px 0;background:var(--bg);}
-.content-inner{max-width:880px;margin:0 auto;padding:0 28px;}
+.ci{max-width:880px;margin:0 auto;padding:0 28px;}
 .content::-webkit-scrollbar{width:5px;}
 .content::-webkit-scrollbar-thumb{background:#d4d8e8;border-radius:3px;}
 .welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;}
 .welcome-icon{font-size:52px;opacity:.12;}
 .welcome-text{font-size:14px;font-weight:500;color:var(--muted);}
 
-/* 시험 구분 탭 */
-.exam-filter{display:flex;gap:6px;margin-bottom:16px;}
-.ef-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;}
-.ef-btn:hover{border-color:#a78bfa;color:var(--accent);}
-.ef-btn.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3);}
-.ef-btn.school.on{background:#2563eb;border-color:#2563eb;box-shadow:0 2px 8px rgba(37,99,235,.3);}
-.ef-btn.academy.on{background:#059669;border-color:#059669;box-shadow:0 2px 8px rgba(5,150,105,.3);}
-
-/* 시험 구분 뱃지 */
-.exam-type-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;}
-.etb-school{background:#dbeafe;color:#1d4ed8;}
-.etb-academy{background:#d1fae5;color:#065f46;}
-
+/* STAT CARDS */
 .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-.score-card{border-radius:16px;padding:22px 22px;position:relative;overflow:hidden;color:#fff;}
+.score-card{border-radius:16px;padding:22px;position:relative;overflow:hidden;color:#fff;}
 .sc-1{background:linear-gradient(135deg,#1d4ed8,#3b82f6);}
 .sc-2{background:linear-gradient(135deg,#b45309,#f59e0b);}
 .sc-3{background:linear-gradient(135deg,#6d28d9,#a78bfa);}
 .score-card::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.07);}
-.score-card::after{content:'';position:absolute;bottom:-20px;left:-10px;width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.04);}
-.score-card-label{font-size:10px;opacity:.68;margin-bottom:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
-.score-card-val{font-size:34px;font-weight:900;line-height:1;letter-spacing:-.02em;}
-.score-card-unit{font-size:14px;opacity:.6;margin-left:3px;font-weight:500;}
-.score-card-sub{font-size:10px;opacity:.42;margin-top:7px;}
+.sc-label{font-size:10px;opacity:.68;margin-bottom:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+.sc-val{font-size:34px;font-weight:900;line-height:1;}
+.sc-unit{font-size:14px;opacity:.6;margin-left:3px;font-weight:500;}
+.sc-sub{font-size:10px;opacity:.42;margin-top:7px;}
 
-.card{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
-.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+/* CARD */
+.card{background:#fff;border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.card-title{font-size:13px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .card-title::before{content:'';width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;flex-shrink:0;}
 
-.exam-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;transition:all .2s;background:#fff;}
-.exam-item:hover{border-color:#c4b5fd;box-shadow:0 3px 12px rgba(124,58,237,.09);transform:translateY(-1px);}
-.exam-date{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;font-weight:500;}
+/* EXAM FILTER */
+.exam-filter{display:flex;gap:6px;margin-bottom:14px;}
+.ef-btn{padding:5px 14px;border-radius:18px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.ef-btn.on{background:#7c3aed;border-color:#7c3aed;color:#fff;}
+.ef-btn.school.on{background:#2563eb;border-color:#2563eb;}
+.ef-btn.academy.on{background:#059669;border-color:#059669;}
+
+/* EXAM ITEMS */
+.exam-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;transition:all .2s;}
+.exam-item:hover{border-color:#c4b5fd;box-shadow:0 3px 12px rgba(124,58,237,.09);}
+.exam-date{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;}
 .exam-name{flex:1;font-size:13px;font-weight:600;}
 .exam-bar{height:4px;border-radius:2px;background:#f1f5f9;margin-top:5px;overflow:hidden;}
 .exam-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#f59e0b);}
-.exam-score{font-size:18px;font-weight:800;color:var(--text);}
+.exam-type-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;}
+.etb-school{background:#dbeafe;color:#1d4ed8;}
+.etb-academy{background:#d1fae5;color:#065f46;}
+.exam-score{font-size:18px;font-weight:800;}
 .exam-unit{font-size:10px;color:var(--muted);margin-left:1px;}
 .grade-badge{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
 .gA{background:#059669;}.gB{background:#2563eb;}.gC{background:#d97706;}.gD{background:#ea580c;}.gF{background:#dc2626;}
 .exam-actions{display:flex;gap:3px;}
-.exam-edit-btn,.exam-del-btn{background:none;border:none;padding:5px 7px;border-radius:6px;font-size:11px;color:var(--muted);transition:all .15s;}
+.exam-edit-btn,.exam-del-btn{background:none;border:none;padding:5px 7px;border-radius:6px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;}
 .exam-edit-btn:hover{background:#ede9fe;color:#7c3aed;}
 .exam-del-btn:hover{background:#fee2e2;color:#dc2626;}
-.add-exam-form{background:linear-gradient(135deg,#f8f9ff,#f0f2fc);border:2px dashed #c4b5fd;border-radius:12px;padding:16px 18px;margin-top:12px;}
+
+/* ADD FORM */
+.add-form{background:linear-gradient(135deg,#f8f9ff,#f0f2fc);border:2px dashed #c4b5fd;border-radius:12px;padding:16px 18px;margin-top:12px;}
 .form-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
 .form-group{display:flex;flex-direction:column;gap:4px;}
 .form-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
 .form-input{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;color:var(--text);}
 .form-input:focus{border-color:#7c3aed;}
-.form-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;color:var(--text);}
-.form-select:focus{border-color:#7c3aed;}
-.btn-primary{padding:8px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(124,58,237,.3);transition:all .15s;}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.4);}
-.btn-ghost{padding:8px 14px;background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;transition:all .15s;}
+.form-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;color:var(--text);}
+
+/* BUTTONS */
+.btn-primary{padding:8px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(124,58,237,.3);}
+.btn-primary:hover{box-shadow:0 4px 16px rgba(124,58,237,.4);}
+.btn-ghost{padding:8px 14px;background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
 .btn-ghost:hover{border-color:#7c3aed;color:#7c3aed;}
+.btn-danger{padding:8px 14px;background:#fff;color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
 
-.report-hero{background:linear-gradient(135deg,#0a0f1e 0%,#1e2d4a 60%,#2d1b69 100%);border-radius:20px;padding:30px;margin-bottom:18px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
-.rh-glow1{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);pointer-events:none;}
-.rh-glow2{position:absolute;bottom:-50px;left:20px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%);pointer-events:none;}
-.rh-glow3{position:absolute;top:50%;right:30%;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.12),transparent 70%);pointer-events:none;}
-.rh-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+/* REPORT HERO */
+.report-hero{background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;position:relative;overflow:hidden;}
+.rh-g1{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);pointer-events:none;}
+.rh-g2{position:absolute;bottom:-50px;left:20px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%);pointer-events:none;}
+.rh-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
 .rh-logo{display:flex;align-items:center;gap:9px;}
-.rh-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#0a0f1e;box-shadow:0 3px 10px rgba(245,158,11,.4);}
-.rh-logo-t1{font-size:13px;font-weight:800;color:#fff;letter-spacing:.02em;}
+.rh-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#0a0f1e;}
+.rh-logo-t1{font-size:13px;font-weight:800;color:#fff;}
 .rh-logo-t2{font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.1em;}
-.rh-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(124,58,237,.28);border:1px solid rgba(167,139,250,.25);color:#a78bfa;border-radius:20px;padding:5px 13px;font-size:10px;font-weight:700;letter-spacing:.05em;}
+.rh-badge{background:rgba(124,58,237,.28);color:#a78bfa;border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;}
 .rh-date{font-size:10px;color:rgba(255,255,255,.22);}
-.rh-name{font-size:27px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-.02em;}
-.rh-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:22px;}
+.rh-name{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;}
+.rh-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:20px;}
 .rh-scores{display:flex;gap:10px;flex-wrap:wrap;}
-.rh-score-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;transition:all .2s;}
-.rhs-label{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
-.rhs-val{font-size:25px;font-weight:900;color:#fff;letter-spacing:-.02em;}
-.rhs-val.gold{color:#fbbf24;}
-.rhs-val.green{color:#34d399;}
-.rhs-val.blue{color:#60a5fa;}
+.rh-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 20px;}
+.rh-box-label{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
+.rh-box-val{font-size:23px;font-weight:900;color:#fff;}
+.rh-box-val.gold{color:#fbbf24;}
+.rh-box-val.green{color:#34d399;}
+.rh-box-val.blue{color:#60a5fa;}
 
-.chart-wrap{position:relative;height:220px;margin:4px 0;}
-
-.re-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;transition:all .2s;}
-.re-item:hover{border-color:#c4b5fd;box-shadow:0 2px 10px rgba(124,58,237,.08);}
+.chart-wrap{height:220px;margin:4px 0;}
+.re-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;}
 .re-name{font-size:13px;font-weight:700;}
 .re-meta{font-size:10px;color:var(--muted);margin-top:2px;}
-.re-score{font-size:20px;font-weight:900;margin-left:auto;}
+.re-score{font-size:19px;font-weight:900;margin-left:auto;}
 
-.msg-auto-btn{display:flex;align-items:center;gap:6px;padding:11px 28px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;box-shadow:0 3px 12px rgba(124,58,237,.35);transition:all .15s;}
-.msg-auto-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.45);}
-.msg-textarea{width:100%;min-height:160px;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;line-height:1.9;resize:vertical;outline:none;transition:border .15s;background:#fafbff;color:var(--text);}
+/* MSG */
+.msg-auto-btn{display:flex;align-items:center;gap:6px;padding:10px 24px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(124,58,237,.35);}
+.msg-textarea{width:100%;min-height:160px;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;line-height:1.9;resize:vertical;outline:none;background:#fafbff;color:var(--text);}
 .msg-textarea:focus{border-color:#7c3aed;}
-.msg-copy-btn{padding:8px 16px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;}
+.msg-copy-btn{padding:8px 14px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
 .msg-copy-btn:hover{border-color:#7c3aed;color:#7c3aed;}
-.report-footer{text-align:center;padding:16px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.05em;}
+.report-footer{text-align:center;padding:14px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.05em;}
 
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;}
-.modal{background:#fff;border-radius:20px;padding:28px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);}
-.modal-title{font-size:15px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
-.modal-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#5b21b6);display:flex;align-items:center;justify-content:center;font-size:14px;}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
-.modal-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;transition:border .15s;margin-bottom:12px;color:var(--text);}
-.modal-input:focus{border-color:#7c3aed;}
-.modal-label{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
-.type-toggle{display:flex;gap:8px;margin-bottom:14px;}
-.type-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;transition:all .15s;color:var(--muted);}
-.type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
-
-/* SIDEBAR 새 스타일 */
-.sb-brand{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
-.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;}
-.sb-logo-title{font-size:15px;font-weight:800;color:#fff;}
-.sb-logo-sub{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.12em;}
-
-.sb-filters{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
-.sb-filter-label{font-size:9px;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px;}
-.sb-teacher-select{width:100%;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;cursor:pointer;}
-.sb-teacher-select option{background:#1a2340;color:#fff;}
-
-.sb-subj-filter{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
-.sb-subj-btns{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
-.sb-subj-btn{padding:4px 10px;border-radius:16px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
-.sb-subj-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
-.sb-subj-btn.on{background:#f59e0b;border-color:#f59e0b;color:#0a0f1e;}
-
-.sb-sort-row{display:flex;gap:6px;padding:10px 14px 6px;}
-.sb-sort-btn{flex:1;padding:5px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
-.sb-sort-btn.on{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.2);}
-
-.sb-student-count{padding:6px 14px 4px;font-size:11px;color:rgba(255,255,255,.35);font-weight:500;}
-.sb-student-list{flex:1;overflow-y:auto;padding:4px 10px 8px;}
-.sb-student-list::-webkit-scrollbar{width:3px;}
-.sb-student-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px;}
-
-.sb-student-item{display:flex;align-items:center;padding:8px 10px;border-radius:9px;cursor:pointer;transition:all .15s;margin-bottom:2px;position:relative;}
-.sb-student-item:hover{background:rgba(255,255,255,.05);}
-.sb-student-item.sel{background:rgba(124,58,237,.22);}
-.sb-student-info{flex:1;min-width:0;}
-.sb-student-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);display:flex;align-items:center;gap:5px;}
-.sb-student-meta{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
-.sb-student-score{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);margin-right:6px;white-space:nowrap;}
-.sb-student-del{background:none;border:none;color:rgba(255,255,255,.15);font-size:12px;padding:2px 4px;border-radius:4px;transition:all .15s;flex-shrink:0;}
-.sb-student-del:hover{color:#ef4444;background:rgba(239,68,68,.12);}
-.sb-pause-dot{width:7px;height:7px;border-radius:50%;background:#ef4444;flex-shrink:0;}
-.sb-active-dot{width:7px;height:7px;border-radius:50%;background:#34d399;flex-shrink:0;}
-
-/* 휴회 탭 */
-.sb-tabs{display:flex;gap:3px;padding:8px 10px 0;}
-.sb-tab{flex:1;padding:5px;border-radius:7px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;transition:all .15s;cursor:pointer;}
-.sb-tab.on{background:rgba(124,58,237,.35);color:#fff;}
-.sb-tab.paused-tab.on{background:rgba(239,68,68,.25);color:#fca5a5;}
-.pause-badge{display:inline-block;background:rgba(239,68,68,.2);color:#fca5a5;font-size:8px;padding:1px 5px;border-radius:5px;margin-left:3px;font-weight:700;}
-.ov-filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
-.ov-filter-group{display:flex;gap:4px;background:#f1f5f9;padding:3px;border-radius:10px;}
-.ov-btn{padding:5px 14px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;cursor:pointer;}
-.ov-btn:hover{color:var(--text);}
+/* OVERVIEW */
+.ov-filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.ov-filter-group{display:flex;gap:3px;background:#f1f5f9;padding:3px;border-radius:10px;}
+.ov-btn{padding:5px 13px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
 .ov-btn.on{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
 .ov-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04);}
-.ov-table th{padding:12px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);background:#f8f9fc;border-bottom:1px solid var(--border);white-space:nowrap;}
-.ov-table th.sortable{cursor:pointer;user-select:none;}
-.ov-table th.sortable:hover{color:var(--accent);}
-.ov-table td{padding:12px 14px;font-size:13px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
+.ov-table th{padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);background:#f8f9fc;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;}
+.ov-table th:hover{color:var(--accent);}
+.ov-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
 .ov-table tr:last-child td{border-bottom:none;}
 .ov-table tr:hover td{background:#fafbff;}
 .ov-subj-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#ede9fe;color:#5b21b6;}
 .ov-score{font-size:14px;font-weight:800;color:var(--navy);}
-.ov-score-sub{font-size:10px;color:var(--muted);margin-left:3px;font-weight:400;}
-.ov-grade{width:28px;height:28px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
-.ov-edit-btn{padding:4px 12px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;}
+.ov-score-sub{font-size:10px;color:var(--muted);margin-left:3px;}
+.ov-grade{width:27px;height:27px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
+.th-school{background:linear-gradient(90deg,#eff6ff,#f8f9fc)!important;}
+.ov-edit-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
 .ov-edit-btn:hover{border-color:#7c3aed;color:#7c3aed;}
 .ov-empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;}
-.th-school{background:linear-gradient(90deg,#eff6ff,#f8f9fc)!important;}
 
-.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:#111827;color:#fff;padding:11px 22px;border-radius:12px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:200;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.22);}
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;}
+.modal{background:#fff;border-radius:20px;padding:28px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:15px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.modal-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#5b21b6);display:flex;align-items:center;justify-content:center;font-size:14px;}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
+.modal-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;margin-bottom:12px;color:var(--text);}
+.modal-input:focus{border-color:#7c3aed;}
+.modal-label{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
+.type-toggle{display:flex;gap:8px;margin-bottom:14px;}
+.type-btn{flex:1;padding:9px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
+.type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
+
+/* TOAST */
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:#111827;color:#fff;padding:11px 22px;border-radius:12px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:200;pointer-events:none;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
 </head>
@@ -256,39 +230,34 @@ input,select,textarea{font-family:inherit;}
   <div class="sidebar">
     <div class="sb-brand">
       <div class="sb-logo-icon">W</div>
-      <div>
-        <div class="sb-logo-title">WAWA</div>
-        <div class="sb-logo-sub">코 칭 센 터</div>
-      </div>
+      <div><div class="sb-logo-title">WAWA</div><div class="sb-logo-sub">코 칭 센 터</div></div>
     </div>
     <div class="sb-tabs">
       <button class="sb-tab on" id="sb-tab-active" onclick="setSbTab('active')">재원</button>
-      <button class="sb-tab paused-tab" id="sb-tab-paused" onclick="setSbTab('paused')">휴회</button>
+      <button class="sb-tab" id="sb-tab-paused" onclick="setSbTab('paused')">휴회</button>
     </div>
-    <div style="padding:6px 12px;background:rgba(239,68,68,.1);border-bottom:1px solid rgba(239,68,68,.2);">
-      <button onclick="fixTeachers()" style="width:100%;padding:6px;background:rgba(239,68,68,.3);border:none;border-radius:6px;color:#fca5a5;font-size:11px;font-weight:700;cursor:pointer;">🔧 강사 목록 초기화</button>
-    </div>
-    <div class="sb-filters">
+    <div class="sb-filter">
       <div class="sb-filter-label">선생님</div>
-      <select class="sb-teacher-select" id="sb-teacher-sel" onchange="setSbTeacher()">
+      <select class="sb-select" id="sb-teacher-sel" onchange="SB.teacherF=this.value;renderSidebar()">
         <option value="all">전체 선생님</option>
       </select>
     </div>
-    <div class="sb-subj-filter">
+    <div class="sb-subj-wrap">
       <div class="sb-filter-label">과목</div>
       <div class="sb-subj-btns" id="sb-subj-btns"></div>
     </div>
-    <div class="sb-sort-row">
+    <div class="sb-sort">
       <button class="sb-sort-btn on" id="sb-sort-grade" onclick="setSbSort('grade')">학년순</button>
       <button class="sb-sort-btn" id="sb-sort-name" onclick="setSbSort('name')">이름순</button>
     </div>
-    <div class="sb-student-count" id="sb-count"></div>
-    <div class="sb-student-list" id="sb-list"></div>
-    <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:6px;">
-      <button class="t-add-btn" style="flex:1;" onclick="openAddStudentSelect()">＋ 학생 추가</button>
-      <button class="t-add-btn" style="flex:1;" onclick="openAddTeacher()">＋ 강사 추가</button>
+    <div class="sb-count" id="sb-count">학생 (0명)</div>
+    <div class="sb-list" id="sb-list"></div>
+    <div class="sb-bottom">
+      <button class="sb-add-btn" onclick="openAddStudent()">＋ 학생 추가</button>
+      <button class="sb-add-btn" onclick="openAddTeacher()">＋ 강사 추가</button>
     </div>
   </div>
+
   <div class="main">
     <div class="header">
       <div>
@@ -297,15 +266,15 @@ input,select,textarea{font-family:inherit;}
       </div>
       <div class="h-right">
         <div class="h-tabs" id="h-tabs" style="display:none;">
-          <button class="h-tab on" onclick="setTab('detail')" id="tab-detail">상세</button>
-          <button class="h-tab" onclick="setTab('report')" id="tab-report">보고서</button>
+          <button class="h-tab on" id="tab-detail" onclick="setTab('detail')">상세</button>
+          <button class="h-tab" id="tab-report" onclick="setTab('report')">보고서</button>
         </div>
-        <button class="save-header-btn" id="save-btn" style="display:none;" onclick="saveReportImage()">📥 이미지 저장</button>
-        <button class="save-header-btn" onclick="showOverview()" style="background:linear-gradient(135deg,#059669,#34d399);">👥 전체 현황</button>
+        <button class="btn-save" id="save-btn" style="display:none;" onclick="saveReportImage()">📥 이미지 저장</button>
+        <button class="btn-overview" onclick="showOverview()">👥 전체 현황</button>
       </div>
     </div>
     <div class="content" id="content">
-      <div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 강사 → 학생 → 과목을 선택하세요</div></div>
+      <div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 학생과 과목을 선택하세요</div></div>
     </div>
   </div>
 </div>
@@ -313,76 +282,37 @@ input,select,textarea{font-family:inherit;}
 <div class="toast" id="toast"></div>
 
 <script>
+// STATE
 const S={
   teachers:JSON.parse(localStorage.getItem('wawa_teachers')||'[]'),
   students:JSON.parse(localStorage.getItem('wawa_students')||'[]'),
   exams:JSON.parse(localStorage.getItem('wawa_exams')||'[]'),
-  openT:new Set(),openS:new Set(),sel:null,tab:'detail',chartInst:null,
-  examFilter:'all',
-  sbTab:'active', // 'active' | 'paused'
+  sel:null,tab:'detail',chartInst:null,examFilter:'all',sbTab:'active',
 };
+const SB={teacherF:'all',subjF:'all',sort:'grade'};
+const OV={gradeF:'all',subjF:'all',sort:{key:'grade',dir:1}};
 let nextId=+localStorage.getItem('wawa_nid')||1;
+
 function nid(){const i=nextId++;localStorage.setItem('wawa_nid',nextId);return i;}
-function save(){localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));localStorage.setItem('wawa_students',JSON.stringify(S.students));localStorage.setItem('wawa_exams',JSON.stringify(S.exams));}
+function save(){
+  localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));
+  localStorage.setItem('wawa_students',JSON.stringify(S.students));
+  localStorage.setItem('wawa_exams',JSON.stringify(S.exams));
+}
 function grade(v){if(v>=90)return'A';if(v>=80)return'B';if(v>=70)return'C';if(v>=60)return'D';return'F';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
-function toggleMemo(){const box=document.getElementById('memo-box');const btn=document.getElementById('memo-toggle-btn');if(!box||!btn)return;const open=box.style.display==='block';box.style.display=open?'none':'block';btn.textContent=open?'펼치기 ▼':'접기 ▲';}
-function memoKey(){return`memo_${S.sel?.sid}_${S.sel?.subj}`;}
-function getMemo(){return S.sel?localStorage.getItem(memoKey())||'':'';}
-function saveMemo(){const a=document.getElementById('fb-memo');if(a)localStorage.setItem(memoKey(),a.value);}
-function msgKey(){return`msg_${S.sel?.sid}_${S.sel?.subj}`;}
-function getMsg(){return S.sel?localStorage.getItem(msgKey())||'':'';}
-function saveMsg(){const a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
+function showModal(html){document.getElementById('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
 
-function openPauseSubj(sid,subjName){
-  const st=S.students.find(s=>s.id===sid);
-  showModal(`<div class="modal-title"><div class="modal-icon">⏸</div>과목 휴회</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;"><strong>${st.name}</strong> · <strong>${subjName}</strong> 과목을 휴회 처리합니다.</div>
-    <div class="modal-label">휴회 사유</div>
-    <input class="modal-input" id="pause-reason" placeholder="예: 이사, 개인 사정 등"/>
-    <div class="modal-label">휴회 날짜</div>
-    <input class="modal-input" id="pause-date" type="date" value="${new Date().toISOString().slice(0,10)}"/>
-    <div class="modal-actions">
-      <button class="btn-ghost" onclick="closeModal()">취소</button>
-      <button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="pauseSubj(${sid},'${subjName}')">휴회 처리</button>
-    </div>`);
-}
-function pauseSubj(sid,subjName){
-  const st=S.students.find(s=>s.id===sid);
-  const subj=(st.subjects||[]).find(s=>s.name===subjName);
-  if(!subj)return;
-  subj.paused=true;
-  subj.pauseReason=document.getElementById('pause-reason').value.trim()||'사유 없음';
-  subj.pauseDate=document.getElementById('pause-date').value;
-  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName)S.sel=null;
-  save();closeModal();renderSidebar();renderMain();
-  toast('⏸ '+st.name+' · '+subjName+' 휴회 처리됐어요');
-}
-function resumeSubj(sid,subjName){
-  const st=S.students.find(s=>s.id===sid);
-  const subj=(st.subjects||[]).find(s=>s.name===subjName);
-  if(!subj)return;
-  if(!confirm(st.name+' · '+subjName+' 과목을 재원으로 복귀시킬까요?'))return;
-  subj.paused=false;subj.pauseReason='';subj.pauseDate='';
-  save();renderTree();toast('✅ '+st.name+' · '+subjName+' 재원 복귀됐어요');
-}
+const GRADE_ORDER=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
+function gradeOrder(g){const i=GRADE_ORDER.indexOf(g);return i>=0?i:99;}
 
-// 시험 구분 필터
-function setExamFilter(f){
-  S.examFilter=f;
-  renderMain();
-}
-function filteredExams(allExams){
-  if(S.examFilter==='all') return allExams;
-  return allExams.filter(e=>(e.examType||'academy')===S.examFilter);
-}
-
-const SB={teacherF:'all',subjF:'all',sort:'grade'};
-
+// SIDEBAR TAB
 function setSbTab(t){
   S.sbTab=t;
   document.getElementById('sb-tab-active').classList.toggle('on',t==='active');
   document.getElementById('sb-tab-paused').classList.toggle('on',t==='paused');
+  document.getElementById('sb-tab-paused').classList.toggle('paused-on',t==='paused');
   renderSidebar();
 }
 function setSbSort(s){
@@ -392,27 +322,21 @@ function setSbSort(s){
   renderSidebar();
 }
 
-function fixTeachers(){
-  if(!confirm('강사 목록을 장한성/이하림/박수권/양원철 4명으로 초기화할까요?\n기존 학생 데이터는 유지됩니다.'))return;
-  S.teachers=[{id:1,name:'장한성'},{id:2,name:'이하림'},{id:3,name:'박수권'},{id:4,name:'양원철'}];
-  save();renderSidebar();toast('✅ 강사 목록 초기화됐어요');
-}
-
+// SIDEBAR RENDER
 function renderSidebar(){
-  // 선생님 드롭다운 갱신
+  // 선생님 드롭다운
   const sel=document.getElementById('sb-teacher-sel');
-  const prev=sel.value;
+  const prev=SB.teacherF;
   sel.innerHTML='<option value="all">전체 선생님</option>'+
-    S.teachers.map(t=>`<option value="${t.id}"${SB.teacherF==t.id?' selected':''}>${t.name} 선생님</option>`).join('');
-  SB.teacherF=prev;
+    S.teachers.map(t=>`<option value="${t.id}"${String(t.id)===String(prev)?' selected':''}>${t.name} 선생님</option>`).join('');
 
-  // 과목 버튼 갱신
+  // 과목 버튼
   const allSubjs=[...new Set(S.students.flatMap(s=>(s.subjects||[]).map(x=>x.name)))];
-  const subjEl=document.getElementById('sb-subj-btns');
-  subjEl.innerHTML=`<button class="sb-subj-btn${SB.subjF==='all'?' on':''}" onclick="setSbSubj('all')">전체</button>`+
-    allSubjs.map(s=>`<button class="sb-subj-btn${SB.subjF===s?' on':''}" onclick="setSbSubj('${s}')">${s}</button>`).join('');
+  document.getElementById('sb-subj-btns').innerHTML=
+    `<button class="sb-subj-btn${SB.subjF==='all'?' on':''}" onclick="SB.subjF='all';renderSidebar()">전체</button>`+
+    allSubjs.map(s=>`<button class="sb-subj-btn${SB.subjF===s?' on':''}" onclick="SB.subjF='${s}';renderSidebar()">${s}</button>`).join('');
 
-  // 학생-과목 목록 수집
+  // 학생-과목 아이템
   let items=[];
   S.students.forEach(st=>{
     const tc=S.teachers.find(t=>t.id===st.tid);
@@ -420,7 +344,7 @@ function renderSidebar(){
       const isPaused=!!subj.paused;
       if(S.sbTab==='paused'&&!isPaused)return;
       if(S.sbTab==='active'&&isPaused)return;
-      if(SB.teacherF!=='all'&&st.tid!=SB.teacherF)return;
+      if(SB.teacherF!=='all'&&String(st.tid)!==String(SB.teacherF))return;
       if(SB.subjF!=='all'&&subj.name!==SB.subjF)return;
       const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name&&(e.examType||'academy')==='academy');
       const avg=exams.length?Math.round(exams.reduce((a,e)=>a+e.score,0)/exams.length*10)/10:null;
@@ -429,151 +353,46 @@ function renderSidebar(){
   });
 
   // 정렬
-  items.sort((a,b)=>SB.sort==='name'?a.st.name.localeCompare(b.st.name):gradeOrder(a.st.grade||'')-gradeOrder(b.st.grade||''));
+  items.sort((a,b)=>SB.sort==='name'?
+    a.st.name.localeCompare(b.st.name):
+    gradeOrder(a.st.grade||'')-gradeOrder(b.st.grade||''));
 
   document.getElementById('sb-count').textContent=`학생 (${items.length}명)`;
+  const unit_=it=>it.subj.type==='count'?'개':'점';
 
-  const listEl=document.getElementById('sb-list');
-  listEl.innerHTML=items.map(it=>{
-    const sel=S.sel&&S.sel.sid===it.st.id&&S.sel.subj===it.subj.name;
-    const unit=it.subj.type==='count'?'개':'점';
-    return`<div class="sb-student-item${sel?' sel':''}" onclick="selectSubj(${it.st.tid},${it.st.id},'${it.subj.name}')">
-      <div class="${it.isPaused?'sb-pause-dot':'sb-active-dot'}"></div>
-      <div class="sb-student-info" style="margin-left:8px;">
-        <div class="sb-student-name">${it.st.name}
-          ${it.isPaused?`<span class="pause-badge">휴회</span>`:''}
-        </div>
-        <div class="sb-student-meta">${it.st.grade||''} · ${it.subj.name}</div>
+  document.getElementById('sb-list').innerHTML=items.map(it=>{
+    const isSel=S.sel&&S.sel.sid===it.st.id&&S.sel.subj===it.subj.name;
+    return`<div class="sb-item${isSel?' sel':''}" onclick="selectSubj(${it.st.tid},${it.st.id},'${it.subj.name}')">
+      <div class="sb-dot ${it.isPaused?'paused':'active'}"></div>
+      <div class="sb-info">
+        <div class="sb-name">${it.st.name}${it.isPaused?'<span style="font-size:9px;background:rgba(239,68,68,.2);color:#fca5a5;padding:1px 5px;border-radius:5px;margin-left:4px;">휴회</span>':''}</div>
+        <div class="sb-meta">${it.st.grade||''} · ${it.subj.name}</div>
       </div>
-      ${it.avg!=null?`<span class="sb-student-score">${it.avg}${unit}</span>`:''}
-      <button class="sb-student-del" onclick="event.stopPropagation();quickDelSubjMenu(${it.st.id},'${it.subj.name}',${it.isPaused})">···</button>
+      ${it.avg!=null?`<span class="sb-avg">${it.avg}${unit_(it)}</span>`:''}
+      <button class="sb-more" onclick="event.stopPropagation();openItemMenu(${it.st.id},'${it.subj.name}',${it.isPaused})">···</button>
     </div>`;
   }).join('');
 }
 
-function setSbSort(s){
-  SB.sort=s;
-  document.getElementById('sb-sort-grade').classList.toggle('on',s==='grade');
-  document.getElementById('sb-sort-name').classList.toggle('on',s==='name');
-  renderSidebar();
-}
-function setSbSubj(sv){SB.subjF=sv;renderSidebar();}
-function setSbTeacher(){SB.teacherF=document.getElementById('sb-teacher-sel').value;renderSidebar();}
-
-function quickDelSubjMenu(sid,subjName,isPaused){
+function openItemMenu(sid,subjName,isPaused){
   const st=S.students.find(s=>s.id===sid);
   showModal(`<div class="modal-title"><div class="modal-icon">⚙️</div>${st.name} · ${subjName}</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       ${isPaused
-        ?`<button class="btn-primary" style="background:linear-gradient(135deg,#059669,#34d399);" onclick="resumeSubj(${sid},'${subjName}');closeModal()">↩ 재원 복귀</button>`
+        ?`<button class="btn-primary" style="background:linear-gradient(135deg,#059669,#34d399);" onclick="resumeSubj(${sid},'${subjName}')">↩ 재원 복귀</button>`
         :`<button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="closeModal();openPauseSubj(${sid},'${subjName}')">⏸ 휴회 처리</button>`
       }
-      <button class="btn-ghost" onclick="if(confirm('${subjName} 과목을 삭제할까요?')){delSubj(${sid},'${subjName}');closeModal()}" style="border-color:#fca5a5;color:#dc2626;">🗑 과목 삭제</button>
-      <button class="btn-ghost" onclick="if(confirm('${st.name} 학생과 모든 데이터를 삭제할까요?')){delStudent(${sid});closeModal()}" style="border-color:#dc2626;color:#dc2626;font-weight:700;">⚠️ 학생 전체 삭제</button>
+      <button class="btn-ghost" onclick="openAddSubj(${sid})">＋ 과목 추가</button>
+      <button class="btn-ghost" style="color:#dc2626;border-color:#fca5a5;" onclick="if(confirm('${subjName} 과목을 삭제할까요?')){delSubj(${sid},'${subjName}');closeModal()}">🗑 과목 삭제</button>
+      <button class="btn-danger" onclick="if(confirm('${st.name} 학생 전체를 삭제할까요?')){delStudent(${sid});closeModal()}">⚠️ 학생 전체 삭제</button>
       <button class="btn-ghost" onclick="closeModal()">취소</button>
-    </div>`);}
-
-
-function openAddTeacherOrStudent(){
-  if(S.teachers.length===0){openAddTeacher();return;}
-  showModal(`<div class="modal-title"><div class="modal-icon">➕</div>추가</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <button class="btn-primary" onclick="closeModal();openAddStudentSelect()">🎓 학생 추가</button>
-      <button class="btn-ghost" onclick="closeModal();openAddTeacher()">👤 강사 추가</button>
     </div>`);
 }
-function openAddStudentSelect(){
-  showModal(`<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div>
-    <div class="modal-label">강사 선택</div>
-    <select class="modal-input" id="sel-tid">
-      ${S.teachers.map(t=>`<option value="${t.id}">${t.name} 선생님</option>`).join('')}
-    </select>
-    <div class="modal-label">이름</div><input class="modal-input" id="sn" placeholder="예: 홍길동"/>
-    <div class="modal-label">학년</div><input class="modal-input" id="sg" placeholder="예: 중2"/>
-    <div class="modal-label">학교 이름</div><input class="modal-input" id="ss" placeholder="예: 광주중학교"/>
-    <div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addStudentFromSidebar()">추가</button></div>`);
-}
-function addStudentFromSidebar(){
-  const tidEl=document.getElementById('sel-tid');
-  const nEl=document.getElementById('sn');
-  const gEl=document.getElementById('sg');
-  const scEl=document.getElementById('ss');
-  if(!tidEl||!nEl){toast('입력 오류');return;}
-  const tid=+tidEl.value;
-  const n=nEl.value.trim();
-  const g=gEl?gEl.value.trim():'';
-  const sc=scEl?scEl.value.trim():'';
-  if(!n){toast('이름을 입력해주세요');return;}
-  if(!tid){toast('강사를 선택해주세요');return;}
-  const newStudent={id:nid(),tid,name:n,grade:g,school:sc,subjects:[]};
-  S.students.push(newStudent);
-  save();
-  closeModal();
-  renderSidebar();
-  toast('✅ '+n+' 추가됐어요');
-}
 
-// 사이드바 탭 - 학생 필터 (과목 기준)
-function renderTree(){renderSidebar();}
-function addTeacher(){
-  const n=document.getElementById('tn').value.trim();
-  if(!n)return;
-  S.teachers.push({id:nid(),name:n});
-  save();closeModal();renderSidebar();toast('✅ '+n+' 선생님 추가');
+function selectSubj(tid,sid,subj){
+  S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';
+  renderSidebar();renderMain();
 }
-// 사이드바 탭 - 학생 필터 (과목 기준)
-function renderTree(){
-  const el=document.getElementById('tree');el.innerHTML='';
-  S.teachers.forEach(t=>{
-    const open=S.openT.has(t.id);const div=document.createElement('div');
-    // 해당 탭에 맞는 과목이 있는 학생만
-    const studs=S.students.filter(s=>s.tid===t.id&&(s.subjects||[]).some(subj=>S.sbTab==='paused'?subj.paused:!subj.paused));
-    div.innerHTML=`
-      <div class="t-teacher-row${open?' open':''}" onclick="toggleT(${t.id})">
-        <div class="t-teacher-icon">${t.name[0]}</div><span>${t.name}</span>
-        <span class="t-chevron${open?' open':''}">▶</span>
-        <button class="t-del" onclick="event.stopPropagation();delTeacher(${t.id})">✕</button>
-      </div>
-      ${open?`<div class="t-students">${studs.map(s=>renderStudent(s)).join('')}
-        ${S.sbTab==='active'?`<button class="t-add-btn" onclick="openAddStudent(${t.id})">＋ 학생 추가</button>`:''}
-      </div>`:''}`;
-    el.appendChild(div);
-  });
-}
-function renderStudent(s){
-  const open=S.openS.has(s.id);
-  const activeSubjs=(s.subjects||[]).filter(subj=>S.sbTab==='paused'?subj.paused:!subj.paused);
-  return`<div>
-    <div class="t-student-row${open?' open':''}" onclick="toggleS(${s.id})">
-      <div class="t-student-icon">${s.name[0]}</div>
-      <span>${s.name}</span><span style="font-size:9px;color:rgba(255,255,255,.2);margin-left:2px;">${s.grade||''}</span>
-      ${(s.subjects||[]).some(x=>x.paused)?`<span class="pause-badge">휴회</span>`:''}
-      <span class="t-chevron${open?' open':''}">▶</span>
-      <button class="t-del" onclick="event.stopPropagation();delStudent(${s.id})">✕</button>
-    </div>
-    ${open?`<div class="t-subjects">
-      ${activeSubjs.map(subj=>{
-        const sel=S.sel&&S.sel.sid===s.id&&S.sel.subj===subj.name;
-        const cnt=S.exams.filter(e=>e.sid===s.id&&e.subj===subj.name).length;
-        return`<div class="t-subj-row${sel?' sel':''}" onclick="selectSubj(${s.tid},${s.id},'${subj.name}')">
-          <div class="t-subj-dot"></div><span>${subj.name}</span>
-          <span class="${subj.type==='count'?'badge-count':'badge-score'}">${subj.type==='count'?'개수':'점수'}</span>
-          <span class="t-cnt">${cnt}</span>
-          ${S.sbTab==='paused'
-            ?`<button class="t-del" style="color:#34d399;" onclick="event.stopPropagation();resumeSubj(${s.id},'${subj.name}')">↩</button>`
-            :`<button class="t-del" style="color:#fca5a5;" onclick="event.stopPropagation();openPauseSubj(${s.id},'${subj.name}')">⏸</button>`
-          }
-          <button class="t-del" onclick="event.stopPropagation();delSubj(${s.id},'${subj.name}')">✕</button>
-        </div>
-        ${S.sbTab==='paused'&&subj.pauseReason?`<div style="font-size:9px;color:rgba(255,255,255,.28);padding:0 10px 4px 22px;">사유: ${subj.pauseReason} · ${subj.pauseDate||''}</div>`:''}`;
-      }).join('')}
-      ${S.sbTab==='active'?`<button class="t-add-btn" onclick="openAddSubj(${s.id})">＋ 과목 추가</button>`:''}
-    </div>`:''}
-  </div>`;
-}
-function selectSubj(tid,sid,subj){S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';renderSidebar();renderMain();}
-function toggleT(id){renderSidebar();}
-function toggleS(id){renderSidebar();}
 
 // MAIN
 function renderMain(){
@@ -582,7 +401,7 @@ function renderMain(){
     document.getElementById('save-btn').style.display='none';
     document.getElementById('h-name').textContent='WAWA 코칭센터';
     document.getElementById('h-meta').textContent='강사 → 학생 → 과목을 선택하세요';
-    document.getElementById('content').innerHTML='<div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 강사 → 학생 → 과목을 선택하세요</div></div>';
+    document.getElementById('content').innerHTML='<div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 학생과 과목을 선택하세요</div></div>';
     return;
   }
   const st=S.students.find(s=>s.id===S.sel.sid);
@@ -597,13 +416,17 @@ function renderMain(){
 }
 function setTab(t){S.tab=t;renderMain();}
 
-// 필터 탭 HTML
+// 시험 필터
+function filteredExams(all){
+  if(S.examFilter==='all')return all;
+  return all.filter(e=>(e.examType||'academy')===S.examFilter);
+}
 function filterTabsHTML(){
   const f=S.examFilter;
   return`<div class="exam-filter">
-    <button class="ef-btn${f==='all'?' on':''}" onclick="setExamFilter('all')">전체</button>
-    <button class="ef-btn academy${f==='academy'?' on':''}" onclick="setExamFilter('academy')">학원</button>
-    <button class="ef-btn school${f==='school'?' on':''}" onclick="setExamFilter('school')">학교</button>
+    <button class="ef-btn${f==='all'?' on':''}" onclick="S.examFilter='all';renderMain()">전체</button>
+    <button class="ef-btn academy${f==='academy'?' on':''}" onclick="S.examFilter='academy';renderMain()">학원</button>
+    <button class="ef-btn school${f==='school'?' on':''}" onclick="S.examFilter='school';renderMain()">학교</button>
   </div>`;
 }
 
@@ -617,37 +440,30 @@ function renderDetail(st,subj){
   const rows=[...exams].reverse().map(e=>{
     const g=type==='score'?grade(e.score):null;
     const et=e.examType||'academy';
-    const etLabel=et==='school'?'학교':'학원';
-    const etClass=et==='school'?'etb-school':'etb-academy';
     return`<div class="exam-item">
       <div class="exam-date">${e.date}</div>
       <div style="flex:1"><div class="exam-name">${e.name}</div><div class="exam-bar"><div class="exam-bar-fill" style="width:${Math.min(100,e.score)}%"></div></div></div>
-      <span class="exam-type-badge ${etClass}">${etLabel}</span>
+      <span class="exam-type-badge ${et==='school'?'etb-school':'etb-academy'}">${et==='school'?'학교':'학원'}</span>
       <div><span class="exam-score">${e.score}</span><span class="exam-unit">${unit}</span></div>
       ${g?`<div class="grade-badge g${g}">${g}</div>`:''}
       <div class="exam-actions"><button class="exam-edit-btn" onclick="openEditExam(${e.id})">✏️</button><button class="exam-del-btn" onclick="delExam(${e.id})">🗑</button></div>
     </div>`;
   }).join('');
-  document.getElementById('content').innerHTML=`<div class="content-inner">
+  document.getElementById('content').innerHTML=`<div class="ci">
     <div class="score-grid">
-      <div class="score-card sc-1"><div class="score-card-label">최근 ${unit==='개'?'갯수':'점수'}</div><div class="score-card-val">${latest??'—'}<span class="score-card-unit">${unit}</span></div><div class="score-card-sub">${exams.length?exams[exams.length-1].name:''}</div></div>
-      <div class="score-card sc-2"><div class="score-card-label">최고 ${unit==='개'?'갯수':'점수'}</div><div class="score-card-val">${max??'—'}<span class="score-card-unit">${unit}</span></div></div>
-      <div class="score-card sc-3"><div class="score-card-label">시험 횟수</div><div class="score-card-val">${vals.length}<span class="score-card-unit">회</span></div></div>
+      <div class="score-card sc-1"><div class="sc-label">최근 ${unit==='개'?'갯수':'점수'}</div><div class="sc-val">${latest??'—'}<span class="sc-unit">${unit}</span></div><div class="sc-sub">${exams.length?exams[exams.length-1].name:''}</div></div>
+      <div class="score-card sc-2"><div class="sc-label">최고 ${unit==='개'?'갯수':'점수'}</div><div class="sc-val">${max??'—'}<span class="sc-unit">${unit}</span></div></div>
+      <div class="score-card sc-3"><div class="sc-label">시험 횟수</div><div class="sc-val">${vals.length}<span class="sc-unit">회</span></div></div>
     </div>
     <div class="card">
       <div class="card-title">시험 기록</div>
       ${filterTabsHTML()}
       ${rows||'<div style="text-align:center;color:var(--muted);padding:28px;">아직 시험 기록이 없어요</div>'}
-      <div class="add-exam-form"><div class="form-row">
-        <div class="form-group"><div class="form-label">구분</div>
-          <select class="form-select" id="ei-type" style="width:88px;">
-            <option value="academy">학원</option>
-            <option value="school">학교</option>
-          </select>
-        </div>
+      <div class="add-form"><div class="form-row">
+        <div class="form-group"><div class="form-label">구분</div><select class="form-select" id="ei-type" style="width:80px;"><option value="academy">학원</option><option value="school">학교</option></select></div>
         <div class="form-group"><div class="form-label">시험명</div><input class="form-input" id="ei-name" placeholder="예: 4월 단원평가" style="width:140px;"/></div>
-        <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:132px;"/></div>
-        <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="${type==='count'?'예: 23':'예: 85'}" style="width:80px;"/></div>
+        <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:130px;"/></div>
+        <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="${type==='count'?'예:23':'예:85'}" style="width:80px;"/></div>
         <div class="form-group" style="justify-content:flex-end;"><button class="btn-primary" onclick="addExam()">+ 추가</button></div>
       </div></div>
     </div>
@@ -665,64 +481,53 @@ function renderReport(st,subj,tc){
   const rows=[...exams].reverse().map(e=>{
     const g=type==='score'?grade(e.score):null;
     const et=e.examType||'academy';
-    const etLabel=et==='school'?'학교':'학원';
-    const etClass=et==='school'?'etb-school':'etb-academy';
     return`<div class="re-item"><div style="flex:1"><div class="re-name">${e.name}</div><div class="re-meta">${e.date}</div></div>
-    <span class="exam-type-badge ${etClass}" style="margin-right:10px;">${etLabel}</span>
-    <div class="re-score">${e.score}${unit}</div>${g?`<div class="grade-badge g${g}">${g}</div>`:''}</div>`;
+      <span class="exam-type-badge ${et==='school'?'etb-school':'etb-academy'}" style="margin-right:8px;">${et==='school'?'학교':'학원'}</span>
+      <div class="re-score">${e.score}${unit}</div>${g?`<div class="grade-badge g${g}">${g}</div>`:''}</div>`;
   }).join('');
 
-  document.getElementById('content').innerHTML=`<div class="content-inner">
+  document.getElementById('content').innerHTML=`<div class="ci">
     <div class="report-hero">
-      <div class="rh-glow1"></div><div class="rh-glow2"></div><div class="rh-glow3"></div>
+      <div class="rh-g1"></div><div class="rh-g2"></div>
       <div class="rh-header">
-        <div class="rh-logo">
-          <div class="rh-logo-icon">W</div>
-          <div><div class="rh-logo-t1">WAWA</div><div class="rh-logo-t2">코 칭 센 터</div></div>
-        </div>
+        <div class="rh-logo"><div class="rh-logo-icon">W</div><div><div class="rh-logo-t1">WAWA</div><div class="rh-logo-t2">코 칭 센 터</div></div></div>
         <div class="rh-badge">✦ 학습 성과 리포트</div>
         <div class="rh-date">${today} 발행</div>
       </div>
       <div class="rh-name">${st.name} 학생</div>
       <div class="rh-sub">${st.grade||''} · ${subj.name} · ${tc?tc.name+' 선생님':''}</div>
       <div class="rh-scores">
-        <div class="rh-score-box"><div class="rhs-label">최근</div><div class="rhs-val gold">${latest??'—'}${unit}</div></div>
-        <div class="rh-score-box"><div class="rhs-label">최고</div><div class="rhs-val green">${maxv??'—'}${vals.length?unit:''}</div></div>
-        <div class="rh-score-box"><div class="rhs-label">시험 횟수</div><div class="rhs-val blue">${vals.length}회</div></div>
+        <div class="rh-box"><div class="rh-box-label">최근</div><div class="rh-box-val gold">${latest??'—'}${unit}</div></div>
+        <div class="rh-box"><div class="rh-box-label">최고</div><div class="rh-box-val green">${maxv??'—'}${vals.length?unit:''}</div></div>
+        <div class="rh-box"><div class="rh-box-label">시험 횟수</div><div class="rh-box-val blue">${vals.length}회</div></div>
       </div>
     </div>
-
     <div class="card">
       <div class="card-title">성적 추이</div>
       ${filterTabsHTML()}
-      ${exams.length>=1?'<div class="chart-wrap"><canvas id="score-chart"></canvas></div>':'<div style="text-align:center;color:var(--muted);padding:28px;">시험 기록을 추가하면 그래프가 표시됩니다</div>'}
+      ${exams.length>=1?'<div class="chart-wrap"><canvas id="score-chart"></canvas></div>':'<div style="text-align:center;color:var(--muted);padding:24px;">시험 기록을 추가하면 그래프가 표시됩니다</div>'}
     </div>
-
     <div class="card">
       <div class="card-title">시험별 성적</div>
-      ${rows||'<div style="text-align:center;color:var(--muted);padding:28px;">기록 없음</div>'}
+      ${rows||'<div style="text-align:center;color:var(--muted);padding:24px;">기록 없음</div>'}
     </div>
-
     <div class="card">
       <div class="card-title">학부모 안내 메시지</div>
-      <div id="memo-section" style="margin-bottom:16px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div id="memo-section" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
           <div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>
-          <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:4px 12px;font-size:11px;color:#7c3aed;font-weight:600;">펼치기 ▼</button>
+          <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:3px 10px;font-size:11px;color:#7c3aed;font-weight:600;cursor:pointer;">펼치기 ▼</button>
         </div>
-        <div id="memo-box" style="display:none;">
-          <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;">
-            <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
-            <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예) 잘한점: 집중력 좋고 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getMemo()}</textarea>
-          </div>
+        <div id="memo-box" style="display:none;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;">
+          <textarea id="fb-memo" style="width:100%;min-height:100px;padding:10px 12px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요" oninput="saveMemo()">${getMemo()}</textarea>
         </div>
       </div>
-      <div id="ai-btn-wrap" style="display:flex;justify-content:center;margin-bottom:16px;">
+      <div id="ai-btn-wrap" style="display:flex;justify-content:center;margin-bottom:14px;">
         <button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>
       </div>
       <div id="msg-result-box" style="${getMsg()?'':'display:none;'}">
-        <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:22px 24px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>
+        <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:20px 22px;margin-bottom:10px;">
+          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>
           <div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);">${getMsg()?`<div style="white-space:pre-wrap;">${getMsg()}</div>`:''}</div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
@@ -734,8 +539,7 @@ function renderReport(st,subj,tc){
     </div>
     <div class="report-footer">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
   </div>`;
-
-  if(exams.length>=1) drawChart(exams,type);
+  if(exams.length>=1)drawChart(exams,type);
 }
 
 // CHART
@@ -746,34 +550,39 @@ function drawChart(exams,type){
   const vals=exams.map(e=>e.score);
   const maxVal=Math.max(...vals);
   const pad=Math.max(2,Math.round(maxVal*0.1));
-  const total=exams.length;
-  const padCount=total<=3?1:0;
-  const paddedLabels=[...Array(padCount).fill(''),...exams.map(e=>e.name),...Array(padCount).fill('')];
-  const paddedVals=[...Array(padCount).fill(null),...vals,...Array(padCount).fill(null)];
-  // 학원=보라, 학교=파랑
-  const baseColors=exams.map(e=>(e.examType||'academy')==='school'?'rgba(37,99,235,0.85)':'rgba(124,58,237,0.85)');
-  const paddedColors=[...Array(padCount).fill('transparent'),...baseColors,...Array(padCount).fill('transparent')];
+  const pc=exams.length<=3?1:0;
+  const labels=[...Array(pc).fill(''),...exams.map(e=>e.name),...Array(pc).fill('')];
+  const data=[...Array(pc).fill(null),...vals,...Array(pc).fill(null)];
+  const colors=[...Array(pc).fill('transparent'),...exams.map(e=>(e.examType||'academy')==='school'?'rgba(37,99,235,.85)':'rgba(124,58,237,.85)'),...Array(pc).fill('transparent')];
   S.chartInst=new Chart(ctx,{
     type:'bar',
-    data:{labels:paddedLabels,datasets:[{label:'성적',data:paddedVals,backgroundColor:paddedColors,borderWidth:0,borderRadius:8,borderSkipped:false,maxBarThickness:100,barPercentage:0.7,categoryPercentage:0.8}]},
+    data:{labels,datasets:[{label:'성적',data,backgroundColor:colors,borderWidth:0,borderRadius:8,borderSkipped:false,maxBarThickness:100,barPercentage:.7,categoryPercentage:.8}]},
     options:{
-      layout:{padding:{right:30}},
+      layout:{padding:{right:20}},
+      responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+unit},backgroundColor:'#111827',padding:10,cornerRadius:8}},
-      scales:{
-        y:{min:0,max:maxVal+pad,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+unit,font:{size:11}}},
-        x:{grid:{display:false},ticks:{font:{size:11},maxRotation:0,autoSkip:false}}
-      }
+      scales:{y:{min:0,max:maxVal+pad,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+unit,font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11},maxRotation:0}}}
     }
   });
 }
 
-// AI MSG
+// MEMO / MSG
+function toggleMemo(){const b=document.getElementById('memo-box');const btn=document.getElementById('memo-toggle-btn');if(!b||!btn)return;const o=b.style.display==='block';b.style.display=o?'none':'block';btn.textContent=o?'펼치기 ▼':'접기 ▲';}
+function memoKey(){return`memo_${S.sel?.sid}_${S.sel?.subj}`;}
+function getMemo(){return S.sel?localStorage.getItem(memoKey())||''  :'';}
+function saveMemo(){const a=document.getElementById('fb-memo');if(a)localStorage.setItem(memoKey(),a.value);}
+function msgKey(){return`msg_${S.sel?.sid}_${S.sel?.subj}`;}
+function getMsg(){return S.sel?localStorage.getItem(msgKey())||''  :'';}
+function saveMsg(){const a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
+function copyMsg(){const txt=document.getElementById('msg-rendered')?.textContent||document.getElementById('msg-area')?.value||'';if(!txt)return;navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됐어요'));}
+function editMsg(){const r=document.getElementById('msg-result-box');const t=document.getElementById('msg-area');if(r&&t){r.style.display='none';t.style.display='block';t.focus();}}
+
 async function autoMsg(){
   const st=S.students.find(s=>s.id===S.sel.sid);
   const tc=S.teachers.find(t=>t.id===S.sel.tid);
   const subj=(st.subjects||[]).find(s=>s.name===S.sel.subj)||{type:'score'};
   const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
-  const type=subj.type||'score';const unit=type==='count'?'개':'점';
+  const unit=subj.type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);const latest=vals.length?vals[vals.length-1]:null;
   const memo=document.getElementById('fb-memo')?.value||'';
   if(!memo.trim()){toast('선생님 메모를 먼저 입력해주세요!');return;}
@@ -784,131 +593,67 @@ async function autoMsg(){
   try{
     const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:900,
-        messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘. 다른 말은 하지 말고 JSON만 출력해.
-학생: ${st.name} (${st.grade||''}) / 과목: ${S.sel.subj} / 담당강사: ${tc?tc.name:'선생님'} / 최근 성적: ${latest??'없음'}${unit}
-[선생님 메모] ${memo}
-
-JSON 형식:
-{
-  "greeting": "안녕하세요 인사말 (학부모님께 인사 + 강사 소개, 1~2문장)",
-  "good": "✅ 잘한 점 내용 (2~3문장)",
-  "bad": "📝 보완이 필요한 부분 내용 (2~3문장)",
-  "next": "📚 앞으로의 학습 방향 내용 (2~3문장)",
-  "closing": "마무리 인사 (강사 이름으로 끝맺음, 1문장)"
-}`}]})});
+        messages:[{role:'user',content:`아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘.
+학생: ${st.name}(${st.grade||''}) / 과목: ${S.sel.subj} / 담당: ${tc?tc.name:'선생님'} / 최근성적: ${latest??'없음'}${unit}
+[메모] ${memo}
+JSON: {"greeting":"인사+강사소개(1~2문장)","good":"✅잘한점(2~3문장)","bad":"📝보완점(2~3문장)","next":"📚학습방향(2~3문장)","closing":"마무리(강사이름으로끝)"}`}]})});
     const raw=await res.text();let d;
-    try{d=JSON.parse(raw);}catch(e){if(rendered)rendered.innerHTML='파싱오류: '+raw;return;}
-    if(d.error){if(rendered)rendered.innerHTML='API오류: '+JSON.stringify(d.error);return;}
+    try{d=JSON.parse(raw);}catch(e){if(rendered)rendered.innerHTML='파싱오류';return;}
+    if(d.error){if(rendered)rendered.innerHTML='오류: '+JSON.stringify(d.error);return;}
     const txt=d.content?.[0]?.text||'';
-    let obj;
-    try{const clean=txt.replace(/```json|```/g,'').trim();obj=JSON.parse(clean);}
-    catch(e){if(rendered)rendered.innerHTML=`<div style="white-space:pre-wrap;line-height:2;">${txt}</div>`;localStorage.setItem(msgKey(),txt);return;}
-    const fullText=`${obj.greeting}\n\n✅ 잘한 점\n${obj.good}\n\n📝 보완이 필요한 부분\n${obj.bad}\n\n📚 앞으로의 학습 방향\n${obj.next}\n\n${obj.closing}`;
-    localStorage.setItem(msgKey(),fullText);
-    if(rendered) rendered.innerHTML=`
-      <div style="font-size:13px;line-height:2;color:#374151;margin-bottom:16px;">${obj.greeting.replace(/\n/g,'<br>')}</div>
-      <div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:6px;">✅ 잘한 점</div>
-        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.good.replace(/\n/g,'<br>')}</div>
-      </div>
-      <div style="background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:12px;">
-        <div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:6px;">📝 보완이 필요한 부분</div>
-        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.bad.replace(/\n/g,'<br>')}</div>
-      </div>
-      <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:14px 16px;margin-bottom:16px;">
-        <div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:6px;">📚 앞으로의 학습 방향</div>
-        <div style="font-size:13px;line-height:1.9;color:#374151;">${obj.next.replace(/\n/g,'<br>')}</div>
-      </div>
+    let obj;try{obj=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch(e){if(rendered)rendered.innerHTML=`<div style="white-space:pre-wrap;">${txt}</div>`;localStorage.setItem(msgKey(),txt);return;}
+    const full=`${obj.greeting}\n\n✅ 잘한 점\n${obj.good}\n\n📝 보완이 필요한 부분\n${obj.bad}\n\n📚 앞으로의 학습 방향\n${obj.next}\n\n${obj.closing}`;
+    localStorage.setItem(msgKey(),full);
+    if(rendered)rendered.innerHTML=`
+      <div style="font-size:13px;line-height:2;color:#374151;margin-bottom:14px;">${obj.greeting.replace(/\n/g,'<br>')}</div>
+      <div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:5px;">✅ 잘한 점</div><div style="font-size:13px;line-height:1.9;color:#374151;">${obj.good.replace(/\n/g,'<br>')}</div></div>
+      <div style="background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:5px;">📝 보완이 필요한 부분</div><div style="font-size:13px;line-height:1.9;color:#374151;">${obj.bad.replace(/\n/g,'<br>')}</div></div>
+      <div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:5px;">📚 앞으로의 학습 방향</div><div style="font-size:13px;line-height:1.9;color:#374151;">${obj.next.replace(/\n/g,'<br>')}</div></div>
       <div style="font-size:13px;line-height:2;color:#374151;">${obj.closing.replace(/\n/g,'<br>')}</div>`;
-    const textarea=document.getElementById('msg-area');
-    if(textarea){textarea.value=fullText;textarea.style.display='none';}
+    const ta=document.getElementById('msg-area');if(ta){ta.value=full;ta.style.display='none';}
   }catch(e){if(rendered)rendered.innerHTML='오류: '+e.message;}
-}
-function copyMsg(){
-  const txt=document.getElementById('msg-rendered')?.textContent||document.getElementById('msg-area')?.value||'';
-  if(!txt)return;navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됐어요'));
-}
-function editMsg(){
-  const resultBox=document.getElementById('msg-result-box');const textarea=document.getElementById('msg-area');
-  if(resultBox&&textarea){resultBox.style.display='none';textarea.style.display='block';textarea.focus();}
 }
 
 // SAVE IMAGE
 async function saveReportImage(){
-  if(!S.sel)return;
-  toast('📸 이미지 생성 중...');
-  const st=S.students.find(s=>s.id===S.sel.sid);
-  const tc=S.teachers.find(t=>t.id===S.sel.tid);
+  if(!S.sel)return;toast('📸 이미지 생성 중...');
+  const st=S.students.find(s=>s.id===S.sel.sid);const tc=S.teachers.find(t=>t.id===S.sel.tid);
   const subj=(st.subjects||[]).find(s=>s.name===S.sel.subj)||{type:'score'};
   const allExams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
   const exams=filteredExams(allExams);
   const type=subj.type||'score';const vals=exams.map(e=>e.score);
-  const unit=type==='count'?'개':'점';
-  const latest=vals.length?vals[vals.length-1]:null;const maxv=vals.length?Math.max(...vals):null;
+  const unit=type==='count'?'개':'점';const latest=vals.length?vals[vals.length-1]:null;const maxv=vals.length?Math.max(...vals):null;
   const today=new Date().toLocaleDateString('ko-KR');
   const msg=document.getElementById('msg-rendered')?.innerHTML||document.getElementById('msg-area')?.value||'';
-  const filterLabel=S.examFilter==='all'?'전체':S.examFilter==='school'?'학교':'학원';
-
   const examRows=[...exams].reverse().map(e=>{
     const et=e.examType||'academy';
-    const etLabel=et==='school'?'학교':'학원';
-    const etColor=et==='school'?'#1d4ed8':'#7c3aed';
-    const etBg=et==='school'?'#dbeafe':'#ede9fe';
-    return`<div style="display:flex;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">
+    return`<div style="display:flex;align-items:center;padding:11px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">
       <div style="flex:1"><div style="font-size:13px;font-weight:700;">${e.name}</div><div style="font-size:10px;color:#64748b;margin-top:2px;">${e.date}</div></div>
-      <span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:${etBg};color:${etColor};margin-right:10px;">${etLabel}</span>
+      <span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:${et==='school'?'#dbeafe':'#d1fae5'};color:${et==='school'?'#1d4ed8':'#065f46'};margin-right:10px;">${et==='school'?'학교':'학원'}</span>
       <div style="font-size:18px;font-weight:900;">${e.score}${unit}</div>
     </div>`;
   }).join('');
-
-  let chartImg='';
-  const chartCanvas=document.getElementById('score-chart');
-  if(chartCanvas)chartImg=chartCanvas.toDataURL('image/png');
-
-  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Noto Sans KR',sans-serif;background:#eef0f8;padding:32px;width:800px;}</style>
-  </head><body>
+  let chartImg='';const cc=document.getElementById('score-chart');if(cc)chartImg=cc.toDataURL('image/png');
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Noto Sans KR',sans-serif;background:#eef0f8;padding:32px;width:800px;}</style></head><body>
   <div style="background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-      <div style="display:flex;align-items:center;gap:9px;">
-        <div style="width:34px;height:34px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#0a0f1e;">W</div>
-        <div><div style="font-size:13px;font-weight:800;color:#fff;">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.3);">코 칭 센 터</div></div>
-      </div>
-      <div style="background:rgba(124,58,237,.28);color:#a78bfa;border-radius:20px;padding:5px 13px;font-size:10px;font-weight:700;">✦ 학습 성과 리포트 · ${filterLabel}</div>
-      <div style="font-size:10px;color:rgba(255,255,255,.22);">${today} 발행</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+      <div style="display:flex;align-items:center;gap:9px;"><div style="width:32px;height:32px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#0a0f1e;">W</div><div><div style="font-size:13px;font-weight:800;color:#fff;">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.3);">코 칭 센 터</div></div></div>
+      <div style="background:rgba(124,58,237,.28);color:#a78bfa;border-radius:20px;padding:5px 13px;font-size:10px;font-weight:700;">✦ 학습 성과 리포트</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.22);">${today}</div>
     </div>
     <div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;">${st.name} 학생</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px;">${st.grade||''} · ${S.sel.subj} · ${tc?tc.name+' 선생님':''}</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:18px;">${st.grade||''} · ${S.sel.subj} · ${tc?tc.name+' 선생님':''}</div>
     <div style="display:flex;gap:10px;">
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">최근</div>
-        <div style="font-size:24px;font-weight:900;color:#fbbf24;">${latest??'—'}${unit}</div>
-      </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">최고</div>
-        <div style="font-size:24px;font-weight:900;color:#34d399;">${maxv??'—'}${vals.length?unit:''}</div>
-      </div>
-      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">시험 횟수</div>
-        <div style="font-size:24px;font-weight:900;color:#60a5fa;">${vals.length}회</div>
-      </div>
+      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;">최근</div><div style="font-size:22px;font-weight:900;color:#fbbf24;">${latest??'—'}${unit}</div></div>
+      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;">최고</div><div style="font-size:22px;font-weight:900;color:#34d399;">${maxv??'—'}${unit}</div></div>
+      <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;">시험 횟수</div><div style="font-size:22px;font-weight:900;color:#60a5fa;">${vals.length}회</div></div>
     </div>
   </div>
-  ${chartImg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">성적 추이</div>
-    <img src="${chartImg}" style="width:100%;height:auto;"/>
-  </div>`:''}
-  <div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">시험별 성적</div>
-    ${examRows||'<div style="text-align:center;color:#64748b;padding:20px;">기록 없음</div>'}
-  </div>
-  ${msg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">학부모 안내 메시지</div>
-    <div style="border:1.5px solid #e9d5ff;border-radius:14px;padding:20px 22px;">${msg}</div>
-  </div>`:''}
-  <div style="text-align:center;padding:14px;color:#64748b;font-size:10px;">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
+  ${chartImg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">성적 추이</div><img src="${chartImg}" style="width:100%;height:auto;"/></div>`:''}
+  <div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">시험별 성적</div>${examRows||'<div style="color:#64748b;padding:20px;text-align:center;">기록 없음</div>'}</div>
+  ${msg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">학부모 안내 메시지</div><div style="border:1.5px solid #e9d5ff;border-radius:14px;padding:18px 20px;">${msg}</div></div>`:''}
+  <div style="text-align:center;padding:12px;color:#64748b;font-size:10px;">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
   </body></html>`;
-
   const iframe=document.createElement('iframe');
   iframe.style.cssText='position:fixed;left:-9999px;top:0;width:800px;height:100vh;border:none;visibility:hidden;';
   document.body.appendChild(iframe);
@@ -918,9 +663,8 @@ async function saveReportImage(){
     const iDoc=iframe.contentDocument.body;
     const canvas=await html2canvas(iDoc,{backgroundColor:'#eef0f8',scale:2,useCORS:true,width:800,height:iDoc.scrollHeight,windowWidth:800,windowHeight:iDoc.scrollHeight});
     const link=document.createElement('a');
-    link.download=`WAWA_${st.name}_${S.sel.subj}_${filterLabel}_${today.replace(/\./g,'').replace(/ /g,'')}.png`;
-    link.href=canvas.toDataURL('image/png');link.click();
-    toast('✅ 저장됐어요');
+    link.download=`WAWA_${st.name}_${S.sel.subj}_${today.replace(/\./g,'').replace(/ /g,'')}.png`;
+    link.href=canvas.toDataURL('image/png');link.click();toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
   document.body.removeChild(iframe);
 }
@@ -940,11 +684,7 @@ function openEditExam(id){
   const st=S.students.find(s=>s.id===e.sid);
   const subj=(st.subjects||[]).find(s=>s.name===e.subj)||{type:'score'};
   showModal(`<div class="modal-title"><div class="modal-icon">✏️</div>시험 수정</div>
-    <div class="modal-label">구분</div>
-    <select class="modal-input" id="me-type">
-      <option value="academy"${(e.examType||'academy')==='academy'?' selected':''}>학원</option>
-      <option value="school"${e.examType==='school'?' selected':''}>학교</option>
-    </select>
+    <div class="modal-label">구분</div><select class="modal-input" id="me-type"><option value="academy"${(e.examType||'academy')==='academy'?' selected':''}>학원</option><option value="school"${e.examType==='school'?' selected':''}>학교</option></select>
     <div class="modal-label">시험명</div><input class="modal-input" id="me-name" value="${e.name}"/>
     <div class="modal-label">날짜</div><input class="modal-input" id="me-date" type="date" value="${e.date}"/>
     <div class="modal-label">${subj.type==='count'?'갯수':'점수'}</div><input class="modal-input" id="me-score" type="number" value="${e.score}" min="0"/>
@@ -961,33 +701,124 @@ function saveEditExam(id){
 function delExam(id){if(!confirm('삭제할까요?'))return;S.exams=S.exams.filter(e=>e.id!==id);save();renderMain();toast('🗑 삭제됐어요');}
 
 // TEACHER CRUD
-function openAddTeacher(){showModal(`<div class="modal-title"><div class="modal-icon">👤</div>강사 추가</div><div class="modal-label">이름</div><input class="modal-input" id="tn" placeholder="예: 김선생"/><div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addTeacher()">추가</button></div>`);}
-function delTeacher(id){if(!confirm('강사와 모든 데이터가 삭제됩니다'))return;S.teachers=S.teachers.filter(t=>t.id!==id);const sids=S.students.filter(s=>s.tid===id).map(s=>s.id);S.students=S.students.filter(s=>s.tid!==id);S.exams=S.exams.filter(e=>!sids.includes(e.sid));if(S.sel&&sids.includes(S.sel.sid))S.sel=null;save();renderSidebar();renderMain();}
+function openAddTeacher(){
+  showModal(`<div class="modal-title"><div class="modal-icon">👤</div>강사 추가</div>
+    <div class="modal-label">이름</div>
+    <input class="modal-input" id="tn" placeholder="예: 김선생님"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="addTeacher()">추가</button>
+    </div>`);
+}
+function addTeacher(){
+  const n=document.getElementById('tn').value.trim();
+  if(!n){toast('이름을 입력해주세요');return;}
+  S.teachers.push({id:nid(),name:n});
+  save();closeModal();renderSidebar();toast('✅ '+n+' 선생님 추가');
+}
+function delTeacher(id){
+  if(!confirm('강사와 모든 데이터가 삭제됩니다'))return;
+  S.teachers=S.teachers.filter(t=>t.id!==id);
+  const sids=S.students.filter(s=>s.tid===id).map(s=>s.id);
+  S.students=S.students.filter(s=>s.tid!==id);
+  S.exams=S.exams.filter(e=>!sids.includes(e.sid));
+  if(S.sel&&sids.includes(S.sel.sid))S.sel=null;
+  save();renderSidebar();renderMain();
+}
 
 // STUDENT CRUD
-function openAddStudent(tid){showModal(`<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div><div class="modal-label">이름</div><input class="modal-input" id="sn" placeholder="예: 홍길동"/><div class="modal-label">학년</div><input class="modal-input" id="sg" placeholder="예: 중2"/><div class="modal-label">학교 이름</div><input class="modal-input" id="ss" placeholder="예: 광주중학교"/><div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addStudent(${tid})">추가</button></div>`);}
-function addStudent(tid){const n=document.getElementById('sn').value.trim();const g=document.getElementById('sg').value.trim();const sc=document.getElementById('ss').value.trim();if(!n)return;S.students.push({id:nid(),tid,name:n,grade:g,school:sc,subjects:[]});save();closeModal();S.openS.add(S.students[S.students.length-1].id);S.openT.add(tid);renderTree();toast('✅ '+n+' 추가');}
-function delStudent(id){if(!confirm('학생과 모든 데이터가 삭제됩니다'))return;S.students=S.students.filter(s=>s.id!==id);S.exams=S.exams.filter(e=>e.sid!==id);if(S.sel&&S.sel.sid===id)S.sel=null;save();renderTree();renderMain();}
+function openAddStudent(){
+  if(S.teachers.length===0){toast('먼저 강사를 추가해주세요!');return;}
+  showModal(`<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div>
+    <div class="modal-label">강사 선택</div>
+    <select class="modal-input" id="new-tid">
+      ${S.teachers.map(t=>`<option value="${t.id}">${t.name} 선생님</option>`).join('')}
+    </select>
+    <div class="modal-label">이름</div><input class="modal-input" id="new-name" placeholder="예: 홍길동"/>
+    <div class="modal-label">학년</div><input class="modal-input" id="new-grade" placeholder="예: 중2"/>
+    <div class="modal-label">학교 이름</div><input class="modal-input" id="new-school" placeholder="예: 광주중학교"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" onclick="addStudent()">추가</button>
+    </div>`);
+}
+function addStudent(){
+  const tid=+document.getElementById('new-tid').value;
+  const name=document.getElementById('new-name').value.trim();
+  const grade_=document.getElementById('new-grade').value.trim();
+  const school=document.getElementById('new-school').value.trim();
+  if(!name){toast('이름을 입력해주세요');return;}
+  S.students.push({id:nid(),tid,name,grade:grade_,school,subjects:[]});
+  save();closeModal();renderSidebar();toast('✅ '+name+' 추가됐어요');
+}
+function delStudent(id){
+  if(!confirm('학생과 모든 데이터가 삭제됩니다'))return;
+  S.students=S.students.filter(s=>s.id!==id);
+  S.exams=S.exams.filter(e=>e.sid!==id);
+  if(S.sel&&S.sel.sid===id)S.sel=null;
+  save();renderSidebar();renderMain();
+}
 
 // SUBJECT CRUD
 function openAddSubj(sid){
   showModal(`<div class="modal-title"><div class="modal-icon">📚</div>과목 추가</div>
-    <div class="modal-label">과목명</div><input class="modal-input" id="subjn" placeholder="예: 수학, 영어"/>
+    <div class="modal-label">과목명</div><input class="modal-input" id="new-subj" placeholder="예: 수학, 영어"/>
     <div class="modal-label">점수 유형</div>
-    <div class="type-toggle"><button class="type-btn on" id="tb-score" onclick="selType('score')">📊 점수 (0~100점)</button><button class="type-btn" id="tb-count" onclick="selType('count')">🔢 갯수 (개수)</button></div>
-    <div style="font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:4px;">· 점수: 수학처럼 100점 만점<br>· 갯수: 영어 단어처럼 맞힌 개수</div>
+    <div class="type-toggle">
+      <button class="type-btn on" id="tb-score" onclick="selType('score')">📊 점수 (0~100점)</button>
+      <button class="type-btn" id="tb-count" onclick="selType('count')">🔢 갯수 (개수)</button>
+    </div>
     <div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addSubj(${sid})">추가</button></div>`);
-  window._selSubjType='score';
+  window._subjType='score';
 }
-function selType(t){window._selSubjType=t;document.getElementById('tb-score').classList.toggle('on',t==='score');document.getElementById('tb-count').classList.toggle('on',t==='count');}
-function addSubj(sid){const n=document.getElementById('subjn').value.trim();if(!n)return;const st=S.students.find(s=>s.id===sid);if(!st.subjects)st.subjects=[];if(st.subjects.find(s=>s.name===n)){toast('이미 있는 과목이에요');return;}st.subjects.push({name:n,type:window._selSubjType||'score'});save();closeModal();S.openS.add(sid);renderTree();toast('✅ '+n+' 과목 추가');}
-function delSubj(sid,subj){if(!confirm(subj+' 과목 데이터가 삭제됩니다'))return;const st=S.students.find(s=>s.id===sid);st.subjects=st.subjects.filter(s=>s.name!==subj);S.exams=S.exams.filter(e=>!(e.sid===sid&&e.subj===subj));if(S.sel&&S.sel.sid===sid&&S.sel.subj===subj)S.sel=null;save();renderTree();renderMain();}
+function selType(t){window._subjType=t;document.getElementById('tb-score').classList.toggle('on',t==='score');document.getElementById('tb-count').classList.toggle('on',t==='count');}
+function addSubj(sid){
+  const n=document.getElementById('new-subj').value.trim();
+  if(!n){toast('과목명을 입력해주세요');return;}
+  const st=S.students.find(s=>s.id===sid);
+  if(!st.subjects)st.subjects=[];
+  if(st.subjects.find(s=>s.name===n)){toast('이미 있는 과목이에요');return;}
+  st.subjects.push({name:n,type:window._subjType||'score'});
+  save();closeModal();renderSidebar();toast('✅ '+n+' 과목 추가');
+}
+function delSubj(sid,subj){
+  const st=S.students.find(s=>s.id===sid);
+  st.subjects=st.subjects.filter(s=>s.name!==subj);
+  S.exams=S.exams.filter(e=>!(e.sid===sid&&e.subj===subj));
+  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subj)S.sel=null;
+  save();renderSidebar();renderMain();
+}
 
-// 전체 현황
-const OV={gradeF:'all',subjF:'all',sort:{key:'grade',dir:1}};
-const GRADES_ORDER=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
-function gradeOrder(g){const i=GRADES_ORDER.indexOf(g);return i>=0?i:99;}
+// PAUSE / RESUME
+function openPauseSubj(sid,subjName){
+  const st=S.students.find(s=>s.id===sid);
+  showModal(`<div class="modal-title"><div class="modal-icon">⏸</div>휴회 처리</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;"><strong>${st.name}</strong> · <strong>${subjName}</strong></div>
+    <div class="modal-label">휴회 사유</div><input class="modal-input" id="pause-reason" placeholder="예: 이사, 개인 사정"/>
+    <div class="modal-label">휴회 날짜</div><input class="modal-input" id="pause-date" type="date" value="${new Date().toISOString().slice(0,10)}"/>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal()">취소</button>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="pauseSubj(${sid},'${subjName}')">휴회 처리</button>
+    </div>`);
+}
+function pauseSubj(sid,subjName){
+  const st=S.students.find(s=>s.id===sid);
+  const subj=(st.subjects||[]).find(s=>s.name===subjName);
+  if(!subj)return;
+  subj.paused=true;subj.pauseReason=document.getElementById('pause-reason').value.trim()||'사유 없음';subj.pauseDate=document.getElementById('pause-date').value;
+  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName)S.sel=null;
+  save();closeModal();renderSidebar();renderMain();toast('⏸ 휴회 처리됐어요');
+}
+function resumeSubj(sid,subjName){
+  const st=S.students.find(s=>s.id===sid);
+  const subj=(st.subjects||[]).find(s=>s.name===subjName);
+  if(!subj)return;
+  if(!confirm(st.name+' · '+subjName+' 재원 복귀할까요?'))return;
+  subj.paused=false;subj.pauseReason='';subj.pauseDate='';
+  save();closeModal();renderSidebar();toast('✅ 재원 복귀됐어요');
+}
 
+// OVERVIEW
 function showOverview(){
   S.sel=null;
   document.getElementById('h-tabs').style.display='none';
@@ -997,9 +828,7 @@ function showOverview(){
   OV.gradeF='all';OV.subjF='all';OV.sort={key:'grade',dir:1};
   renderOverview();
 }
-
 function renderOverview(){
-  // 모든 학생-과목 조합 수집 (휴회 제외, 학생 기준으로 묶기)
   let studentRows=[];
   S.students.forEach(st=>{
     const tc=S.teachers.find(t=>t.id===st.tid);
@@ -1007,15 +836,14 @@ function renderOverview(){
     if(activeSubjs.length===0)return;
     const subjData=activeSubjs.map(subj=>{
       const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name);
-      const academyExams=exams.filter(e=>(e.examType||'academy')==='academy');
-      const schoolExams=exams.filter(e=>e.examType==='school');
-      const avgOf=arr=>arr.length?Math.round(arr.reduce((a,e)=>a+e.score,0)/arr.length):null;
-      return{subj,exams,academyExams,schoolExams,acAvg:avgOf(academyExams),scAvg:avgOf(schoolExams)};
+      const aEx=exams.filter(e=>(e.examType||'academy')==='academy');
+      const sEx=exams.filter(e=>e.examType==='school');
+      const avg=arr=>arr.length?Math.round(arr.reduce((a,e)=>a+e.score,0)/arr.length):null;
+      return{subj,aEx,sEx,acAvg:avg(aEx),scAvg:avg(sEx)};
     });
-    studentRows.push({st,tc,subjData,gradeOrder:gradeOrder(st.grade||'')});
+    studentRows.push({st,tc,subjData,go:gradeOrder(st.grade||'')});
   });
 
-  // 필터
   const gf=OV.gradeF;const sf=OV.subjF;
   let rows=studentRows.filter(r=>{
     if(gf!=='all'&&!(r.st.grade&&r.st.grade.startsWith(gf)))return false;
@@ -1023,51 +851,39 @@ function renderOverview(){
     return true;
   }).map(r=>({...r,subjData:sf==='all'?r.subjData:r.subjData.filter(s=>s.subj.name===sf)}));
 
-  // 정렬
   rows.sort((a,b)=>{
     const{key,dir}=OV.sort;
-    let va,vb;
-    if(key==='grade'){va=a.gradeOrder;vb=b.gradeOrder;}
-    else if(key==='name'){va=a.st.name;vb=b.st.name;}
-    else{va=a.gradeOrder;vb=b.gradeOrder;}
-    if(typeof va==='string')return dir*(va.localeCompare(vb));
-    return dir*(va-vb);
+    if(key==='name')return dir*a.st.name.localeCompare(b.st.name);
+    return dir*(a.go-b.go);
   });
 
   const total=rows.reduce((a,r)=>a+r.subjData.length,0);
-
-  // 학년/과목 필터 목록
   const allGrades=[...new Set(S.students.map(s=>s.grade||'').filter(Boolean))].sort((a,b)=>gradeOrder(a)-gradeOrder(b));
   const gradeGroups=[...new Set(allGrades.map(g=>g.replace(/[0-9]/g,'')))];
   const allSubjs=[...new Set(S.students.flatMap(s=>(s.subjects||[]).filter(x=>!x.paused).map(x=>x.name)))];
+  const si=k=>OV.sort.key===k?(OV.sort.dir===1?'↑':'↓'):'<span style="color:#ddd;font-size:9px;">⇅</span>';
 
-  function sortIcon(k){if(OV.sort.key!==k)return'<span style="color:#ddd;font-size:9px;">⇅</span>';return OV.sort.dir===1?'↑':'↓';}
+  const tableRows=rows.map(r=>r.subjData.map((sd,i)=>{
+    const g=sd.acAvg!=null?grade(sd.acAvg):null;
+    const diff=sd.acAvg!=null&&sd.scAvg!=null?sd.acAvg-sd.scAvg:null;
+    const diffTxt=diff!=null?(diff>0?`+${diff}`:diff===0?'±0':`${diff}`):'—';
+    const diffColor=diff==null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
+    return`<tr>
+      ${i===0?`<td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;color:var(--muted);font-size:12px;">${r.st.grade||'—'}</td>
+      <td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-weight:700;">${r.st.name}</td>
+      <td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">${r.st.school||'—'}</td>
+      <td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">${r.tc?r.tc.name+' 선생님':'—'}</td>`:''}
+      <td><span class="ov-subj-badge">${sd.subj.name}</span></td>
+      <td><span class="ov-score">${sd.acAvg!=null?sd.acAvg+'점':'—'}</span><span class="ov-score-sub">${sd.aEx.length>0?'('+sd.aEx.length+'회)':''}</span></td>
+      <td class="th-school"><span class="ov-score" style="color:#2563eb;">${sd.scAvg!=null?sd.scAvg+'점':'—'}</span><span class="ov-score-sub">${sd.sEx.length>0?'('+sd.sEx.length+'회)':''}</span></td>
+      <td style="font-weight:700;color:${diffColor};">${diffTxt}</td>
+      <td>${g?`<span class="ov-grade g${g}">${g}</span>`:'<span style="color:#ddd;">—</span>'}</td>
+      ${i===0?`<td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;"><button class="ov-edit-btn" onclick="goToStudent(${r.st.tid},${r.st.id},'${r.subjData[0].subj.name}')">상세 →</button></td>`:''}
+    </tr>`;
+  }).join('')).join('');
 
-  const tableRows=rows.map(r=>{
-    return r.subjData.map((sd,i)=>{
-      const g=sd.acAvg!=null?grade(sd.acAvg):null;
-      const diff=sd.acAvg!=null&&sd.scAvg!=null?sd.acAvg-sd.scAvg:null;
-      const diffTxt=diff!=null?(diff>0?`+${diff}`:diff===0?'±0':`${diff}`):'—';
-      const diffColor=diff==null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
-      return`<tr>
-        ${i===0?`<td rowspan="${r.subjData.length}" style="color:var(--muted);font-size:12px;vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.grade||'—'}</td>
-        <td rowspan="${r.subjData.length}" style="font-weight:700;vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.name}</td>
-        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.school||'—'}</td>
-        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.tc?r.tc.name+' 선생님':'—'}</td>`:''}
-        <td><span class="ov-subj-badge">${sd.subj.name}</span></td>
-        <td><span class="ov-score">${sd.acAvg!=null?sd.acAvg+'점':'—'}</span><span class="ov-score-sub">${sd.academyExams.length>0?'('+sd.academyExams.length+'회)':''}</span></td>
-        <td class="th-school"><span class="ov-score" style="color:#2563eb;">${sd.scAvg!=null?sd.scAvg+'점':'—'}</span><span class="ov-score-sub">${sd.schoolExams.length>0?'('+sd.schoolExams.length+'회)':''}</span></td>
-        <td style="font-weight:700;color:${diffColor};">${diffTxt}</td>
-        <td>${g?`<span class="ov-grade g${g}">${g}</span>`:'<span style="color:#ddd;">—</span>'}</td>
-        ${i===0?`<td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;"><button class="ov-edit-btn" onclick="goToStudent(${r.st.tid},${r.st.id},'${r.subjData[0].subj.name}')">상세 →</button></td>`:''}
-      </tr>`;
-    }).join('');
-  }).join('');
-
-  document.getElementById('content').innerHTML=`<div class="content-inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-      <div style="font-size:14px;font-weight:700;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(${total}건)</span></div>
-    </div>
+  document.getElementById('content').innerHTML=`<div class="ci">
+    <div style="font-size:14px;font-weight:700;margin-bottom:14px;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(${total}건)</span></div>
     <div class="ov-filter-bar">
       <div class="ov-filter-group">
         <button class="ov-btn${OV.gradeF==='all'?' on':''}" onclick="setOvFilter('grade','all')">전체</button>
@@ -1078,107 +894,23 @@ function renderOverview(){
         ${allSubjs.map(s=>`<button class="ov-btn${OV.subjF===s?' on':''}" onclick="setOvFilter('subj','${s}')">${s}</button>`).join('')}
       </div>
     </div>
-    ${rows.length===0?`<div class="ov-empty">📭 해당하는 학생이 없어요<br><span style="font-size:11px;color:#94a3b8;margin-top:8px;display:block;">학생을 추가하거나 필터를 변경해보세요</span></div>`:`
-    <table class="ov-table">
-      <thead><tr>
-        <th class="sortable" onclick="setSort('grade')">학년 ${sortIcon('grade')}</th>
-        <th class="sortable" onclick="setSort('name')">이름 ${sortIcon('name')}</th>
-        <th>학교</th>
-        <th>선생님</th>
-        <th>과목</th>
-        <th class="sortable" onclick="setSort('acAvg')">🏫 학원 평균 ${sortIcon('acAvg')}</th>
-        <th class="sortable th-school" onclick="setSort('scAvg')">📚 학교 평균 ${sortIcon('scAvg')}</th>
-        <th>비교</th>
-        <th>등급</th>
-        <th></th>
-      </tr></thead>
-      <tbody>${tableRows}</tbody>
-    </table>`}
+    ${rows.length===0?`<div class="ov-empty">📭 학생이 없어요<br><span style="font-size:11px;color:#94a3b8;display:block;margin-top:8px;">학생을 추가하거나 필터를 변경해보세요</span></div>`:`
+    <table class="ov-table"><thead><tr>
+      <th onclick="setOvSort('grade')">학년 ${si('grade')}</th>
+      <th onclick="setOvSort('name')">이름 ${si('name')}</th>
+      <th>학교</th><th>선생님</th><th>과목</th>
+      <th>🏫 학원 평균</th>
+      <th class="th-school">📚 학교 평균</th>
+      <th>비교</th><th>등급</th><th></th>
+    </tr></thead><tbody>${tableRows}</tbody></table>`}
   </div>`;
 }
+function setOvFilter(type,val){if(type==='grade')OV.gradeF=val;else OV.subjF=val;renderOverview();}
+function setOvSort(k){if(OV.sort.key===k)OV.sort.dir*=-1;else{OV.sort.key=k;OV.sort.dir=1;}renderOverview();}
+function goToStudent(tid,sid,subj){S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';renderSidebar();renderMain();}
 
-  // 학년 그룹
-  const allGrades=[...new Set(S.students.map(s=>s.grade||'').filter(Boolean))].sort((a,b)=>gradeOrder(a)-gradeOrder(b));
-  const gradeGroups=[...new Set(allGrades.map(g=>g.replace(/[0-9]/g,'')))];
-
-  function sortIcon(k){if(OV.sort.key!==k)return'<span style="color:#ddd;font-size:9px;">⇅</span>';return OV.sort.dir===1?'↑':'↓';}
-
-  const tableRows=rows.map(r=>{
-    const subjRows=r.subjData.map((sd,i)=>{
-      const g=sd.acAvg!=null?grade(sd.acAvg):null;
-      const diff=sd.acAvg!=null&&sd.scAvg!=null?sd.acAvg-sd.scAvg:null;
-      const diffTxt=diff!=null?(diff>0?`+${diff}`:diff===0?'±0':`${diff}`):'—';
-      const diffColor=diff==null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
-      return`<tr>
-        ${i===0?`<td rowspan="${r.subjData.length}" style="color:var(--muted);font-size:12px;vertical-align:middle;">${r.st.grade||'—'}</td>
-        <td rowspan="${r.subjData.length}" style="font-weight:700;vertical-align:middle;">${r.st.name}</td>
-        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;">${r.st.school||'—'}</td>
-        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;">${r.tc?r.tc.name+' 선생님':'—'}</td>`:''}
-        <td><span class="ov-subj-badge">${sd.subj.name}</span></td>
-        <td><span class="ov-score">${sd.acAvg!=null?sd.acAvg+'점':'—'}</span><span class="ov-score-sub">${sd.academyExams.length>0?'('+sd.academyExams.length+'회)':''}</span></td>
-        <td class="th-school"><span class="ov-score" style="color:#2563eb;">${sd.scAvg!=null?sd.scAvg+'점':'—'}</span><span class="ov-score-sub">${sd.schoolExams.length>0?'('+sd.schoolExams.length+'회)':''}</span></td>
-        <td style="font-weight:700;color:${diffColor};">${diffTxt}</td>
-        <td>${g?`<span class="ov-grade g${g}">${g}</span>`:'<span style="color:#ddd;">—</span>'}</td>
-        ${i===0?`<td rowspan="${r.subjData.length}" style="vertical-align:middle;"><button class="ov-edit-btn" onclick="goToStudent(${r.st.tid},${r.st.id},'${r.subjData[0].subj.name}')">상세 →</button></td>`:''}
-      </tr>`;
-    }).join('');
-    return subjRows;
-  }).join('');
-
-  document.getElementById('content').innerHTML=`<div class="content-inner">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
-      <div style="font-size:14px;font-weight:700;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(${total}건)</span></div>
-    </div>
-    <div class="ov-filter-bar">
-      <div class="ov-filter-group">
-        <button class="ov-btn${OV.gradeF==='all'?' on':''}" onclick="setOvFilter('grade','all')">전체</button>
-        ${gradeGroups.map(g=>`<button class="ov-btn${OV.gradeF===g?' on':''}" onclick="setOvFilter('grade','${g}')">${g==='초'?'초등':g==='중'?'중학':g==='고'?'고등':g}</button>`).join('')}
-      </div>
-      <div class="ov-filter-group">
-        <button class="ov-btn${OV.subjF==='all'?' on':''}" onclick="setOvFilter('subj','all')">전체</button>
-        ${allSubjs.map(s=>`<button class="ov-btn${OV.subjF===s?' on':''}" onclick="setOvFilter('subj','${s}')">${s}</button>`).join('')}
-      </div>
-    </div>
-    ${rows.length===0?`<div class="ov-empty">📭 해당하는 학생이 없어요</div>`:`
-    <table class="ov-table">
-      <thead><tr>
-        <th class="sortable" onclick="setSort('grade')">학년 ${sortIcon('grade')}</th>
-        <th class="sortable" onclick="setSort('name')">이름 ${sortIcon('name')}</th>
-        <th>학교</th>
-        <th>선생님</th>
-        <th>과목</th>
-        <th class="sortable" onclick="setSort('acAvg')">🏫 학원 평균 ${sortIcon('acAvg')}</th>
-        <th class="sortable th-school" onclick="setSort('scAvg')">📚 학교 평균 ${sortIcon('scAvg')}</th>
-        <th>비교</th>
-        <th class="sortable" onclick="setSort('gradeLabel')">등급 ${sortIcon('gradeLabel')}</th>
-        <th></th>
-      </tr></thead>
-      <tbody>${tableRows}</tbody>
-    </table>`}
-  </div>`;
-}
-
-function setOvFilter(type,val){
-  if(type==='grade') OV.gradeF=val;
-  else OV.subjF=val;
-  renderOverview();
-}
-function setSort(k){
-  if(OV.sort.key===k) OV.sort.dir*=-1;
-  else{OV.sort.key=k;OV.sort.dir=1;}
-  renderOverview();
-}
-function goToStudent(tid,sid,subj){
-  S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';
-  S.openT.add(tid);S.openS.add(sid);
-  renderTree();renderMain();
-}
-
-// MODAL
-function showModal(html){document.getElementById('modal-root').innerHTML=`<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">${html}</div></div>`;}
-function closeModal(){document.getElementById('modal-root').innerHTML='';}
-
-renderTree();renderMain();
+// INIT
+renderSidebar();renderMain();
 </script>
 </body>
 </html>
