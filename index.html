@@ -390,6 +390,10 @@ function setSbSort(s){
 }
 
 function renderSidebar(){
+  // 중복 강사 제거 (이름 기준)
+  const seen=new Set();
+  S.teachers=S.teachers.filter(t=>{if(seen.has(t.name))return false;seen.add(t.name);return true;});
+  save();
   // 선생님 드롭다운 갱신
   const sel=document.getElementById('sb-teacher-sel');
   const prev=sel.value;
