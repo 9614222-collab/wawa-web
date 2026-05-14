@@ -265,6 +265,9 @@ input,select,textarea{font-family:inherit;}
       <button class="sb-tab on" id="sb-tab-active" onclick="setSbTab('active')">재원</button>
       <button class="sb-tab paused-tab" id="sb-tab-paused" onclick="setSbTab('paused')">휴회</button>
     </div>
+    <div style="padding:6px 12px;background:rgba(239,68,68,.1);border-bottom:1px solid rgba(239,68,68,.2);">
+      <button onclick="fixTeachers()" style="width:100%;padding:6px;background:rgba(239,68,68,.3);border:none;border-radius:6px;color:#fca5a5;font-size:11px;font-weight:700;cursor:pointer;">🔧 강사 목록 초기화</button>
+    </div>
     <div class="sb-filters">
       <div class="sb-filter-label">선생님</div>
       <select class="sb-teacher-select" id="sb-teacher-sel" onchange="setSbTeacher()">
@@ -389,11 +392,13 @@ function setSbSort(s){
   renderSidebar();
 }
 
+function fixTeachers(){
+  if(!confirm('강사 목록을 장한성/이하림/박수권/양원철 4명으로 초기화할까요?\n기존 학생 데이터는 유지됩니다.'))return;
+  S.teachers=[{id:1,name:'장한성'},{id:2,name:'이하림'},{id:3,name:'박수권'},{id:4,name:'양원철'}];
+  save();renderSidebar();toast('✅ 강사 목록 초기화됐어요');
+}
+
 function renderSidebar(){
-  // 중복 강사 제거 (이름 기준)
-  const seen=new Set();
-  S.teachers=S.teachers.filter(t=>{if(seen.has(t.name))return false;seen.add(t.name);return true;});
-  save();
   // 선생님 드롭다운 갱신
   const sel=document.getElementById('sb-teacher-sel');
   const prev=sel.value;
