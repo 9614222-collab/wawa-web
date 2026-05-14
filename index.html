@@ -267,7 +267,7 @@ input,select,textarea{font-family:inherit;}
     </div>
     <div class="sb-filters">
       <div class="sb-filter-label">선생님</div>
-      <select class="sb-teacher-select" id="sb-teacher-sel" onchange="renderSidebar()">
+      <select class="sb-teacher-select" id="sb-teacher-sel" onchange="setSbTeacher()">
         <option value="all">전체 선생님</option>
       </select>
     </div>
@@ -441,7 +441,14 @@ function renderSidebar(){
   }).join('');
 }
 
-function setSbSubj(s){SB.subjF=s;renderSidebar();}
+function setSbSort(s){
+  SB.sort=s;
+  document.getElementById('sb-sort-grade').classList.toggle('on',s==='grade');
+  document.getElementById('sb-sort-name').classList.toggle('on',s==='name');
+  renderSidebar();
+}
+function setSbSubj(sv){SB.subjF=sv;renderSidebar();}
+function setSbTeacher(){SB.teacherF=document.getElementById('sb-teacher-sel').value;renderSidebar();}
 
 function quickDelSubjMenu(sid,subjName,isPaused){
   const st=S.students.find(s=>s.id===sid);
