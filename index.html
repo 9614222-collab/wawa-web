@@ -281,8 +281,9 @@ input,select,textarea{font-family:inherit;}
     </div>
     <div class="sb-student-count" id="sb-count"></div>
     <div class="sb-student-list" id="sb-list"></div>
-    <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);">
-      <button class="t-add-btn" onclick="openAddTeacherOrStudent()" id="sb-add-btn">＋ 학생 추가</button>
+    <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:6px;">
+      <button class="t-add-btn" style="flex:1;" onclick="openAddStudentSelect()">＋ 학생 추가</button>
+      <button class="t-add-btn" style="flex:1;" onclick="openAddTeacher()">＋ 강사 추가</button>
     </div>
   </div>
   <div class="main">
@@ -465,7 +466,6 @@ function quickDelSubjMenu(sid,subjName,isPaused){
 
 
 function openAddTeacherOrStudent(){
-  // 선생님이 있으면 학생 추가, 없으면 강사 추가
   if(S.teachers.length===0){openAddTeacher();return;}
   showModal(`<div class="modal-title"><div class="modal-icon">➕</div>추가</div>
     <div style="display:flex;flex-direction:column;gap:8px;">
