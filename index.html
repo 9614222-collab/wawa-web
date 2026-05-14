@@ -21,12 +21,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;}
 
-/* LAYOUT */
 .layout{display:flex;height:100vh;overflow:hidden;}
 .sidebar{width:232px;background:linear-gradient(180deg,#0a0f1e 0%,#111827 60%,#1a2340 100%);display:flex;flex-direction:column;flex-shrink:0;box-shadow:4px 0 24px rgba(0,0,0,.3);}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
-/* SIDEBAR */
 .sb-brand{padding:22px 18px 18px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
 .sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;box-shadow:0 4px 12px rgba(245,158,11,.4);}
 .sb-logo-title{font-size:15px;font-weight:800;color:#fff;}
@@ -60,7 +58,6 @@ input,select,textarea{font-family:inherit;}
 .badge-score{font-size:8px;padding:1px 5px;border-radius:7px;font-weight:700;margin-left:2px;background:rgba(124,58,237,.2);color:#a78bfa;}
 .badge-count{font-size:8px;padding:1px 5px;border-radius:7px;font-weight:700;margin-left:2px;background:rgba(245,158,11,.15);color:#fbbf24;}
 
-/* HEADER */
 .header{background:linear-gradient(135deg,#fff 0%,#f8f9ff 100%);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:64px;box-shadow:0 2px 12px rgba(124,58,237,.06);}
 .h-name{font-size:17px;font-weight:800;color:var(--text);}
 .h-meta{font-size:11px;color:var(--muted);margin-top:2px;}
@@ -72,7 +69,6 @@ input,select,textarea{font-family:inherit;}
 .save-header-btn{display:flex;align-items:center;gap:5px;padding:8px 16px;background:linear-gradient(135deg,#0a0f1e,#1e2d4a);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;box-shadow:0 2px 10px rgba(10,15,30,.2);transition:all .15s;}
 .save-header-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(10,15,30,.3);}
 
-/* CONTENT */
 .content{flex:1;overflow-y:auto;padding:28px 0;background:var(--bg);}
 .content-inner{max-width:880px;margin:0 auto;padding:0 28px;}
 .content::-webkit-scrollbar{width:5px;}
@@ -81,7 +77,19 @@ input,select,textarea{font-family:inherit;}
 .welcome-icon{font-size:52px;opacity:.12;}
 .welcome-text{font-size:14px;font-weight:500;color:var(--muted);}
 
-/* STAT CARDS */
+/* 시험 구분 탭 */
+.exam-filter{display:flex;gap:6px;margin-bottom:16px;}
+.ef-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);transition:all .15s;}
+.ef-btn:hover{border-color:#a78bfa;color:var(--accent);}
+.ef-btn.on{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(124,58,237,.3);}
+.ef-btn.school.on{background:#2563eb;border-color:#2563eb;box-shadow:0 2px 8px rgba(37,99,235,.3);}
+.ef-btn.academy.on{background:#059669;border-color:#059669;box-shadow:0 2px 8px rgba(5,150,105,.3);}
+
+/* 시험 구분 뱃지 */
+.exam-type-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;}
+.etb-school{background:#dbeafe;color:#1d4ed8;}
+.etb-academy{background:#d1fae5;color:#065f46;}
+
 .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
 .score-card{border-radius:16px;padding:22px 22px;position:relative;overflow:hidden;color:#fff;}
 .sc-1{background:linear-gradient(135deg,#1d4ed8,#3b82f6);}
@@ -94,12 +102,10 @@ input,select,textarea{font-family:inherit;}
 .score-card-unit{font-size:14px;opacity:.6;margin-left:3px;font-weight:500;}
 .score-card-sub{font-size:10px;opacity:.42;margin-top:7px;}
 
-/* CARD */
 .card{background:var(--card);border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
 .card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .card-title::before{content:'';width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;flex-shrink:0;}
 
-/* EXAM */
 .exam-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;transition:all .2s;background:#fff;}
 .exam-item:hover{border-color:#c4b5fd;box-shadow:0 3px 12px rgba(124,58,237,.09);transform:translateY(-1px);}
 .exam-date{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;font-weight:500;}
@@ -120,12 +126,13 @@ input,select,textarea{font-family:inherit;}
 .form-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
 .form-input{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;color:var(--text);}
 .form-input:focus{border-color:#7c3aed;}
+.form-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;color:var(--text);}
+.form-select:focus{border-color:#7c3aed;}
 .btn-primary{padding:8px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;box-shadow:0 2px 10px rgba(124,58,237,.3);transition:all .15s;}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,.4);}
 .btn-ghost{padding:8px 14px;background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;transition:all .15s;}
 .btn-ghost:hover{border-color:#7c3aed;color:#7c3aed;}
 
-/* REPORT HERO */
 .report-hero{background:linear-gradient(135deg,#0a0f1e 0%,#1e2d4a 60%,#2d1b69 100%);border-radius:20px;padding:30px;margin-bottom:18px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
 .rh-glow1{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);pointer-events:none;}
 .rh-glow2{position:absolute;bottom:-50px;left:20px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%);pointer-events:none;}
@@ -141,35 +148,28 @@ input,select,textarea{font-family:inherit;}
 .rh-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:22px;}
 .rh-scores{display:flex;gap:10px;flex-wrap:wrap;}
 .rh-score-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;transition:all .2s;}
-.rh-score-box:hover{background:rgba(255,255,255,.1);}
 .rhs-label{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
 .rhs-val{font-size:25px;font-weight:900;color:#fff;letter-spacing:-.02em;}
 .rhs-val.gold{color:#fbbf24;}
 .rhs-val.green{color:#34d399;}
 .rhs-val.blue{color:#60a5fa;}
 
-/* CHART */
 .chart-wrap{position:relative;height:220px;margin:4px 0;}
 
-/* REPORT EXAM */
 .re-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;transition:all .2s;}
 .re-item:hover{border-color:#c4b5fd;box-shadow:0 2px 10px rgba(124,58,237,.08);}
 .re-name{font-size:13px;font-weight:700;}
 .re-meta{font-size:10px;color:var(--muted);margin-top:2px;}
 .re-score{font-size:20px;font-weight:900;margin-left:auto;}
 
-/* MSG */
 .msg-auto-btn{display:flex;align-items:center;gap:6px;padding:11px 28px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;box-shadow:0 3px 12px rgba(124,58,237,.35);transition:all .15s;}
 .msg-auto-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(124,58,237,.45);}
 .msg-textarea{width:100%;min-height:160px;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;line-height:1.9;resize:vertical;outline:none;transition:border .15s;background:#fafbff;color:var(--text);}
 .msg-textarea:focus{border-color:#7c3aed;}
 .msg-copy-btn{padding:8px 16px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:11px;font-weight:600;color:var(--muted);transition:all .15s;}
 .msg-copy-btn:hover{border-color:#7c3aed;color:#7c3aed;}
-
-/* REPORT FOOTER */
 .report-footer{text-align:center;padding:16px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.05em;}
 
-/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;}
 .modal{background:#fff;border-radius:20px;padding:28px;width:360px;box-shadow:0 24px 64px rgba(0,0,0,.2);}
 .modal-title{font-size:15px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
@@ -182,7 +182,6 @@ input,select,textarea{font-family:inherit;}
 .type-btn{flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;transition:all .15s;color:var(--muted);}
 .type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
 
-/* TOAST */
 .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(12px);background:#111827;color:#fff;padding:11px 22px;border-radius:12px;font-size:12px;font-weight:600;opacity:0;transition:all .3s;z-index:200;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.22);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 </style>
@@ -203,7 +202,6 @@ input,select,textarea{font-family:inherit;}
       <button class="t-add-btn" onclick="openAddTeacher()">＋ 강사 추가</button>
     </div>
   </div>
-
   <div class="main">
     <div class="header">
       <div>
@@ -232,26 +230,30 @@ const S={
   students:JSON.parse(localStorage.getItem('wawa_students')||'[]'),
   exams:JSON.parse(localStorage.getItem('wawa_exams')||'[]'),
   openT:new Set(),openS:new Set(),sel:null,tab:'detail',chartInst:null,
+  examFilter:'all', // 'all' | 'school' | 'academy'
 };
 let nextId=+localStorage.getItem('wawa_nid')||1;
 function nid(){const i=nextId++;localStorage.setItem('wawa_nid',nextId);return i;}
 function save(){localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));localStorage.setItem('wawa_students',JSON.stringify(S.students));localStorage.setItem('wawa_exams',JSON.stringify(S.exams));}
 function grade(v){if(v>=90)return'A';if(v>=80)return'B';if(v>=70)return'C';if(v>=60)return'D';return'F';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300);}
-function toggleMemo(){
-  const box=document.getElementById('memo-box');
-  const btn=document.getElementById('memo-toggle-btn');
-  if(!box||!btn)return;
-  const open=box.style.display==='block';
-  box.style.display=open?'none':'block';
-  btn.textContent=open?'펼치기 ▼':'접기 ▲';
-}
+function toggleMemo(){const box=document.getElementById('memo-box');const btn=document.getElementById('memo-toggle-btn');if(!box||!btn)return;const open=box.style.display==='block';box.style.display=open?'none':'block';btn.textContent=open?'펼치기 ▼':'접기 ▲';}
 function memoKey(){return`memo_${S.sel?.sid}_${S.sel?.subj}`;}
 function getMemo(){return S.sel?localStorage.getItem(memoKey())||'':'';}
 function saveMemo(){const a=document.getElementById('fb-memo');if(a)localStorage.setItem(memoKey(),a.value);}
 function msgKey(){return`msg_${S.sel?.sid}_${S.sel?.subj}`;}
 function getMsg(){return S.sel?localStorage.getItem(msgKey())||'':'';}
 function saveMsg(){const a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
+
+// 시험 구분 필터
+function setExamFilter(f){
+  S.examFilter=f;
+  renderMain();
+}
+function filteredExams(allExams){
+  if(S.examFilter==='all') return allExams;
+  return allExams.filter(e=>(e.examType||'academy')===S.examFilter);
+}
 
 // TREE
 function renderTree(){
@@ -297,7 +299,7 @@ function renderStudent(s){
 }
 function toggleT(id){S.openT.has(id)?S.openT.delete(id):S.openT.add(id);renderTree();}
 function toggleS(id){S.openS.has(id)?S.openS.delete(id):S.openS.add(id);renderTree();}
-function selectSubj(tid,sid,subj){S.sel={tid,sid,subj};S.tab='detail';renderTree();renderMain();}
+function selectSubj(tid,sid,subj){S.sel={tid,sid,subj};S.tab='detail';S.examFilter='all';renderTree();renderMain();}
 
 // MAIN
 function renderMain(){
@@ -321,17 +323,32 @@ function renderMain(){
 }
 function setTab(t){S.tab=t;renderMain();}
 
+// 필터 탭 HTML
+function filterTabsHTML(){
+  const f=S.examFilter;
+  return`<div class="exam-filter">
+    <button class="ef-btn${f==='all'?' on':''}" onclick="setExamFilter('all')">전체</button>
+    <button class="ef-btn academy${f==='academy'?' on':''}" onclick="setExamFilter('academy')">학원</button>
+    <button class="ef-btn school${f==='school'?' on':''}" onclick="setExamFilter('school')">학교</button>
+  </div>`;
+}
+
 // DETAIL
 function renderDetail(st,subj){
-  const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const allExams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const exams=filteredExams(allExams);
   const type=subj.type||'score';const vals=exams.map(e=>e.score);
   const latest=vals.length?vals[vals.length-1]:null;const max=vals.length?Math.max(...vals):null;
   const unit=type==='count'?'개':'점';
   const rows=[...exams].reverse().map(e=>{
     const g=type==='score'?grade(e.score):null;
+    const et=e.examType||'academy';
+    const etLabel=et==='school'?'학교':'학원';
+    const etClass=et==='school'?'etb-school':'etb-academy';
     return`<div class="exam-item">
       <div class="exam-date">${e.date}</div>
       <div style="flex:1"><div class="exam-name">${e.name}</div><div class="exam-bar"><div class="exam-bar-fill" style="width:${Math.min(100,e.score)}%"></div></div></div>
+      <span class="exam-type-badge ${etClass}">${etLabel}</span>
       <div><span class="exam-score">${e.score}</span><span class="exam-unit">${unit}</span></div>
       ${g?`<div class="grade-badge g${g}">${g}</div>`:''}
       <div class="exam-actions"><button class="exam-edit-btn" onclick="openEditExam(${e.id})">✏️</button><button class="exam-del-btn" onclick="delExam(${e.id})">🗑</button></div>
@@ -345,11 +362,18 @@ function renderDetail(st,subj){
     </div>
     <div class="card">
       <div class="card-title">시험 기록</div>
+      ${filterTabsHTML()}
       ${rows||'<div style="text-align:center;color:var(--muted);padding:28px;">아직 시험 기록이 없어요</div>'}
       <div class="add-exam-form"><div class="form-row">
-        <div class="form-group"><div class="form-label">시험명</div><input class="form-input" id="ei-name" placeholder="예: 4월 단원평가" style="width:155px;"/></div>
-        <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:138px;"/></div>
-        <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="${type==='count'?'예: 23':'예: 85'}" style="width:88px;"/></div>
+        <div class="form-group"><div class="form-label">구분</div>
+          <select class="form-select" id="ei-type" style="width:88px;">
+            <option value="academy">학원</option>
+            <option value="school">학교</option>
+          </select>
+        </div>
+        <div class="form-group"><div class="form-label">시험명</div><input class="form-input" id="ei-name" placeholder="예: 4월 단원평가" style="width:140px;"/></div>
+        <div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="${new Date().toISOString().slice(0,10)}" style="width:132px;"/></div>
+        <div class="form-group"><div class="form-label">${type==='count'?'갯수':'점수'}</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="${type==='count'?'예: 23':'예: 85'}" style="width:80px;"/></div>
         <div class="form-group" style="justify-content:flex-end;"><button class="btn-primary" onclick="addExam()">+ 추가</button></div>
       </div></div>
     </div>
@@ -358,15 +382,20 @@ function renderDetail(st,subj){
 
 // REPORT
 function renderReport(st,subj,tc){
-  const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const allExams=S.exams.filter(e=>e.sid===st.id&&e.subj===subj.name).sort((a,b)=>a.date.localeCompare(b.date));
+  const exams=filteredExams(allExams);
   const type=subj.type||'score';const vals=exams.map(e=>e.score);
-  const avg=vals.length?Math.round(vals.reduce((a,b)=>a+b,0)/vals.length):null;
   const latest=vals.length?vals[vals.length-1]:null;const maxv=vals.length?Math.max(...vals):null;
   const unit=type==='count'?'개':'점';
   const today=new Date().toLocaleDateString('ko-KR');
   const rows=[...exams].reverse().map(e=>{
     const g=type==='score'?grade(e.score):null;
-    return`<div class="re-item"><div style="flex:1"><div class="re-name">${e.name}</div><div class="re-meta">${e.date}</div></div><div class="re-score">${e.score}${unit}</div>${g?`<div class="grade-badge g${g}">${g}</div>`:''}</div>`;
+    const et=e.examType||'academy';
+    const etLabel=et==='school'?'학교':'학원';
+    const etClass=et==='school'?'etb-school':'etb-academy';
+    return`<div class="re-item"><div style="flex:1"><div class="re-name">${e.name}</div><div class="re-meta">${e.date}</div></div>
+    <span class="exam-type-badge ${etClass}" style="margin-right:10px;">${etLabel}</span>
+    <div class="re-score">${e.score}${unit}</div>${g?`<div class="grade-badge g${g}">${g}</div>`:''}</div>`;
   }).join('');
 
   document.getElementById('content').innerHTML=`<div class="content-inner">
@@ -391,6 +420,7 @@ function renderReport(st,subj,tc){
 
     <div class="card">
       <div class="card-title">성적 추이</div>
+      ${filterTabsHTML()}
       ${exams.length>=1?'<div class="chart-wrap"><canvas id="score-chart"></canvas></div>':'<div style="text-align:center;color:var(--muted);padding:28px;">시험 기록을 추가하면 그래프가 표시됩니다</div>'}
     </div>
 
@@ -404,11 +434,11 @@ function renderReport(st,subj,tc){
       <div id="memo-section" style="margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
           <div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>
-          <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:4px 12px;font-size:11px;color:#7c3aed;font-weight:600;transition:all .15s;">펼치기 ▼</button>
+          <button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:4px 12px;font-size:11px;color:#7c3aed;font-weight:600;">펼치기 ▼</button>
         </div>
         <div id="memo-box" style="display:none;">
           <div style="background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:16px 18px;">
-            <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;line-height:1.7;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
+            <div style="font-size:11px;color:#7c3aed;margin-bottom:10px;opacity:.8;">잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요</div>
             <textarea id="fb-memo" style="width:100%;min-height:110px;padding:12px 14px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="예) 잘한점: 집중력 좋고 계산 정확&#10;아쉬운점: 서술형 취약&#10;앞으로: 오답노트 작성" oninput="saveMemo()">${getMemo()}</textarea>
           </div>
         </div>
@@ -418,7 +448,7 @@ function renderReport(st,subj,tc){
       </div>
       <div id="msg-result-box" style="${getMsg()?'':'display:none;'}">
         <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:22px 24px;margin-bottom:10px;">
-          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ede9fe;letter-spacing:.05em;">📋 학부모 안내 메시지</div>
+          <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>
           <div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);">${getMsg()?`<div style="white-space:pre-wrap;">${getMsg()}</div>`:''}</div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:8px;">
@@ -428,44 +458,35 @@ function renderReport(st,subj,tc){
       </div>
       <textarea class="msg-textarea" id="msg-area" style="${getMsg()?'display:none;':''}" placeholder="위에 메모를 입력하고 'AI로 정리하기'를 눌러보세요." oninput="saveMsg()">${getMsg()}</textarea>
     </div>
-
     <div class="report-footer">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
   </div>`;
 
   if(exams.length>=1) drawChart(exams,type);
 }
 
-// CHART - 막대그래프
+// CHART
 function drawChart(exams,type){
   if(S.chartInst){S.chartInst.destroy();S.chartInst=null;}
   const ctx=document.getElementById('score-chart');if(!ctx)return;
   const unit=type==='count'?'개':'점';
   const vals=exams.map(e=>e.score);
-  const minVal=Math.min(...vals);
   const maxVal=Math.max(...vals);
   const pad=Math.max(2,Math.round(maxVal*0.1));
-  const yMin=0;
-  const yMax=maxVal+pad;  const barColors=exams.map((_,i)=>{
-    const r=i/(exams.length-1||1);
-    return`rgba(${Math.round(124+(59-124)*r)},${Math.round(58+(130-58)*r)},${Math.round(237+(246-237)*r)},0.85)`;
-  });
+  const total=exams.length;
+  const padCount=total<=3?1:0;
+  const paddedLabels=[...Array(padCount).fill(''),...exams.map(e=>e.name),...Array(padCount).fill('')];
+  const paddedVals=[...Array(padCount).fill(null),...vals,...Array(padCount).fill(null)];
+  // 학원=보라, 학교=파랑
+  const baseColors=exams.map(e=>(e.examType||'academy')==='school'?'rgba(37,99,235,0.85)':'rgba(124,58,237,0.85)');
+  const paddedColors=[...Array(padCount).fill('transparent'),...baseColors,...Array(padCount).fill('transparent')];
   S.chartInst=new Chart(ctx,{
     type:'bar',
-    data:{
-      labels:exams.map(e=>e.name),
-      datasets:[{
-        label:'성적',data:vals,
-        backgroundColor:barColors,
-        borderWidth:0,borderRadius:8,borderSkipped:false
-      }]
-    },
+    data:{labels:paddedLabels,datasets:[{label:'성적',data:paddedVals,backgroundColor:paddedColors,borderWidth:0,borderRadius:8,borderSkipped:false,maxBarThickness:100,barPercentage:0.7,categoryPercentage:0.8}]},
     options:{
       layout:{padding:{right:30}},
-      plugins:{
-        legend:{display:false},        tooltip:{callbacks:{label:c=>c.parsed.y+unit},backgroundColor:'#111827',padding:10,cornerRadius:8}
-      },
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.y+unit},backgroundColor:'#111827',padding:10,cornerRadius:8}},
       scales:{
-        y:{min:yMin,max:yMax,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+unit,font:{size:11}}},
+        y:{min:0,max:maxVal+pad,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:v=>v+unit,font:{size:11}}},
         x:{grid:{display:false},ticks:{font:{size:11},maxRotation:0,autoSkip:false}}
       }
     }
@@ -506,15 +527,8 @@ JSON 형식:
     if(d.error){if(rendered)rendered.innerHTML='API오류: '+JSON.stringify(d.error);return;}
     const txt=d.content?.[0]?.text||'';
     let obj;
-    try{
-      const clean=txt.replace(/```json|```/g,'').trim();
-      obj=JSON.parse(clean);
-    }catch(e){
-      // JSON 파싱 실패시 텍스트 그대로
-      if(rendered)rendered.innerHTML=`<div style="white-space:pre-wrap;line-height:2;">${txt}</div>`;
-      localStorage.setItem(msgKey(),txt);
-      return;
-    }
+    try{const clean=txt.replace(/```json|```/g,'').trim();obj=JSON.parse(clean);}
+    catch(e){if(rendered)rendered.innerHTML=`<div style="white-space:pre-wrap;line-height:2;">${txt}</div>`;localStorage.setItem(msgKey(),txt);return;}
     const fullText=`${obj.greeting}\n\n✅ 잘한 점\n${obj.good}\n\n📝 보완이 필요한 부분\n${obj.bad}\n\n📚 앞으로의 학습 방향\n${obj.next}\n\n${obj.closing}`;
     localStorage.setItem(msgKey(),fullText);
     if(rendered) rendered.innerHTML=`
@@ -538,12 +552,10 @@ JSON 형식:
 }
 function copyMsg(){
   const txt=document.getElementById('msg-rendered')?.textContent||document.getElementById('msg-area')?.value||'';
-  if(!txt)return;
-  navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됐어요'));
+  if(!txt)return;navigator.clipboard.writeText(txt).then(()=>toast('📋 복사됐어요'));
 }
 function editMsg(){
-  const resultBox=document.getElementById('msg-result-box');
-  const textarea=document.getElementById('msg-area');
+  const resultBox=document.getElementById('msg-result-box');const textarea=document.getElementById('msg-area');
   if(resultBox&&textarea){resultBox.style.display='none';textarea.style.display='block';textarea.focus();}
 }
 
@@ -551,102 +563,88 @@ function editMsg(){
 async function saveReportImage(){
   if(!S.sel)return;
   toast('📸 이미지 생성 중...');
-
   const st=S.students.find(s=>s.id===S.sel.sid);
   const tc=S.teachers.find(t=>t.id===S.sel.tid);
   const subj=(st.subjects||[]).find(s=>s.name===S.sel.subj)||{type:'score'};
-  const exams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
-  const type=subj.type||'score';
-  const vals=exams.map(e=>e.score);
+  const allExams=S.exams.filter(e=>e.sid===st.id&&e.subj===S.sel.subj).sort((a,b)=>a.date.localeCompare(b.date));
+  const exams=filteredExams(allExams);
+  const type=subj.type||'score';const vals=exams.map(e=>e.score);
   const unit=type==='count'?'개':'점';
-  const latest=vals.length?vals[vals.length-1]:null;
-  const maxv=vals.length?Math.max(...vals):null;
+  const latest=vals.length?vals[vals.length-1]:null;const maxv=vals.length?Math.max(...vals):null;
   const today=new Date().toLocaleDateString('ko-KR');
   const msg=document.getElementById('msg-rendered')?.innerHTML||document.getElementById('msg-area')?.value||'';
+  const filterLabel=S.examFilter==='all'?'전체':S.examFilter==='school'?'학교':'학원';
 
-  const examRows=[...exams].reverse().map(e=>`
-    <div style="display:flex;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">
+  const examRows=[...exams].reverse().map(e=>{
+    const et=e.examType||'academy';
+    const etLabel=et==='school'?'학교':'학원';
+    const etColor=et==='school'?'#1d4ed8':'#7c3aed';
+    const etBg=et==='school'?'#dbeafe':'#ede9fe';
+    return`<div style="display:flex;align-items:center;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">
       <div style="flex:1"><div style="font-size:13px;font-weight:700;">${e.name}</div><div style="font-size:10px;color:#64748b;margin-top:2px;">${e.date}</div></div>
+      <span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:${etBg};color:${etColor};margin-right:10px;">${etLabel}</span>
       <div style="font-size:18px;font-weight:900;">${e.score}${unit}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
-  // 차트 이미지 추출
   let chartImg='';
   const chartCanvas=document.getElementById('score-chart');
   if(chartCanvas)chartImg=chartCanvas.toDataURL('image/png');
 
   const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"/>
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Noto Sans KR',sans-serif;background:#eef0f8;padding:32px;width:800px;}
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&display=swap');
-  </style></head><body>
-  <div style="background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;position:relative;overflow:hidden;">
+  <style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:'Noto Sans KR',sans-serif;background:#eef0f8;padding:32px;width:800px;}</style>
+  </head><body>
+  <div style="background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
       <div style="display:flex;align-items:center;gap:9px;">
         <div style="width:34px;height:34px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#0a0f1e;">W</div>
-        <div><div style="font-size:13px;font-weight:800;color:#fff;">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.1em;">코 칭 센 터</div></div>
+        <div><div style="font-size:13px;font-weight:800;color:#fff;">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.3);">코 칭 센 터</div></div>
       </div>
-      <div style="background:rgba(124,58,237,.28);border:1px solid rgba(167,139,250,.25);color:#a78bfa;border-radius:20px;padding:5px 13px;font-size:10px;font-weight:700;">✦ 학습 성과 리포트</div>
+      <div style="background:rgba(124,58,237,.28);color:#a78bfa;border-radius:20px;padding:5px 13px;font-size:10px;font-weight:700;">✦ 학습 성과 리포트 · ${filterLabel}</div>
       <div style="font-size:10px;color:rgba(255,255,255,.22);">${today} 발행</div>
     </div>
     <div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;">${st.name} 학생</div>
     <div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:20px;">${st.grade||''} · ${S.sel.subj} · ${tc?tc.name+' 선생님':''}</div>
     <div style="display:flex;gap:10px;">
       <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">최근</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">최근</div>
         <div style="font-size:24px;font-weight:900;color:#fbbf24;">${latest??'—'}${unit}</div>
       </div>
       <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">최고</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">최고</div>
         <div style="font-size:24px;font-weight:900;color:#34d399;">${maxv??'—'}${vals.length?unit:''}</div>
       </div>
       <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:13px;padding:14px 22px;">
-        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;">시험 횟수</div>
+        <div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:7px;font-weight:700;">시험 횟수</div>
         <div style="font-size:24px;font-weight:900;color:#60a5fa;">${vals.length}회</div>
       </div>
     </div>
   </div>
-
   ${chartImg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;"></span>성적 추이</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">성적 추이</div>
     <img src="${chartImg}" style="width:100%;height:auto;"/>
   </div>`:''}
-
   <div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;"></span>시험별 성적</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">시험별 성적</div>
     ${examRows||'<div style="text-align:center;color:#64748b;padding:20px;">기록 없음</div>'}
   </div>
-
   ${msg?`<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;">
-    <div style="font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;"><span style="display:inline-block;width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;"></span>학부모 안내 메시지</div>
-    <div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:20px 22px;">
-      <div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>
-      ${msg}
-    </div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:16px;">학부모 안내 메시지</div>
+    <div style="border:1.5px solid #e9d5ff;border-radius:14px;padding:20px 22px;">${msg}</div>
   </div>`:''}
-
-  <div style="text-align:center;padding:14px;color:#64748b;font-size:10px;font-weight:500;letter-spacing:.05em;">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
+  <div style="text-align:center;padding:14px;color:#64748b;font-size:10px;">WAWA 코칭센터 · ${tc?tc.name+' 선생님':'담당 선생님'} · ${today}</div>
   </body></html>`;
 
-  // 임시 iframe으로 렌더링
   const iframe=document.createElement('iframe');
   iframe.style.cssText='position:fixed;left:-9999px;top:0;width:800px;height:100vh;border:none;visibility:hidden;';
   document.body.appendChild(iframe);
-  iframe.contentDocument.open();
-  iframe.contentDocument.write(html);
-  iframe.contentDocument.close();
+  iframe.contentDocument.open();iframe.contentDocument.write(html);iframe.contentDocument.close();
   await new Promise(r=>setTimeout(r,800));
-
   try{
     const iDoc=iframe.contentDocument.body;
-    const canvas=await html2canvas(iDoc,{
-      backgroundColor:'#eef0f8',scale:2,useCORS:true,
-      width:800,height:iDoc.scrollHeight,
-      windowWidth:800,windowHeight:iDoc.scrollHeight,
-    });
+    const canvas=await html2canvas(iDoc,{backgroundColor:'#eef0f8',scale:2,useCORS:true,width:800,height:iDoc.scrollHeight,windowWidth:800,windowHeight:iDoc.scrollHeight});
     const link=document.createElement('a');
-    link.download=`WAWA_${st.name}_${S.sel.subj}_${today.replace(/\./g,'').replace(/ /g,'')}.png`;
+    link.download=`WAWA_${st.name}_${S.sel.subj}_${filterLabel}_${today.replace(/\./g,'').replace(/ /g,'')}.png`;
     link.href=canvas.toDataURL('image/png');link.click();
     toast('✅ 저장됐어요');
   }catch(e){toast('저장 실패: '+e.message);}
@@ -655,11 +653,12 @@ async function saveReportImage(){
 
 // EXAM CRUD
 function addExam(){
+  const examType=document.getElementById('ei-type').value;
   const name=document.getElementById('ei-name').value.trim();
   const date=document.getElementById('ei-date').value;
   const score=+document.getElementById('ei-score').value;
   if(!name||!date||isNaN(score)||score<0){toast('모든 항목을 입력해주세요');return;}
-  S.exams.push({id:nid(),sid:S.sel.sid,subj:S.sel.subj,name,date,score});
+  S.exams.push({id:nid(),sid:S.sel.sid,subj:S.sel.subj,name,date,score,examType});
   save();renderMain();toast('✅ 추가됐어요');
 }
 function openEditExam(id){
@@ -667,12 +666,24 @@ function openEditExam(id){
   const st=S.students.find(s=>s.id===e.sid);
   const subj=(st.subjects||[]).find(s=>s.name===e.subj)||{type:'score'};
   showModal(`<div class="modal-title"><div class="modal-icon">✏️</div>시험 수정</div>
+    <div class="modal-label">구분</div>
+    <select class="modal-input" id="me-type">
+      <option value="academy"${(e.examType||'academy')==='academy'?' selected':''}>학원</option>
+      <option value="school"${e.examType==='school'?' selected':''}>학교</option>
+    </select>
     <div class="modal-label">시험명</div><input class="modal-input" id="me-name" value="${e.name}"/>
     <div class="modal-label">날짜</div><input class="modal-input" id="me-date" type="date" value="${e.date}"/>
     <div class="modal-label">${subj.type==='count'?'갯수':'점수'}</div><input class="modal-input" id="me-score" type="number" value="${e.score}" min="0"/>
     <div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="saveEditExam(${id})">저장</button></div>`);
 }
-function saveEditExam(id){const e=S.exams.find(x=>x.id===id);e.name=document.getElementById('me-name').value.trim();e.date=document.getElementById('me-date').value;e.score=+document.getElementById('me-score').value;save();closeModal();renderMain();toast('✅ 수정됐어요');}
+function saveEditExam(id){
+  const e=S.exams.find(x=>x.id===id);
+  e.examType=document.getElementById('me-type').value;
+  e.name=document.getElementById('me-name').value.trim();
+  e.date=document.getElementById('me-date').value;
+  e.score=+document.getElementById('me-score').value;
+  save();closeModal();renderMain();toast('✅ 수정됐어요');
+}
 function delExam(id){if(!confirm('삭제할까요?'))return;S.exams=S.exams.filter(e=>e.id!==id);save();renderMain();toast('🗑 삭제됐어요');}
 
 // TEACHER CRUD
