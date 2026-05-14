@@ -236,6 +236,9 @@ input,select,textarea{font-family:inherit;}
       <button class="sb-tab on" id="sb-tab-active" onclick="setSbTab('active')">재원</button>
       <button class="sb-tab" id="sb-tab-paused" onclick="setSbTab('paused')">휴회</button>
     </div>
+    <div style="padding:6px 12px;">
+      <button onclick="fixTeachers()" style="width:100%;padding:6px;background:rgba(239,68,68,.25);border:1px solid rgba(239,68,68,.3);border-radius:7px;color:#fca5a5;font-size:11px;font-weight:700;cursor:pointer;">🔧 강사 중복 제거</button>
+    </div>
     <div class="sb-filter">
       <div class="sb-filter-label">선생님</div>
       <select class="sb-select" id="sb-teacher-sel" onchange="SB.teacherF=this.value;renderSidebar()">
@@ -306,6 +309,12 @@ function closeModal(){document.getElementById('modal-root').innerHTML='';}
 
 const GRADE_ORDER=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
 function gradeOrder(g){const i=GRADE_ORDER.indexOf(g);return i>=0?i:99;}
+
+function fixTeachers(){
+  const seen=new Set();
+  S.teachers=S.teachers.filter(t=>{if(seen.has(t.name))return false;seen.add(t.name);return true;});
+  save();renderSidebar();toast('✅ 중복 강사 제거됐어요');
+}
 
 // SIDEBAR TAB
 function setSbTab(t){
