@@ -495,7 +495,13 @@ function addStudentFromSidebar(){
 }
 
 // 사이드바 탭 - 학생 필터 (과목 기준)
-function renderTree(){renderSidebar();} // 하위 호환
+function renderTree(){renderSidebar();}
+function addTeacher(){
+  const n=document.getElementById('tn').value.trim();
+  if(!n)return;
+  S.teachers.push({id:nid(),name:n});
+  save();closeModal();renderSidebar();toast('✅ '+n+' 선생님 추가');
+}
 // 사이드바 탭 - 학생 필터 (과목 기준)
 function renderTree(){
   const el=document.getElementById('tree');el.innerHTML='';
@@ -937,8 +943,7 @@ function delExam(id){if(!confirm('삭제할까요?'))return;S.exams=S.exams.filt
 
 // TEACHER CRUD
 function openAddTeacher(){showModal(`<div class="modal-title"><div class="modal-icon">👤</div>강사 추가</div><div class="modal-label">이름</div><input class="modal-input" id="tn" placeholder="예: 김선생"/><div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addTeacher()">추가</button></div>`);}
-function addTeacher(){const n=document.getElementById('tn').value.trim();if(!n)return;S.teachers.push({id:nid(),name:n});save();closeModal();renderTree();toast('✅ '+n+' 선생님 추가');}
-function delTeacher(id){if(!confirm('강사와 모든 데이터가 삭제됩니다'))return;S.teachers=S.teachers.filter(t=>t.id!==id);const sids=S.students.filter(s=>s.tid===id).map(s=>s.id);S.students=S.students.filter(s=>s.tid!==id);S.exams=S.exams.filter(e=>!sids.includes(e.sid));if(S.sel&&sids.includes(S.sel.sid))S.sel=null;save();renderTree();renderMain();}
+function delTeacher(id){if(!confirm('강사와 모든 데이터가 삭제됩니다'))return;S.teachers=S.teachers.filter(t=>t.id!==id);const sids=S.students.filter(s=>s.tid===id).map(s=>s.id);S.students=S.students.filter(s=>s.tid!==id);S.exams=S.exams.filter(e=>!sids.includes(e.sid));if(S.sel&&sids.includes(S.sel.sid))S.sel=null;save();renderSidebar();renderMain();}
 
 // STUDENT CRUD
 function openAddStudent(tid){showModal(`<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div><div class="modal-label">이름</div><input class="modal-input" id="sn" placeholder="예: 홍길동"/><div class="modal-label">학년</div><input class="modal-input" id="sg" placeholder="예: 중2"/><div class="modal-label">학교 이름</div><input class="modal-input" id="ss" placeholder="예: 광주중학교"/><div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addStudent(${tid})">추가</button></div>`);}
