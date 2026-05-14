@@ -984,11 +984,12 @@ function showOverview(){
   document.getElementById('save-btn').style.display='none';
   document.getElementById('h-name').textContent='전체 학생 현황';
   document.getElementById('h-meta').textContent='모든 강사 · 학생 · 과목 통합 보기';
+  OV.gradeF='all';OV.subjF='all';OV.sort={key:'grade',dir:1};
   renderOverview();
 }
 
 function renderOverview(){
-  // 모든 학생-과목 조합 수집 (학생 기준으로 묶기)
+  // 모든 학생-과목 조합 수집 (휴회 제외, 학생 기준으로 묶기)
   let studentRows=[];
   S.students.forEach(st=>{
     const tc=S.teachers.find(t=>t.id===st.tid);
@@ -1023,10 +1024,68 @@ function renderOverview(){
     return dir*(va-vb);
   });
 
-  const total=rows.length;
+  const total=rows.reduce((a,r)=>a+r.subjData.length,0);
 
-  // 과목 목록
+  // 학년/과목 필터 목록
+  const allGrades=[...new Set(S.students.map(s=>s.grade||'').filter(Boolean))].sort((a,b)=>gradeOrder(a)-gradeOrder(b));
+  const gradeGroups=[...new Set(allGrades.map(g=>g.replace(/[0-9]/g,'')))];
   const allSubjs=[...new Set(S.students.flatMap(s=>(s.subjects||[]).filter(x=>!x.paused).map(x=>x.name)))];
+
+  function sortIcon(k){if(OV.sort.key!==k)return'<span style="color:#ddd;font-size:9px;">⇅</span>';return OV.sort.dir===1?'↑':'↓';}
+
+  const tableRows=rows.map(r=>{
+    return r.subjData.map((sd,i)=>{
+      const g=sd.acAvg!=null?grade(sd.acAvg):null;
+      const diff=sd.acAvg!=null&&sd.scAvg!=null?sd.acAvg-sd.scAvg:null;
+      const diffTxt=diff!=null?(diff>0?`+${diff}`:diff===0?'±0':`${diff}`):'—';
+      const diffColor=diff==null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
+      return`<tr>
+        ${i===0?`<td rowspan="${r.subjData.length}" style="color:var(--muted);font-size:12px;vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.grade||'—'}</td>
+        <td rowspan="${r.subjData.length}" style="font-weight:700;vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.name}</td>
+        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.st.school||'—'}</td>
+        <td rowspan="${r.subjData.length}" style="font-size:12px;color:var(--muted);vertical-align:middle;border-bottom:2px solid #e2e8f0;">${r.tc?r.tc.name+' 선생님':'—'}</td>`:''}
+        <td><span class="ov-subj-badge">${sd.subj.name}</span></td>
+        <td><span class="ov-score">${sd.acAvg!=null?sd.acAvg+'점':'—'}</span><span class="ov-score-sub">${sd.academyExams.length>0?'('+sd.academyExams.length+'회)':''}</span></td>
+        <td class="th-school"><span class="ov-score" style="color:#2563eb;">${sd.scAvg!=null?sd.scAvg+'점':'—'}</span><span class="ov-score-sub">${sd.schoolExams.length>0?'('+sd.schoolExams.length+'회)':''}</span></td>
+        <td style="font-weight:700;color:${diffColor};">${diffTxt}</td>
+        <td>${g?`<span class="ov-grade g${g}">${g}</span>`:'<span style="color:#ddd;">—</span>'}</td>
+        ${i===0?`<td rowspan="${r.subjData.length}" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;"><button class="ov-edit-btn" onclick="goToStudent(${r.st.tid},${r.st.id},'${r.subjData[0].subj.name}')">상세 →</button></td>`:''}
+      </tr>`;
+    }).join('');
+  }).join('');
+
+  document.getElementById('content').innerHTML=`<div class="content-inner">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+      <div style="font-size:14px;font-weight:700;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(${total}건)</span></div>
+    </div>
+    <div class="ov-filter-bar">
+      <div class="ov-filter-group">
+        <button class="ov-btn${OV.gradeF==='all'?' on':''}" onclick="setOvFilter('grade','all')">전체</button>
+        ${gradeGroups.map(g=>`<button class="ov-btn${OV.gradeF===g?' on':''}" onclick="setOvFilter('grade','${g}')">${g==='초'?'초등':g==='중'?'중학':g==='고'?'고등':g}</button>`).join('')}
+      </div>
+      <div class="ov-filter-group">
+        <button class="ov-btn${OV.subjF==='all'?' on':''}" onclick="setOvFilter('subj','all')">전체</button>
+        ${allSubjs.map(s=>`<button class="ov-btn${OV.subjF===s?' on':''}" onclick="setOvFilter('subj','${s}')">${s}</button>`).join('')}
+      </div>
+    </div>
+    ${rows.length===0?`<div class="ov-empty">📭 해당하는 학생이 없어요<br><span style="font-size:11px;color:#94a3b8;margin-top:8px;display:block;">학생을 추가하거나 필터를 변경해보세요</span></div>`:`
+    <table class="ov-table">
+      <thead><tr>
+        <th class="sortable" onclick="setSort('grade')">학년 ${sortIcon('grade')}</th>
+        <th class="sortable" onclick="setSort('name')">이름 ${sortIcon('name')}</th>
+        <th>학교</th>
+        <th>선생님</th>
+        <th>과목</th>
+        <th class="sortable" onclick="setSort('acAvg')">🏫 학원 평균 ${sortIcon('acAvg')}</th>
+        <th class="sortable th-school" onclick="setSort('scAvg')">📚 학교 평균 ${sortIcon('scAvg')}</th>
+        <th>비교</th>
+        <th>등급</th>
+        <th></th>
+      </tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>`}
+  </div>`;
+}
 
   // 학년 그룹
   const allGrades=[...new Set(S.students.map(s=>s.grade||'').filter(Boolean))].sort((a,b)=>gradeOrder(a)-gradeOrder(b));
