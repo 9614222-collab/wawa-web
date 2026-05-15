@@ -1088,14 +1088,14 @@ function renderOverview() {
   S.students.forEach(function(st) {
     var tc = S.teachers.find(function(t) { return t.id === st.tid; });
     var activeSubjs = (st.subjects || []).filter(function(s) { return !s.paused; });
-    if (!activeSubjs.length) return;
-    var subjData = activeSubjs.map(function(subj) {
+    // 과목이 없어도 학생은 표시 (빈 과목 행으로)
+    var subjData = activeSubjs.length ? activeSubjs.map(function(subj) {
       var exams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; });
       var aEx = exams.filter(function(e) { return (e.examType || 'academy') === 'academy'; });
       var sEx = exams.filter(function(e) { return e.examType === 'school'; });
       var avg = function(arr) { return arr.length ? Math.round(arr.reduce(function(a, e) { return a + e.score; }, 0) / arr.length) : null; };
       return {subj: subj, aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)};
-    });
+    }) : [{subj: {name: '—', type: 'score'}, aEx: [], sEx: [], acAvg: null, scAvg: null}];
     studentRows.push({st: st, tc: tc, subjData: subjData, go: gradeOrder(st.grade || '')});
   });
 
