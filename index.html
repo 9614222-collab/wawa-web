@@ -1084,20 +1084,27 @@ function showOverview() {
 }
 
 function renderOverview() {
-  var studentRows = [];
+  // 같은 이름+학교 학생을 하나로 묶기
+  var mergedMap = {};
   S.students.forEach(function(st) {
+    var key = st.name + '__' + (st.school || '') + '__' + (st.grade || '');
+    if (!mergedMap[key]) {
+      mergedMap[key] = {st: st, subjData: [], go: gradeOrder(st.grade || '')};
+    }
     var tc = S.teachers.find(function(t) { return t.id === st.tid; });
     var activeSubjs = (st.subjects || []).filter(function(s) { return !s.paused; });
-    // 과목이 없어도 학생은 표시 (빈 과목 행으로)
-    var subjData = activeSubjs.length ? activeSubjs.map(function(subj) {
+    activeSubjs.forEach(function(subj) {
       var exams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; });
       var aEx = exams.filter(function(e) { return (e.examType || 'academy') === 'academy'; });
       var sEx = exams.filter(function(e) { return e.examType === 'school'; });
       var avg = function(arr) { return arr.length ? Math.round(arr.reduce(function(a, e) { return a + e.score; }, 0) / arr.length) : null; };
-      return {subj: subj, aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)};
-    }) : [{subj: {name: '—', type: 'score'}, aEx: [], sEx: [], acAvg: null, scAvg: null}];
-    studentRows.push({st: st, tc: tc, subjData: subjData, go: gradeOrder(st.grade || '')});
+      mergedMap[key].subjData.push({subj: subj, tc: tc, sid: st.id, tid: st.tid, aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)});
+    });
+    if (activeSubjs.length === 0) {
+      mergedMap[key].subjData.push({subj: {name: '—', type: 'score'}, tc: tc, sid: st.id, tid: st.tid, aEx: [], sEx: [], acAvg: null, scAvg: null});
+    }
   });
+  var studentRows = Object.values(mergedMap);
 
   var rows = studentRows.filter(function(r) {
     if (OV.gradeF !== 'all' && !(r.st.grade && r.st.grade.startsWith(OV.gradeF))) return false;
@@ -1174,9 +1181,9 @@ function renderOverview() {
       '<table class="ov-table"><thead><tr>' +
         '<th onclick="setOvSort(\'grade\')">학년 ' + si('grade') + '</th>' +
         '<th onclick="setOvSort(\'name\')">이름 ' + si('name') + '</th>' +
-        '<th>학교</th><th>선생님</th><th>과목</th>' +
-        '<th>🏫 학원 평균</th><th class="th-school">📚 학교 평균</th>' +
-        '<th>비교</th><th>등급</th><th></th>' +
+        '<th>학교</th>' +
+        '<th>과목 · 선생님 · 학원평균 · 학교평균 · 등급</th>' +
+        '<th></th>' +
       '</tr></thead><tbody>' + tableRows + '</tbody></table>') +
   '</div>';
 }
