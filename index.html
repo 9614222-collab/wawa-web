@@ -873,7 +873,10 @@ function addStudent() {
   var school = schoolEl ? schoolEl.value.trim() : '';
   var tid = tidEl ? parseInt(tidEl.value, 10) : 0;
   if (!name) { showToast('이름을 입력해주세요'); return; }
-  S.students.push({id: nid(), tid: tid, name: name, grade: grade, school: school, subjects: []});
+  // 선생님 이름도 함께 저장
+  var tc = S.teachers.find(function(t) { return t.id == tid; });
+  var tcName = tc ? tc.name : '';
+  S.students.push({id: nid(), tid: tid, tcName: tcName, name: name, grade: grade, school: school, subjects: []});
   save(); closeModal(); SB.teacherF = 'all'; renderSidebar(); showToast('✅ ' + name + ' 추가됐어요');
 }
 function delStudent(id) {
@@ -1073,18 +1076,15 @@ function resumeSubjFromOverview(sid, subjName) {
 }
 
 // ── 전체 현황 ──
-function getTeacherName(tid) {
-  if (!tid && tid !== 0) return '—';
+function getTeacherName(tid, tcNameFallback) {
+  // 1. 저장된 이름 우선 사용
+  if (tcNameFallback) return tcNameFallback;
+  // 2. tid로 찾기
   for (var i = 0; i < S.teachers.length; i++) {
-    var t = S.teachers[i];
-    if (t.id == tid || String(t.id) === String(tid)) return t.name;
+    if (S.teachers[i].id == tid) return S.teachers[i].name;
   }
-  // 못 찾으면 전체 선생님 목록 출력용으로 이름 반환 시도
-  if (S.teachers.length > 0) {
-    // tid가 인덱스일 수도 있으니 시도
-    var idx = parseInt(tid, 10);
-    if (!isNaN(idx) && S.teachers[idx]) return S.teachers[idx].name;
-  }
+  // 3. 선생님이 1명이면 그 이름
+  if (S.teachers.length === 1) return S.teachers[0].name;
   return '—';
 }
 
