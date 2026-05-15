@@ -1216,6 +1216,16 @@ function renderOverview() {
   '</div>';
 }
 
+function openAddSubjFromOverview(sid) {
+  openAddSubj(sid);
+  // 과목 추가 후 전체현황으로 돌아오게
+  var origAddSubj = window._addSubjCallback;
+  window._addSubjCallback = function() {
+    renderSidebar();
+    renderOverview();
+  };
+}
+
 function delStudentFromOverview(id) {
   var st = S.students.find(function(s) { return s.id === id; });
   if (!st) return;
