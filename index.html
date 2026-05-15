@@ -1084,28 +1084,40 @@ function showOverview() {
 }
 
 function renderOverview() {
-  // 같은 이름+학교+학년 학생을 하나로 묶기
   var mergedMap = {};
   S.students.forEach(function(st) {
     var key = st.name + '__' + (st.school || '') + '__' + (st.grade || '');
     if (!mergedMap[key]) {
       mergedMap[key] = {st: st, subjData: [], go: gradeOrder(st.grade || '')};
     }
-    var tc = S.teachers.find(function(t) { return String(t.id) === String(st.tid); });
+    // 선생님 찾기 - tid 타입 무관하게 매칭
+    var tc = null;
+    for (var ti = 0; ti < S.teachers.length; ti++) {
+      if (String(S.teachers[ti].id) === String(st.tid)) {
+        tc = S.teachers[ti]; break;
+      }
+    }
+    // tid가 숫자 0이거나 없으면 첫번째 선생님으로 fallback 안함, 그냥 null 유지
     var activeSubjs = (st.subjects || []).filter(function(s) { return !s.paused; });
     if (activeSubjs.length === 0) {
-      mergedMap[key].subjData.push({subj: {name: '—', type: 'score'}, tc: tc, sid: st.id, tid: st.tid, aEx: [], sEx: [], acAvg: null, scAvg: null});
+      mergedMap[key].subjData.push({
+        subj: {name: '—', type: 'score'}, tc: tc,
+        sid: st.id, tid: st.tid, aEx: [], sEx: [], acAvg: null, scAvg: null
+      });
     } else {
       activeSubjs.forEach(function(subj) {
         var exams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; });
         var aEx = exams.filter(function(e) { return (e.examType || 'academy') === 'academy'; });
         var sEx = exams.filter(function(e) { return e.examType === 'school'; });
-        var avg = function(arr) { return arr.length ? Math.round(arr.reduce(function(a, e) { return a + e.score; }, 0) / arr.length) : null; };
-        mergedMap[key].subjData.push({subj: subj, tc: tc, sid: st.id, tid: st.tid, aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)});
+        var avg = function(arr) { return arr.length ? Math.round(arr.reduce(function(a,e){return a+e.score;},0)/arr.length) : null; };
+        mergedMap[key].subjData.push({
+          subj: subj, tc: tc, sid: st.id, tid: st.tid,
+          aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)
+        });
       });
     }
   });
-  var studentRows = Object.keys(mergedMap).map(function(k) { return mergedMap[k]; });
+  var studentRows = Object.keys(mergedMap).map(function(k){ return mergedMap[k]; });
 
   var rows = studentRows.filter(function(r) {
     if (OV.gradeF !== 'all' && !(r.st.grade && r.st.grade.startsWith(OV.gradeF))) return false;
