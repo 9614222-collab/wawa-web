@@ -334,9 +334,17 @@ function gradeOrder(g){var i=GO.indexOf(g);return i>=0?i:99;}
 function pauseDays(d){if(!d)return 0;return Math.floor((new Date()-new Date(d))/86400000);}
 function daysUntilReturn(d){if(!d)return null;return Math.ceil((new Date(d)-new Date())/86400000);}
 
-// 선생님 이름 찾기 (tcName 직접 저장값 우선)
-function getTcName(st) {
+// 선생님 이름 찾기 - 과목별 tcName → 학생 tcName → tid 매칭 순
+function getTcName(st, subj) {
+  // 과목에 선생님 정보가 있으면 우선 사용
+  if (subj && subj.tcName) return subj.tcName;
+  if (subj && subj.tid) {
+    var tc = S.teachers.find(function(t){ return t.id == subj.tid; });
+    if (tc) return tc.name;
+  }
+  // 학생에 저장된 이름
   if (st.tcName) return st.tcName;
+  // tid 매칭
   for (var i=0;i<S.teachers.length;i++) {
     if (S.teachers[i].id == st.tid) return S.teachers[i].name;
   }
@@ -404,7 +412,7 @@ function renderSidebar(){
     var unit=it.subj.type==='count'?'개':'점';
     var piHTML='';
     if(it.ip){
-      piHTML='<div class="sb-pi"><div class="sb-pi-d">휴회 '+days+'일째'+(it.subj.pauseDate?' ('+it.subj.pauseDate+')):'')+' </div>'+
+      piHTML='<div class="sb-pi"><div class="sb-pi-d">휴회 '+days+'일째'+(it.subj.pauseDate?' ('+it.subj.pauseDate+')':'')+' </div>'+
         (it.subj.pauseReason?'<div class="sb-pi-r">📌 '+it.subj.pauseReason+'</div>':'')+
         (returnD!==null?'<div class="sb-pi-r">🔄 복귀 '+(returnD>=0?returnD+'일 후':'예정일 지남')+'</div>':'')+
       '</div>';
@@ -736,8 +744,13 @@ function delStudent(id){
 function openAddSubj(sid){
   window._addSubjSid=sid;
   window._addSubjType='score';
+  var tcOpts=S.teachers.map(function(t){return'<option value="'+t.id+'">'+t.name+' 선생님</option>';}).join('');
   showModal('<div class="modal-title"><div class="modal-icon">📚</div>과목 추가</div>'+
     '<div class="ml">과목명</div><input class="mi" id="new-subj" placeholder="예: 수학, 영어"/>'+
+    '<div class="ml">담당 선생님</div>'+
+    '<select class="mi" id="new-subj-tc">'+
+      '<option value="">선생님 선택 (선택사항)</option>'+tcOpts+
+    '</select>'+
     '<div class="ml">점수 유형</div>'+
     '<div class="type-toggle"><button class="type-btn on" id="tb-score" onclick="selType(\'score\')">📊 점수 (0~100점)</button><button class="type-btn" id="tb-count" onclick="selType(\'count\')">🔢 갯수</button></div>'+
     '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="addSubj()">추가</button></div>');
@@ -750,10 +763,17 @@ function addSubj(){
   var st=S.students.find(function(s){return s.id===sid;});
   if(!st.subjects)st.subjects=[];
   if(st.subjects.find(function(s){return s.name===n;})){showToast('이미 있는 과목이에요');return;}
-  st.subjects.push({name:n,type:window._addSubjType||'score'});
+  // 선택한 선생님 처리
+  var tcSelEl=document.getElementById('new-subj-tc');
+  var selectedTid=tcSelEl?parseInt(tcSelEl.value,10):0;
+  var selectedTc=selectedTid?S.teachers.find(function(t){return t.id===selectedTid;}):null;
+  // 과목에 선생님 정보 저장 (선택했으면 해당 선생님, 아니면 학생의 기본 선생님)
+  var subjTcId=selectedTid||st.tid;
+  var subjTcName=selectedTc?selectedTc.name:getTcName(st);
+  st.subjects.push({name:n, type:window._addSubjType||'score', tid:subjTcId, tcName:subjTcName});
   save();closeModal();renderSidebar();
   if(window._afterAddSubj){window._afterAddSubj();window._afterAddSubj=null;}
-  showToast('✅ '+n+' 과목 추가');
+  showToast('✅ '+n+' ('+subjTcName+' 선생님) 과목 추가');
 }
 function delSubj(sid,subj){
   var st=S.students.find(function(s){return s.id===sid;});
@@ -888,7 +908,8 @@ function renderOverview(){
         var aEx=exams.filter(function(e){return(e.examType||'academy')==='academy';});
         var sEx=exams.filter(function(e){return e.examType==='school';});
         var avg=function(arr){return arr.length?Math.round(arr.reduce(function(a,e){return a+e.score;},0)/arr.length):null;};
-        map[key].rows.push({subjName:subj.name,tcName:tcName,sid:st.id,tid:st.tid,acAvg:avg(aEx),scAvg:avg(sEx),aEx:aEx,sEx:sEx});
+        var subjTcName=getTcName(st, subj); // 과목별 선생님
+        map[key].rows.push({subjName:subj.name,tcName:subjTcName,sid:st.id,tid:subj.tid||st.tid,acAvg:avg(aEx),scAvg:avg(sEx),aEx:aEx,sEx:sEx});
       });
     }
   });
