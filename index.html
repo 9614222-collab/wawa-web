@@ -1136,8 +1136,13 @@ function renderOverview() {
           '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">' + (r.st.school || '—') + '</td>' +
           '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">' + (r.tc ? r.tc.name + ' 선생님' : '—') + '</td>'
         : '';
+      var hasRealSubj = r.subjData[0].subj.name !== '—';
       var lastCol = i === 0
-        ? '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;"><button class="ov-edit-btn" onclick="goToStudent(' + r.st.tid + ',' + r.st.id + ',\'' + r.subjData[0].subj.name + '\')">상세 →</button></td>'
+        ? '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;">' +
+            (hasRealSubj
+              ? '<button class="ov-edit-btn" onclick="goToStudent(' + r.st.tid + ',' + r.st.id + ',\'' + r.subjData[0].subj.name + '\')">상세 →</button>'
+              : '<button class="ov-edit-btn" style="border-color:#f59e0b;color:#d97706;" onclick="openAddSubj(' + r.st.id + ')">+ 과목 추가</button>') +
+          '</td>'
         : '';
       return '<tr>' + firstCols +
         '<td><span class="ov-subj-badge">' + sd.subj.name + '</span></td>' +
