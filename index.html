@@ -5,82 +5,80 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>WAWA 코칭센터</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --navy:#0a0f1e;--navy2:#111827;--navy3:#1e2d4a;
-  --gold:#f59e0b;--gold2:#fbbf24;
-  --accent:#7c3aed;--accent2:#a78bfa;
-  --bg:#eef0f8;--card:#fff;
-  --text:#0f172a;--muted:#64748b;--border:#e2e8f0;
-  --green:#059669;--red:#dc2626;--blue:#2563eb;
-}
-body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh;}
+:root{--navy:#0a0f1e;--accent:#7c3aed;--bg:#eef0f8;--text:#0f172a;--muted:#64748b;--border:#e2e8f0;--green:#059669;--red:#dc2626;--blue:#2563eb;--gold:#f59e0b;}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:13px;}
 button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;}
+
+/* LAYOUT */
 .layout{display:flex;height:100vh;overflow:hidden;}
-.sidebar{width:250px;background:linear-gradient(180deg,#0a0f1e,#111827 60%,#1a2340);display:flex;flex-direction:column;flex-shrink:0;box-shadow:4px 0 24px rgba(0,0,0,.3);}
+.sidebar{width:250px;background:linear-gradient(180deg,#0a0f1e,#111827 60%,#1a2340);display:flex;flex-direction:column;flex-shrink:0;}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 
 /* SIDEBAR */
 .sb-brand{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px;}
-.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;}
-.sb-logo-title{font-size:15px;font-weight:800;color:#fff;}
-.sb-logo-sub{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.12em;}
+.sb-logo{width:36px;height:36px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#0a0f1e;flex-shrink:0;}
+.sb-title{font-size:15px;font-weight:800;color:#fff;}
+.sb-sub{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:.12em;}
+
 .sb-stats{display:flex;gap:6px;padding:10px 12px 4px;}
-.sb-stat-box{flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:8px 6px;text-align:center;}
-.sb-stat-num{font-size:18px;font-weight:900;color:#fff;}
-.sb-stat-num.green{color:#34d399;}
-.sb-stat-num.red{color:#fca5a5;}
-.sb-stat-num.gold{color:#fbbf24;}
-.sb-stat-label{font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;}
+.sb-stat{flex:1;background:rgba(255,255,255,.06);border-radius:10px;padding:8px 6px;text-align:center;}
+.sb-stat-n{font-size:18px;font-weight:900;}
+.sb-stat-n.g{color:#34d399;} .sb-stat-n.r{color:#fca5a5;} .sb-stat-n.gold{color:#fbbf24;}
+.sb-stat-l{font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;}
+
 .sb-tabs{display:flex;gap:4px;padding:8px 12px 0;}
-.sb-tab{flex:1;padding:7px;border-radius:8px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
-.sb-tab-active{background:rgba(52,211,153,.15);color:rgba(52,211,153,.6);}
-.sb-tab-active.on{background:rgba(52,211,153,.3);color:#34d399;border:1px solid rgba(52,211,153,.4);}
-.sb-tab-paused{background:rgba(239,68,68,.1);color:rgba(239,68,68,.5);}
-.sb-tab-paused.on{background:rgba(239,68,68,.25);color:#fca5a5;border:1px solid rgba(239,68,68,.35);}
+.sb-tab{flex:1;padding:7px;border-radius:8px;border:1px solid transparent;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
+.sb-tab-a{background:rgba(52,211,153,.15);color:rgba(52,211,153,.6);}
+.sb-tab-a.on{background:rgba(52,211,153,.3);color:#34d399;border-color:rgba(52,211,153,.4);}
+.sb-tab-p{background:rgba(239,68,68,.1);color:rgba(239,68,68,.5);}
+.sb-tab-p.on{background:rgba(239,68,68,.25);color:#fca5a5;border-color:rgba(239,68,68,.35);}
+
 .sb-filter{padding:8px 12px 0;}
-.sb-filter-label{font-size:9px;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
-.sb-select{width:100%;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;outline:none;cursor:pointer;}
-.sb-select option{background:#1a2340;color:#fff;}
+.sb-fl{font-size:9px;color:rgba(255,255,255,.3);font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px;}
+.sb-sel{width:100%;padding:7px 10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:12px;outline:none;}
+.sb-sel option{background:#1a2340;}
+
 .sb-subj-wrap{padding:6px 12px 0;}
 .sb-subj-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
-.sb-subj-btn{padding:3px 10px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-subj-btn{padding:3px 10px;border-radius:14px;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-size:11px;font-weight:600;cursor:pointer;}
 .sb-subj-btn.on{background:#f59e0b;border-color:#f59e0b;color:#0a0f1e;}
+
 .sb-sort{display:flex;gap:5px;padding:8px 12px 4px;}
-.sb-sort-btn{flex:1;padding:5px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s;}
+.sb-sort-btn{flex:1;padding:5px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);font-size:10px;font-weight:600;cursor:pointer;}
 .sb-sort-btn.on{background:rgba(255,255,255,.12);color:#fff;}
+
 .sb-count{padding:4px 14px;font-size:11px;color:rgba(255,255,255,.3);}
 .sb-list{flex:1;overflow-y:auto;padding:2px 10px 4px;}
 .sb-list::-webkit-scrollbar{width:3px;}
-.sb-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:2px;}
-.sb-item{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:3px;border:1px solid transparent;}
+.sb-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);}
+
+.sb-item{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border-radius:10px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all .15s;}
 .sb-item:hover{background:rgba(255,255,255,.05);}
 .sb-item.sel{background:rgba(124,58,237,.25);border-color:rgba(124,58,237,.3);}
-.sb-item.paused-item{border-color:rgba(239,68,68,.15);}
-.sb-item.paused-item.sel{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.35);}
+.sb-item.pi{border-color:rgba(239,68,68,.15);}
+.sb-item.pi.sel{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.35);}
 .sb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-.sb-dot.active{background:#34d399;}
-.sb-dot.paused{background:#ef4444;animation:blink 1.5s ease-in-out infinite;}
+.sb-dot.a{background:#34d399;}
+.sb-dot.p{background:#ef4444;animation:blink 1.5s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
 .sb-info{flex:1;min-width:0;}
 .sb-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);}
 .sb-meta{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
-.sb-pause-info{margin-top:4px;padding:4px 8px;background:rgba(239,68,68,.12);border-radius:6px;border-left:2px solid rgba(239,68,68,.4);}
-.sb-pause-date{font-size:10px;color:#fca5a5;font-weight:600;}
-.sb-pause-reason{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-pause-return{font-size:10px;color:#fbbf24;margin-top:1px;}
+.sb-pi{margin-top:4px;padding:4px 8px;background:rgba(239,68,68,.12);border-radius:6px;border-left:2px solid rgba(239,68,68,.4);}
+.sb-pi-d{font-size:10px;color:#fca5a5;font-weight:600;}
+.sb-pi-r{font-size:10px;color:rgba(255,255,255,.35);margin-top:1px;}
 .sb-avg{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;}
-.sb-more{background:none;border:none;color:rgba(255,255,255,.2);font-size:13px;padding:2px 5px;border-radius:4px;transition:all .15s;}
+.sb-more{background:none;border:none;color:rgba(255,255,255,.2);font-size:13px;padding:2px 5px;border-radius:4px;}
 .sb-more:hover{background:rgba(255,255,255,.08);color:#fff;}
+
 .sb-bottom{padding:10px 12px;border-top:1px solid rgba(255,255,255,.05);display:flex;gap:6px;}
-.sb-add-btn{flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
-.sb-add-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
-.sb-pause-btn{padding:7px 10px;border-radius:8px;border:none;background:rgba(239,68,68,.15);color:#fca5a5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
-.sb-pause-btn:hover{background:rgba(239,68,68,.25);}
+.sb-btn{flex:1;padding:7px;border-radius:8px;border:none;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:11px;font-weight:600;cursor:pointer;}
+.sb-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
+.sb-btn-p{padding:7px 10px;border-radius:8px;border:none;background:rgba(239,68,68,.15);color:#fca5a5;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;}
 
 /* HEADER */
 .header{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;height:64px;box-shadow:0 2px 12px rgba(124,58,237,.06);}
@@ -88,10 +86,10 @@ input,select,textarea{font-family:inherit;}
 .h-meta{font-size:11px;color:var(--muted);margin-top:2px;}
 .h-right{display:flex;align-items:center;gap:8px;}
 .h-tabs{display:flex;gap:3px;background:#ede9fe;padding:3px;border-radius:10px;}
-.h-tab{padding:6px 18px;border-radius:7px;border:none;background:transparent;color:#7c3aed;font-size:12px;font-weight:600;opacity:.6;cursor:pointer;transition:all .15s;}
+.h-tab{padding:6px 18px;border-radius:7px;border:none;background:transparent;color:#7c3aed;font-size:12px;font-weight:600;opacity:.6;cursor:pointer;}
 .h-tab.on{background:#fff;color:#5b21b6;box-shadow:0 1px 6px rgba(124,58,237,.15);opacity:1;}
-.btn-save{display:flex;align-items:center;gap:5px;padding:8px 14px;background:linear-gradient(135deg,#0a0f1e,#1e2d4a);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
-.btn-overview{display:flex;align-items:center;gap:5px;padding:8px 14px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-save{padding:8px 14px;background:linear-gradient(135deg,#0a0f1e,#1e2d4a);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
+.btn-ov{padding:8px 14px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;}
 
 /* CONTENT */
 .content{flex:1;overflow-y:auto;padding:28px 0;background:var(--bg);}
@@ -104,22 +102,22 @@ input,select,textarea{font-family:inherit;}
 
 /* CARDS */
 .score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
-.score-card{border-radius:16px;padding:22px;position:relative;overflow:hidden;color:#fff;}
-.sc-1{background:linear-gradient(135deg,#1d4ed8,#3b82f6);}
-.sc-2{background:linear-gradient(135deg,#b45309,#f59e0b);}
-.sc-3{background:linear-gradient(135deg,#6d28d9,#a78bfa);}
-.score-card::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.07);}
+.sc{border-radius:16px;padding:22px;position:relative;overflow:hidden;color:#fff;}
+.sc1{background:linear-gradient(135deg,#1d4ed8,#3b82f6);}
+.sc2{background:linear-gradient(135deg,#b45309,#f59e0b);}
+.sc3{background:linear-gradient(135deg,#6d28d9,#a78bfa);}
+.sc::before{content:'';position:absolute;top:-28px;right:-28px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.07);}
 .sc-label{font-size:10px;opacity:.68;margin-bottom:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
 .sc-val{font-size:34px;font-weight:900;line-height:1;}
-.sc-unit{font-size:14px;opacity:.6;margin-left:3px;font-weight:500;}
+.sc-unit{font-size:14px;opacity:.6;margin-left:3px;}
 .sc-sub{font-size:10px;opacity:.42;margin-top:7px;}
+
 .card{background:#fff;border-radius:16px;border:1px solid var(--border);padding:24px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
 .card-title{font-size:13px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
 .card-title::before{content:'';width:3px;height:15px;background:linear-gradient(to bottom,#7c3aed,#f59e0b);border-radius:2px;flex-shrink:0;}
 
 /* PAUSE BANNER */
-.pause-banner{background:linear-gradient(135deg,#1c0a0a,#2d1515);border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:22px 28px;margin-bottom:16px;display:flex;align-items:center;gap:20px;}
-.pb-icon{font-size:36px;flex-shrink:0;}
+.pb{background:linear-gradient(135deg,#1c0a0a,#2d1515);border:1px solid rgba(239,68,68,.3);border-radius:16px;padding:22px 28px;margin-bottom:16px;display:flex;align-items:center;gap:20px;}
 .pb-info{flex:1;}
 .pb-title{font-size:16px;font-weight:800;color:#fca5a5;margin-bottom:4px;}
 .pb-meta{font-size:12px;color:rgba(255,255,255,.4);}
@@ -127,119 +125,112 @@ input,select,textarea{font-family:inherit;}
 .pb-return{font-size:12px;color:#fbbf24;margin-top:6px;font-weight:600;}
 .pb-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0;}
 .btn-resume{padding:10px 20px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
-.btn-edit-pause{padding:8px 16px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-ep{padding:8px 16px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;}
 
 /* HISTORY */
-.history-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;}
+.hi{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;}
 .hi-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
-.hi-paused{background:#fee2e2;}
-.hi-resumed{background:#d1fae5;}
+.hi-p{background:#fee2e2;} .hi-r{background:#d1fae5;}
 .hi-info{flex:1;}
-.hi-title{font-size:13px;font-weight:700;}
-.hi-meta{font-size:11px;color:var(--muted);margin-top:2px;}
-.hi-reason{font-size:11px;color:var(--muted);margin-top:2px;font-style:italic;}
+.hi-t{font-size:13px;font-weight:700;}
+.hi-m{font-size:11px;color:var(--muted);margin-top:2px;}
 
 /* EXAM */
-.exam-filter{display:flex;gap:6px;margin-bottom:14px;}
-.ef-btn{padding:5px 14px;border-radius:18px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.ef{display:flex;gap:6px;margin-bottom:14px;}
+.ef-btn{padding:5px 14px;border-radius:18px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;}
 .ef-btn.on{background:#7c3aed;border-color:#7c3aed;color:#fff;}
-.ef-btn.school.on{background:#2563eb;border-color:#2563eb;}
 .ef-btn.academy.on{background:#059669;border-color:#059669;}
-.exam-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;transition:all .2s;}
-.exam-item:hover{border-color:#c4b5fd;box-shadow:0 3px 12px rgba(124,58,237,.09);}
-.exam-date{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;}
-.exam-bar{height:4px;border-radius:2px;background:#f1f5f9;margin-top:5px;overflow:hidden;}
-.exam-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#f59e0b);}
-.exam-type-badge{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;}
-.etb-school{background:#dbeafe;color:#1d4ed8;}
-.etb-academy{background:#d1fae5;color:#065f46;}
-.exam-score{font-size:18px;font-weight:800;}
-.exam-unit{font-size:10px;color:var(--muted);margin-left:1px;}
-.grade-badge{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.ef-btn.school.on{background:#2563eb;border-color:#2563eb;}
+
+.ei{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;transition:all .2s;}
+.ei:hover{border-color:#c4b5fd;}
+.ei-date{font-size:10px;color:var(--muted);width:76px;flex-shrink:0;}
+.ei-bar{height:4px;border-radius:2px;background:#f1f5f9;margin-top:5px;overflow:hidden;}
+.ei-bar-f{height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,#f59e0b);}
+.etb{font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;flex-shrink:0;}
+.etb-a{background:#d1fae5;color:#065f46;} .etb-s{background:#dbeafe;color:#1d4ed8;}
+.gb{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
 .gA{background:#059669;}.gB{background:#2563eb;}.gC{background:#d97706;}.gD{background:#ea580c;}.gF{background:#dc2626;}
-.exam-actions{display:flex;gap:3px;}
-.exam-edit-btn,.exam-del-btn{background:none;border:none;padding:5px 7px;border-radius:6px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;}
-.exam-edit-btn:hover{background:#ede9fe;color:#7c3aed;}
-.exam-del-btn:hover{background:#fee2e2;color:#dc2626;}
+.ea{display:flex;gap:3px;}
+.eeb,.edb{background:none;border:none;padding:5px 7px;border-radius:6px;font-size:11px;color:var(--muted);cursor:pointer;}
+.eeb:hover{background:#ede9fe;color:#7c3aed;} .edb:hover{background:#fee2e2;color:#dc2626;}
+
 .add-form{background:linear-gradient(135deg,#f8f9ff,#f0f2fc);border:2px dashed #c4b5fd;border-radius:12px;padding:16px 18px;margin-top:12px;}
 .form-row{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;}
-.form-group{display:flex;flex-direction:column;gap:4px;}
-.form-label{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
-.form-input{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;transition:border .15s;color:var(--text);}
-.form-input:focus{border-color:#7c3aed;}
-.form-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;color:var(--text);}
-.btn-primary{padding:8px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;box-shadow:0 2px 10px rgba(124,58,237,.3);}
-.btn-ghost{padding:8px 14px;background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
-.btn-ghost:hover{border-color:#7c3aed;color:#7c3aed;}
-.btn-danger{padding:8px 14px;background:#fff;color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fl{font-size:10px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase;}
+.fi{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;color:var(--text);}
+.fi:focus{border-color:#7c3aed;}
+.fs{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:12px;background:#fff;outline:none;color:var(--text);}
+
+.btn-p{padding:8px 20px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;}
+.btn-g{padding:8px 14px;background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+.btn-g:hover{border-color:#7c3aed;color:#7c3aed;}
+.btn-d{padding:8px 14px;background:#fff;color:#dc2626;border:1.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
 
 /* REPORT */
-.report-hero{background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;position:relative;overflow:hidden;}
-.rh-g1{position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);pointer-events:none;}
-.rh-g2{position:absolute;bottom:-50px;left:20px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(245,158,11,.15),transparent 70%);pointer-events:none;}
-.rh-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+.rh{background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;position:relative;overflow:hidden;}
+.rh::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.3),transparent 70%);pointer-events:none;}
+.rh-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
 .rh-logo{display:flex;align-items:center;gap:9px;}
-.rh-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#0a0f1e;}
-.rh-logo-t1{font-size:13px;font-weight:800;color:#fff;}
-.rh-logo-t2{font-size:9px;color:rgba(255,255,255,.28);letter-spacing:.1em;}
+.rh-logo-i{width:32px;height:32px;background:linear-gradient(135deg,#f59e0b,#fbbf24);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#0a0f1e;}
+.rh-logo-t{font-size:13px;font-weight:800;color:#fff;}
 .rh-badge{background:rgba(124,58,237,.28);color:#a78bfa;border-radius:20px;padding:4px 12px;font-size:10px;font-weight:700;}
 .rh-date{font-size:10px;color:rgba(255,255,255,.22);}
 .rh-name{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;}
 .rh-sub{font-size:12px;color:rgba(255,255,255,.38);margin-bottom:20px;}
 .rh-scores{display:flex;gap:10px;flex-wrap:wrap;}
 .rh-box{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:13px 20px;}
-.rh-box-label{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;}
-.rh-box-val{font-size:23px;font-weight:900;color:#fff;}
-.rh-box-val.gold{color:#fbbf24;}
-.rh-box-val.green{color:#34d399;}
-.rh-box-val.blue{color:#60a5fa;}
+.rh-box-l{font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;font-weight:700;text-transform:uppercase;}
+.rh-box-v{font-size:23px;font-weight:900;color:#fff;}
+.rh-box-v.gold{color:#fbbf24;} .rh-box-v.green{color:#34d399;} .rh-box-v.blue{color:#60a5fa;}
 .chart-wrap{height:220px;margin:4px 0;}
-.re-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;}
-.re-name{font-size:13px;font-weight:700;}
-.re-meta{font-size:10px;color:var(--muted);margin-top:2px;}
-.re-score{font-size:19px;font-weight:900;margin-left:auto;}
-.msg-auto-btn{display:flex;align-items:center;gap:6px;padding:10px 24px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 12px rgba(124,58,237,.35);}
-.msg-textarea{width:100%;min-height:160px;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;line-height:1.9;resize:vertical;outline:none;background:#fafbff;color:var(--text);}
-.msg-textarea:focus{border-color:#7c3aed;}
-.msg-copy-btn{padding:8px 14px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
-.msg-copy-btn:hover{border-color:#7c3aed;color:#7c3aed;}
-.report-footer{text-align:center;padding:14px;color:var(--muted);font-size:10px;font-weight:500;letter-spacing:.05em;}
-
-/* PAUSE OVERVIEW */
-.pause-stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
-.pause-stat-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:18px;text-align:center;}
-.psc-num{font-size:28px;font-weight:900;margin-bottom:4px;}
-.psc-label{font-size:11px;color:var(--muted);font-weight:500;}
-.paused-table-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;border:1px solid rgba(239,68,68,.2);margin-bottom:8px;background:linear-gradient(135deg,#fff,#fff5f5);}
-.pti-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;animation:blink 1.5s ease-in-out infinite;}
-.pti-info{flex:1;}
-.pti-name{font-size:14px;font-weight:700;}
-.pti-meta{font-size:11px;color:var(--muted);margin-top:2px;}
-.pti-reason{display:inline-block;margin-top:5px;padding:3px 10px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:11px;font-weight:600;}
-.pti-return{display:inline-block;margin-top:5px;margin-left:6px;padding:3px 10px;background:#fef3c7;color:#d97706;border-radius:6px;font-size:11px;font-weight:600;}
-.pti-days{font-size:22px;font-weight:900;color:#ef4444;white-space:nowrap;}
-.pti-days-label{font-size:10px;color:var(--muted);text-align:center;}
-.btn-resume-sm{padding:7px 14px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.ri{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);margin-bottom:7px;background:#fff;}
+.ri-score{font-size:19px;font-weight:900;margin-left:auto;}
+.msg-btn{display:flex;align-items:center;gap:6px;padding:10px 24px;background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;}
+.msg-ta{width:100%;min-height:160px;padding:14px 16px;border:1.5px solid var(--border);border-radius:12px;font-size:12px;line-height:1.9;resize:vertical;outline:none;background:#fafbff;color:var(--text);}
+.msg-ta:focus{border-color:#7c3aed;}
+.msg-copy{padding:8px 14px;background:#fff;border:1.5px solid var(--border);border-radius:9px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
+.rfoot{text-align:center;padding:14px;color:var(--muted);font-size:10px;}
 
 /* OVERVIEW */
-.ov-filter-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
-.ov-filter-group{display:flex;gap:3px;background:#f1f5f9;padding:3px;border-radius:10px;}
-.ov-btn{padding:5px 13px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.ov-fb{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.ov-fg{display:flex;gap:3px;background:#f1f5f9;padding:3px;border-radius:10px;}
+.ov-btn{padding:5px 13px;border-radius:7px;border:none;background:transparent;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;}
 .ov-btn.on{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.1);}
-.ov-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.ov-table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--border);}
 .ov-table th{padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);background:#f8f9fc;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;}
 .ov-table th:hover{color:var(--accent);}
 .ov-table td{padding:11px 14px;font-size:13px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
 .ov-table tr:last-child td{border-bottom:none;}
 .ov-table tr:hover td{background:#fafbff;}
-.ov-subj-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;background:#ede9fe;color:#5b21b6;}
-.ov-score{font-size:14px;font-weight:800;color:var(--navy);}
-.ov-score-sub{font-size:10px;color:var(--muted);margin-left:3px;}
-.ov-grade{width:27px;height:27px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;}
-.th-school{background:linear-gradient(90deg,#eff6ff,#f8f9fc)!important;}
-.ov-edit-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
-.ov-edit-btn:hover{border-color:#7c3aed;color:#7c3aed;}
+.ov-eb{padding:4px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;}
+.ov-eb:hover{border-color:#7c3aed;color:#7c3aed;}
 .ov-empty{text-align:center;padding:48px;color:var(--muted);font-size:13px;}
+
+/* 과목 카드 */
+.sc-card{display:flex;align-items:center;gap:8px;padding:7px 10px;margin-bottom:4px;background:#f8f9fc;border-radius:10px;border:1px solid #e8eaf0;}
+.sc-badge{background:#7c3aed;color:#fff;border-radius:7px;padding:2px 10px;font-size:12px;font-weight:700;white-space:nowrap;}
+.sc-tc{font-size:12px;color:#444;font-weight:600;}
+.sc-avg{font-size:13px;font-weight:800;color:#0f172a;}
+.sc-savg{font-size:12px;font-weight:700;color:#2563eb;}
+.gb-sm{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+
+/* 휴회 현황 */
+.ps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.ps-card{background:#fff;border-radius:14px;border:1px solid var(--border);padding:18px;text-align:center;}
+.ps-num{font-size:28px;font-weight:900;margin-bottom:4px;}
+.ps-label{font-size:11px;color:var(--muted);}
+.pi-item{display:flex;align-items:center;gap:12px;padding:14px 18px;border-radius:12px;border:1px solid rgba(239,68,68,.2);margin-bottom:8px;background:linear-gradient(135deg,#fff,#fff5f5);}
+.pi-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;flex-shrink:0;animation:blink 1.5s ease-in-out infinite;}
+.pi-info{flex:1;}
+.pi-name{font-size:14px;font-weight:700;}
+.pi-meta{font-size:11px;color:var(--muted);margin-top:2px;}
+.pi-tag{display:inline-block;margin-top:5px;padding:3px 10px;background:#fee2e2;color:#dc2626;border-radius:6px;font-size:11px;font-weight:600;}
+.pi-ret{display:inline-block;margin-top:5px;margin-left:6px;padding:3px 10px;background:#fef3c7;color:#d97706;border-radius:6px;font-size:11px;font-weight:600;}
+.pi-days{font-size:22px;font-weight:900;color:#ef4444;white-space:nowrap;}
+.pi-dl{font-size:10px;color:var(--muted);text-align:center;}
+.btn-rs-sm{padding:7px 14px;background:linear-gradient(135deg,#059669,#34d399);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;}
 
 /* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;}
@@ -247,9 +238,9 @@ input,select,textarea{font-family:inherit;}
 .modal-title{font-size:15px;font-weight:800;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
 .modal-icon{width:32px;height:32px;border-radius:9px;background:linear-gradient(135deg,#7c3aed,#5b21b6);display:flex;align-items:center;justify-content:center;font-size:14px;}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px;}
-.modal-input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;margin-bottom:12px;color:var(--text);}
-.modal-input:focus{border-color:#7c3aed;}
-.modal-label{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
+.mi{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;outline:none;margin-bottom:12px;color:var(--text);}
+.mi:focus{border-color:#7c3aed;}
+.ml{font-size:10px;color:var(--muted);font-weight:700;margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase;}
 .type-toggle{display:flex;gap:8px;margin-bottom:14px;}
 .type-btn{flex:1;padding:9px;border-radius:9px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted);}
 .type-btn.on{border-color:#7c3aed;color:#7c3aed;background:#ede9fe;}
@@ -263,22 +254,20 @@ input,select,textarea{font-family:inherit;}
 <div class="layout">
   <div class="sidebar">
     <div class="sb-brand">
-      <div class="sb-logo-icon">W</div>
-      <div><div class="sb-logo-title">WAWA</div><div class="sb-logo-sub">코 칭 센 터</div></div>
+      <div class="sb-logo">W</div>
+      <div><div class="sb-title">WAWA</div><div class="sb-sub">코 칭 센 터</div></div>
     </div>
-    <div class="sb-stats" id="sb-stats-box"></div>
+    <div class="sb-stats" id="sb-stats"></div>
     <div class="sb-tabs">
-      <button class="sb-tab sb-tab-active on" id="sb-tab-active" onclick="setSbTab('active')">✅ 재원</button>
-      <button class="sb-tab sb-tab-paused" id="sb-tab-paused" onclick="setSbTab('paused')">⏸ 휴회</button>
+      <button class="sb-tab sb-tab-a on" id="tab-a" onclick="setSbTab('active')">✅ 재원</button>
+      <button class="sb-tab sb-tab-p" id="tab-p" onclick="setSbTab('paused')">⏸ 휴회</button>
     </div>
     <div class="sb-filter">
-      <div class="sb-filter-label">선생님</div>
-      <select class="sb-select" id="sb-teacher-sel" onchange="SB.teacherF=this.value;renderSidebar()">
-        <option value="all">전체 선생님</option>
-      </select>
+      <div class="sb-fl">선생님</div>
+      <select class="sb-sel" id="sb-tc-sel" onchange="SB.tcF=this.value;renderSidebar()"><option value="all">전체 선생님</option></select>
     </div>
     <div class="sb-subj-wrap">
-      <div class="sb-filter-label">과목</div>
+      <div class="sb-fl">과목</div>
       <div class="sb-subj-btns" id="sb-subj-btns"></div>
     </div>
     <div class="sb-sort">
@@ -289,12 +278,11 @@ input,select,textarea{font-family:inherit;}
     <div class="sb-count" id="sb-count"></div>
     <div class="sb-list" id="sb-list"></div>
     <div class="sb-bottom">
-      <button class="sb-add-btn" onclick="openAddStudent()">＋ 학생</button>
-      <button class="sb-add-btn" onclick="openAddTeacher()">＋ 강사</button>
-      <button class="sb-pause-btn" onclick="showPausedOverview()">휴회 현황</button>
+      <button class="sb-btn" onclick="openAddStudent()">＋ 학생</button>
+      <button class="sb-btn" onclick="openAddTeacher()">＋ 강사</button>
+      <button class="sb-btn-p" onclick="showPausedOv()">휴회 현황</button>
     </div>
   </div>
-
   <div class="main">
     <div class="header">
       <div>
@@ -306,8 +294,8 @@ input,select,textarea{font-family:inherit;}
           <button class="h-tab on" id="tab-detail" onclick="setTab('detail')">상세</button>
           <button class="h-tab" id="tab-report" onclick="setTab('report')">보고서</button>
         </div>
-        <button class="btn-save" id="save-btn" style="display:none;" onclick="saveReportImage()">📥 저장</button>
-        <button class="btn-overview" onclick="showOverview()">👥 전체 현황</button>
+        <button class="btn-save" id="save-btn" style="display:none;" onclick="saveImg()">📥 저장</button>
+        <button class="btn-ov" onclick="showOverview()">👥 전체 현황</button>
       </div>
     </div>
     <div class="content" id="content">
@@ -320,997 +308,731 @@ input,select,textarea{font-family:inherit;}
 
 <script>
 var S = {
-  teachers: JSON.parse(localStorage.getItem('wawa_teachers') || '[]'),
-  students: JSON.parse(localStorage.getItem('wawa_students') || '[]'),
-  exams: JSON.parse(localStorage.getItem('wawa_exams') || '[]'),
-  pauseHistory: JSON.parse(localStorage.getItem('wawa_pause_history') || '[]'),
+  teachers: JSON.parse(localStorage.getItem('wawa_teachers')||'[]'),
+  students: JSON.parse(localStorage.getItem('wawa_students')||'[]'),
+  exams: JSON.parse(localStorage.getItem('wawa_exams')||'[]'),
+  pauseHistory: JSON.parse(localStorage.getItem('wawa_pause_history')||'[]'),
   sel: null, tab: 'detail', chartInst: null, examFilter: 'all', sbTab: 'active'
 };
-var SB = {teacherF: 'all', subjF: 'all', sort: 'grade'};
-var OV = {gradeF: 'all', subjF: 'all', sort: {key: 'grade', dir: 1}};
-var nextId = parseInt(localStorage.getItem('wawa_nid') || '1', 10);
+var SB = {tcF:'all', subjF:'all', sort:'grade'};
+var OV = {gradeF:'all', subjF:'all', sort:{key:'grade',dir:1}};
+var nextId = parseInt(localStorage.getItem('wawa_nid')||'1',10);
 
-function nid() { var i = nextId++; localStorage.setItem('wawa_nid', nextId); return i; }
-
-function save() {
-  localStorage.setItem('wawa_teachers', JSON.stringify(S.teachers));
-  localStorage.setItem('wawa_students', JSON.stringify(S.students));
-  localStorage.setItem('wawa_exams', JSON.stringify(S.exams));
-  localStorage.setItem('wawa_pause_history', JSON.stringify(S.pauseHistory));
+function nid(){var i=nextId++;localStorage.setItem('wawa_nid',nextId);return i;}
+function save(){
+  localStorage.setItem('wawa_teachers',JSON.stringify(S.teachers));
+  localStorage.setItem('wawa_students',JSON.stringify(S.students));
+  localStorage.setItem('wawa_exams',JSON.stringify(S.exams));
+  localStorage.setItem('wawa_pause_history',JSON.stringify(S.pauseHistory));
 }
+function gradeScore(v){if(v>=90)return'A';if(v>=80)return'B';if(v>=70)return'C';if(v>=60)return'D';return'F';}
+function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2300);}
+function showModal(html){document.getElementById('modal-root').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">'+html+'</div></div>';}
+function closeModal(){document.getElementById('modal-root').innerHTML='';}
+var GO=['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
+function gradeOrder(g){var i=GO.indexOf(g);return i>=0?i:99;}
+function pauseDays(d){if(!d)return 0;return Math.floor((new Date()-new Date(d))/86400000);}
+function daysUntilReturn(d){if(!d)return null;return Math.ceil((new Date(d)-new Date())/86400000);}
 
-function gradeScore(v) {
-  if (v >= 90) return 'A';
-  if (v >= 80) return 'B';
-  if (v >= 70) return 'C';
-  if (v >= 60) return 'D';
-  return 'F';
-}
-
-function showToast(msg) {
-  var t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(function() { t.classList.remove('show'); }, 2300);
-}
-
-function showModal(html) {
-  document.getElementById('modal-root').innerHTML = '<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">' + html + '</div></div>';
-}
-
-function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
-
-var GRADE_ORDER = ['초1','초2','초3','초4','초5','초6','중1','중2','중3','고1','고2','고3'];
-function gradeOrder(g) { var i = GRADE_ORDER.indexOf(g); return i >= 0 ? i : 99; }
-
-function pauseDays(d) {
-  if (!d) return 0;
-  return Math.floor((new Date() - new Date(d)) / 86400000);
-}
-
-function daysUntilReturn(d) {
-  if (!d) return null;
-  return Math.ceil((new Date(d) - new Date()) / 86400000);
+// 선생님 이름 찾기 (tcName 직접 저장값 우선)
+function getTcName(st) {
+  if (st.tcName) return st.tcName;
+  for (var i=0;i<S.teachers.length;i++) {
+    if (S.teachers[i].id == st.tid) return S.teachers[i].name;
+  }
+  if (S.teachers.length===1) return S.teachers[0].name;
+  return '';
 }
 
 // ── 통계 ──
-function renderSbStats() {
-  var pairs = S.students.flatMap(function(st) { return (st.subjects || []).map(function(s) { return {st: st, s: s}; }); });
-  var active = pairs.filter(function(p) { return !p.s.paused; }).length;
-  var paused = pairs.filter(function(p) { return p.s.paused; }).length;
-  document.getElementById('sb-stats-box').innerHTML =
-    '<div class="sb-stat-box"><div class="sb-stat-num green">' + active + '</div><div class="sb-stat-label">재원</div></div>' +
-    '<div class="sb-stat-box"><div class="sb-stat-num red">' + paused + '</div><div class="sb-stat-label">휴회</div></div>' +
-    '<div class="sb-stat-box"><div class="sb-stat-num gold">' + S.students.length + '</div><div class="sb-stat-label">학생</div></div>';
+function renderStats(){
+  var pairs=S.students.flatMap(function(st){return(st.subjects||[]).map(function(s){return{st:st,s:s};});});
+  var active=pairs.filter(function(p){return!p.s.paused;}).length;
+  var paused=pairs.filter(function(p){return p.s.paused;}).length;
+  document.getElementById('sb-stats').innerHTML=
+    '<div class="sb-stat"><div class="sb-stat-n g">'+active+'</div><div class="sb-stat-l">재원</div></div>'+
+    '<div class="sb-stat"><div class="sb-stat-n r">'+paused+'</div><div class="sb-stat-l">휴회</div></div>'+
+    '<div class="sb-stat"><div class="sb-stat-n gold">'+S.students.length+'</div><div class="sb-stat-l">학생</div></div>';
 }
 
 // ── SIDEBAR ──
-function setSbTab(t) {
-  S.sbTab = t;
-  document.getElementById('sb-tab-active').classList.toggle('on', t === 'active');
-  document.getElementById('sb-tab-paused').classList.toggle('on', t === 'paused');
+function setSbTab(t){
+  S.sbTab=t;
+  document.getElementById('tab-a').classList.toggle('on',t==='active');
+  document.getElementById('tab-p').classList.toggle('on',t==='paused');
   renderSidebar();
 }
-
-function setSbSort(s) {
-  SB.sort = s;
-  ['grade','name','date'].forEach(function(k) {
-    var el = document.getElementById('sb-sort-' + k);
-    if (el) el.classList.toggle('on', k === s);
-  });
+function setSbSort(s){
+  SB.sort=s;
+  ['grade','name','date'].forEach(function(k){var el=document.getElementById('sb-sort-'+k);if(el)el.classList.toggle('on',k===s);});
   renderSidebar();
 }
-
-function renderSidebar() {
-  renderSbStats();
-
-  var sel = document.getElementById('sb-teacher-sel');
-  var prev = SB.teacherF;
-  sel.innerHTML = '<option value="all">전체 선생님</option>' +
-    S.teachers.map(function(t) {
-      return '<option value="' + t.id + '"' + (String(t.id) === String(prev) ? ' selected' : '') + '>' + t.name + ' 선생님</option>';
-    }).join('');
-
-  var allSubjs = [];
-  S.students.forEach(function(st) {
-    (st.subjects || []).forEach(function(s) {
-      if (allSubjs.indexOf(s.name) < 0) allSubjs.push(s.name);
+function renderSidebar(){
+  renderStats();
+  var sel=document.getElementById('sb-tc-sel');
+  var prev=SB.tcF;
+  sel.innerHTML='<option value="all">전체 선생님</option>'+
+    S.teachers.map(function(t){return'<option value="'+t.id+'"'+(String(t.id)===String(prev)?' selected':'')+'>'+t.name+' 선생님</option>';}).join('');
+  var allSubjs=[];
+  S.students.forEach(function(st){(st.subjects||[]).forEach(function(s){if(allSubjs.indexOf(s.name)<0)allSubjs.push(s.name);});});
+  document.getElementById('sb-subj-btns').innerHTML=
+    '<button class="sb-subj-btn'+(SB.subjF==='all'?' on':'')+'" onclick="SB.subjF=\'all\';renderSidebar()">전체</button>'+
+    allSubjs.map(function(s){return'<button class="sb-subj-btn'+(SB.subjF===s?' on':'')+'" onclick="SB.subjF=\''+s+'\';renderSidebar()">'+s+'</button>';}).join('');
+  var items=[];
+  S.students.forEach(function(st){
+    (st.subjects||[]).forEach(function(subj){
+      var ip=!!subj.paused;
+      if(S.sbTab==='paused'&&!ip)return;
+      if(S.sbTab==='active'&&ip)return;
+      if(SB.tcF!=='all'&&String(st.tid)!==String(SB.tcF))return;
+      if(SB.subjF!=='all'&&subj.name!==SB.subjF)return;
+      var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name&&(e.examType||'academy')==='academy';});
+      var avg=exams.length?Math.round(exams.reduce(function(a,e){return a+e.score;},0)/exams.length*10)/10:null;
+      items.push({st:st,subj:subj,avg:avg,ip:ip});
     });
   });
-
-  document.getElementById('sb-subj-btns').innerHTML =
-    '<button class="sb-subj-btn' + (SB.subjF === 'all' ? ' on' : '') + '" onclick="SB.subjF=\'all\';renderSidebar()">전체</button>' +
-    allSubjs.map(function(s) {
-      return '<button class="sb-subj-btn' + (SB.subjF === s ? ' on' : '') + '" onclick="SB.subjF=\'' + s + '\';renderSidebar()">' + s + '</button>';
-    }).join('');
-
-  var items = [];
-  S.students.forEach(function(st) {
-    (st.subjects || []).forEach(function(subj) {
-      var isPaused = !!subj.paused;
-      if (S.sbTab === 'paused' && !isPaused) return;
-      if (S.sbTab === 'active' && isPaused) return;
-      if (SB.teacherF !== 'all' && String(st.tid) !== String(SB.teacherF)) return;
-      if (SB.subjF !== 'all' && subj.name !== SB.subjF) return;
-      var exams = S.exams.filter(function(e) {
-        return e.sid === st.id && e.subj === subj.name && (e.examType || 'academy') === 'academy';
-      });
-      var avg = exams.length ? Math.round(exams.reduce(function(a, e) { return a + e.score; }, 0) / exams.length * 10) / 10 : null;
-      items.push({st: st, subj: subj, avg: avg, isPaused: isPaused});
-    });
+  items.sort(function(a,b){
+    if(SB.sort==='name')return a.st.name.localeCompare(b.st.name);
+    if(SB.sort==='date'&&S.sbTab==='paused'){return(b.subj.pauseDate||'').localeCompare(a.subj.pauseDate||'');}
+    return gradeOrder(a.st.grade||'')-gradeOrder(b.st.grade||'');
   });
-
-  items.sort(function(a, b) {
-    if (SB.sort === 'name') return a.st.name.localeCompare(b.st.name);
-    if (SB.sort === 'date' && S.sbTab === 'paused') {
-      var da = a.subj.pauseDate || '';
-      var db = b.subj.pauseDate || '';
-      return db.localeCompare(da);
+  document.getElementById('sb-count').textContent=(S.sbTab==='paused'?'휴회':'재원')+' ('+items.length+'명)';
+  document.getElementById('sb-list').innerHTML=items.map(function(it){
+    var isSel=S.sel&&S.sel.sid===it.st.id&&S.sel.subj===it.subj.name;
+    var days=it.ip?pauseDays(it.subj.pauseDate):0;
+    var returnD=(it.ip&&it.subj.returnDate)?daysUntilReturn(it.subj.returnDate):null;
+    var unit=it.subj.type==='count'?'개':'점';
+    var piHTML='';
+    if(it.ip){
+      piHTML='<div class="sb-pi"><div class="sb-pi-d">휴회 '+days+'일째'+(it.subj.pauseDate?' ('+it.subj.pauseDate+')):'')+' </div>'+
+        (it.subj.pauseReason?'<div class="sb-pi-r">📌 '+it.subj.pauseReason+'</div>':'')+
+        (returnD!==null?'<div class="sb-pi-r">🔄 복귀 '+(returnD>=0?returnD+'일 후':'예정일 지남')+'</div>':'')+
+      '</div>';
     }
-    return gradeOrder(a.st.grade || '') - gradeOrder(b.st.grade || '');
-  });
-
-  document.getElementById('sb-count').textContent = (S.sbTab === 'paused' ? '휴회' : '재원') + ' (' + items.length + '명)';
-
-  document.getElementById('sb-list').innerHTML = items.map(function(it) {
-    var isSel = S.sel && S.sel.sid === it.st.id && S.sel.subj === it.subj.name;
-    var days = it.isPaused ? pauseDays(it.subj.pauseDate) : 0;
-    var returnD = (it.isPaused && it.subj.returnDate) ? daysUntilReturn(it.subj.returnDate) : null;
-    var unit = it.subj.type === 'count' ? '개' : '점';
-    var pauseHTML = '';
-    if (it.isPaused) {
-      pauseHTML = '<div class="sb-pause-info">' +
-        '<div class="sb-pause-date">휴회 ' + days + '일째' + (it.subj.pauseDate ? ' (' + it.subj.pauseDate + ')' : '') + '</div>' +
-        (it.subj.pauseReason ? '<div class="sb-pause-reason">📌 ' + it.subj.pauseReason + '</div>' : '') +
-        (returnD !== null ? '<div class="sb-pause-return">🔄 복귀 ' + (returnD >= 0 ? returnD + '일 후' : '예정일 지남') + '</div>' : '') +
-        '</div>';
-    }
-    return '<div class="sb-item' + (isSel ? ' sel' : '') + (it.isPaused ? ' paused-item' : '') + '" onclick="selectSubj(' + it.st.tid + ',' + it.st.id + ',\'' + it.subj.name + '\')">' +
-      '<div class="sb-dot ' + (it.isPaused ? 'paused' : 'active') + '"></div>' +
-      '<div class="sb-info">' +
-        '<div class="sb-name">' + it.st.name + '</div>' +
-        '<div class="sb-meta">' + (it.st.grade || '') + ' · ' + it.subj.name + '</div>' +
-        pauseHTML +
-      '</div>' +
-      (it.avg !== null && !it.isPaused ? '<span class="sb-avg">' + it.avg + unit + '</span>' : '') +
-      '<button class="sb-more" onclick="event.stopPropagation();openItemMenu(' + it.st.id + ',\'' + it.subj.name + '\',' + it.isPaused + ')">···</button>' +
+    return '<div class="sb-item'+(isSel?' sel':'')+(it.ip?' pi':'')+'" onclick="selectSubj('+it.st.tid+','+it.st.id+',\''+it.subj.name+'\')">' +
+      '<div class="sb-dot '+(it.ip?'p':'a')+'"></div>'+
+      '<div class="sb-info"><div class="sb-name">'+it.st.name+'</div><div class="sb-meta">'+(it.st.grade||'')+' · '+it.subj.name+'</div>'+piHTML+'</div>'+
+      (it.avg!==null&&!it.ip?'<span class="sb-avg">'+it.avg+unit+'</span>':'')+
+      '<button class="sb-more" onclick="event.stopPropagation();openItemMenu('+it.st.id+',\''+it.subj.name+'\','+it.ip+')">···</button>'+
     '</div>';
   }).join('');
 }
 
-function openItemMenu(sid, subjName, isPaused) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  var btns = isPaused
-    ? '<button class="btn-resume" onclick="resumeSubj(' + sid + ',\'' + subjName + '\')">✅ 재원 복귀</button>' +
-      '<button class="btn-edit-pause" style="margin-top:0;" onclick="closeModal();openPauseSubj(' + sid + ',\'' + subjName + '\',true)">📝 휴회 정보 수정</button>'
-    : '<button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);width:100%;padding:10px;" onclick="closeModal();openPauseSubj(' + sid + ',\'' + subjName + '\',false)">⏸ 휴회 처리</button>';
+function openItemMenu(sid,subjName,isPaused){
+  var st=S.students.find(function(s){return s.id===sid;});
+  var btns=isPaused
+    ?'<button class="btn-resume" style="width:100%;margin-bottom:8px;" onclick="resumeSubj('+sid+',\''+subjName+'\')">✅ 재원 복귀</button>'+
+      '<button class="btn-ep" style="width:100%;margin-bottom:8px;" onclick="closeModal();openPauseSubj('+sid+',\''+subjName+'\',true)">📝 휴회 정보 수정</button>'
+    :'<button class="btn-p" style="background:linear-gradient(135deg,#dc2626,#ef4444);width:100%;margin-bottom:8px;" onclick="closeModal();openPauseSubj('+sid+',\''+subjName+'\',false)">⏸ 휴회 처리</button>';
   showModal(
-    '<div class="modal-title"><div class="modal-icon">⚙️</div>' + st.name + ' · ' + subjName + '</div>' +
-    '<div style="display:flex;flex-direction:column;gap:8px;">' +
-      btns +
-      '<button class="btn-ghost" onclick="openAddSubj(' + sid + ')">＋ 과목 추가</button>' +
-      '<button class="btn-ghost" style="color:#dc2626;border-color:#fca5a5;" onclick="if(confirm(\'' + subjName + ' 과목을 삭제할까요?\')){delSubj(' + sid + ',\'' + subjName + '\');closeModal()}">🗑 과목 삭제</button>' +
-      '<button class="btn-danger" onclick="if(confirm(\'' + st.name + ' 학생 전체를 삭제할까요?\')){delStudent(' + sid + ');closeModal()}">⚠️ 학생 전체 삭제</button>' +
-      '<button class="btn-ghost" onclick="closeModal()">취소</button>' +
-    '</div>'
+    '<div class="modal-title"><div class="modal-icon">⚙️</div>'+st.name+' · '+subjName+'</div>'+
+    '<div style="display:flex;flex-direction:column;">'+btns+
+    '<button class="btn-g" style="margin-bottom:8px;" onclick="openAddSubj('+sid+')">＋ 과목 추가</button>'+
+    '<button class="btn-g" style="color:#dc2626;border-color:#fca5a5;margin-bottom:8px;" onclick="if(confirm(\''+subjName+' 과목을 삭제할까요?\')){delSubj('+sid+',\''+subjName+'\');closeModal()}">🗑 과목 삭제</button>'+
+    '<button class="btn-d" onclick="if(confirm(\''+st.name+' 학생 전체를 삭제할까요?\')){delStudent('+sid+');closeModal()}">⚠️ 학생 전체 삭제</button>'+
+    '<button class="btn-g" style="margin-top:8px;" onclick="closeModal()">취소</button></div>'
   );
 }
-
-function selectSubj(tid, sid, subj) {
-  S.sel = {tid: tid, sid: sid, subj: subj};
-  S.tab = 'detail';
-  S.examFilter = 'all';
-  renderSidebar();
-  renderMain();
-}
+function selectSubj(tid,sid,subj){S.sel={tid:tid,sid:sid,subj:subj};S.tab='detail';S.examFilter='all';renderSidebar();renderMain();}
 
 // ── MAIN ──
-function renderMain() {
-  if (!S.sel) {
-    document.getElementById('h-tabs').style.display = 'none';
-    document.getElementById('save-btn').style.display = 'none';
-    document.getElementById('h-name').textContent = 'WAWA 코칭센터';
-    document.getElementById('h-meta').textContent = '강사 → 학생 → 과목을 선택하세요';
-    document.getElementById('content').innerHTML = '<div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 학생과 과목을 선택하세요</div></div>';
+function renderMain(){
+  if(!S.sel){
+    document.getElementById('h-tabs').style.display='none';
+    document.getElementById('save-btn').style.display='none';
+    document.getElementById('h-name').textContent='WAWA 코칭센터';
+    document.getElementById('h-meta').textContent='강사 → 학생 → 과목을 선택하세요';
+    document.getElementById('content').innerHTML='<div class="welcome"><div class="welcome-icon">📊</div><div class="welcome-text">왼쪽에서 학생과 과목을 선택하세요</div></div>';
     return;
   }
-  var st = S.students.find(function(s) { return s.id === S.sel.sid; });
-  var tc = S.teachers.find(function(t) { return t.id === S.sel.tid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === S.sel.subj; }) || {name: S.sel.subj, type: 'score'};
-  document.getElementById('h-tabs').style.display = 'flex';
-  document.getElementById('save-btn').style.display = S.tab === 'report' ? 'flex' : 'none';
-  ['detail','report'].forEach(function(t) { document.getElementById('tab-' + t).classList.toggle('on', S.tab === t); });
-  document.getElementById('h-name').textContent = st.name + ' 학생' + (subj.paused ? ' 🔴 휴회 중' : '');
-  document.getElementById('h-meta').innerHTML = (st.grade || '') + ' · <strong>' + S.sel.subj + '</strong> · ' + (tc ? tc.name + ' 선생님' : '') + (st.school ? ' · ' + st.school : '');
-  if (S.tab === 'detail') renderDetail(st, subj);
-  else renderReport(st, subj, tc);
+  var st=S.students.find(function(s){return s.id===S.sel.sid;});
+  var tc=S.teachers.find(function(t){return t.id===S.sel.tid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===S.sel.subj;})||{name:S.sel.subj,type:'score'};
+  document.getElementById('h-tabs').style.display='flex';
+  document.getElementById('save-btn').style.display=S.tab==='report'?'flex':'none';
+  ['detail','report'].forEach(function(t){document.getElementById('tab-'+t).classList.toggle('on',S.tab===t);});
+  document.getElementById('h-name').textContent=st.name+' 학생'+(subj.paused?' 🔴 휴회 중':'');
+  document.getElementById('h-meta').innerHTML=(st.grade||'')+' · <strong>'+S.sel.subj+'</strong> · '+(tc?tc.name+' 선생님':'')+(st.school?' · '+st.school:'');
+  if(S.tab==='detail')renderDetail(st,subj);else renderReport(st,subj,tc);
 }
-
-function setTab(t) { S.tab = t; renderMain(); }
-
-function filteredExams(all) {
-  if (S.examFilter === 'all') return all;
-  return all.filter(function(e) { return (e.examType || 'academy') === S.examFilter; });
-}
-
-function filterTabsHTML() {
-  var f = S.examFilter;
-  return '<div class="exam-filter">' +
-    '<button class="ef-btn' + (f === 'all' ? ' on' : '') + '" onclick="S.examFilter=\'all\';renderMain()">전체</button>' +
-    '<button class="ef-btn academy' + (f === 'academy' ? ' on' : '') + '" onclick="S.examFilter=\'academy\';renderMain()">학원</button>' +
-    '<button class="ef-btn school' + (f === 'school' ? ' on' : '') + '" onclick="S.examFilter=\'school\';renderMain()">학교</button>' +
+function setTab(t){S.tab=t;renderMain();}
+function filteredExams(all){if(S.examFilter==='all')return all;return all.filter(function(e){return(e.examType||'academy')===S.examFilter;});}
+function filterTabsHTML(){
+  var f=S.examFilter;
+  return'<div class="ef">'+
+    '<button class="ef-btn'+(f==='all'?' on':'')+'" onclick="S.examFilter=\'all\';renderMain()">전체</button>'+
+    '<button class="ef-btn academy'+(f==='academy'?' on':'')+'" onclick="S.examFilter=\'academy\';renderMain()">학원</button>'+
+    '<button class="ef-btn school'+(f==='school'?' on':'')+'" onclick="S.examFilter=\'school\';renderMain()">학교</button>'+
   '</div>';
 }
 
 // ── DETAIL ──
-function renderDetail(st, subj) {
-  var isPaused = !!subj.paused;
-  var days = isPaused ? pauseDays(subj.pauseDate) : 0;
-  var returnD = (isPaused && subj.returnDate) ? daysUntilReturn(subj.returnDate) : null;
-  var allExams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; }).sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var exams = filteredExams(allExams);
-  var type = subj.type || 'score';
-  var vals = exams.map(function(e) { return e.score; });
-  var latest = vals.length ? vals[vals.length - 1] : null;
-  var maxVal = vals.length ? Math.max.apply(null, vals) : null;
-  var unit = type === 'count' ? '개' : '점';
-
-  var history = S.pauseHistory.filter(function(h) { return h.sid === st.id && h.subj === subj.name; }).sort(function(a, b) { return b.date.localeCompare(a.date); });
-
-  var rows = [].concat(exams).reverse().map(function(e) {
-    var g = type === 'score' ? gradeScore(e.score) : null;
-    var et = e.examType || 'academy';
-    return '<div class="exam-item">' +
-      '<div class="exam-date">' + e.date + '</div>' +
-      '<div style="flex:1"><div class="exam-name">' + e.name + '</div><div class="exam-bar"><div class="exam-bar-fill" style="width:' + Math.min(100, e.score) + '%"></div></div></div>' +
-      '<span class="exam-type-badge ' + (et === 'school' ? 'etb-school' : 'etb-academy') + '">' + (et === 'school' ? '학교' : '학원') + '</span>' +
-      '<div><span class="exam-score">' + e.score + '</span><span class="exam-unit">' + unit + '</span></div>' +
-      (g ? '<div class="grade-badge g' + g + '">' + g + '</div>' : '') +
-      '<div class="exam-actions"><button class="exam-edit-btn" onclick="openEditExam(' + e.id + ')">✏️</button><button class="exam-del-btn" onclick="delExam(' + e.id + ')">🗑</button></div>' +
+function renderDetail(st,subj){
+  var ip=!!subj.paused;
+  var days=ip?pauseDays(subj.pauseDate):0;
+  var returnD=(ip&&subj.returnDate)?daysUntilReturn(subj.returnDate):null;
+  var allExams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name;}).sort(function(a,b){return a.date.localeCompare(b.date);});
+  var exams=filteredExams(allExams);
+  var type=subj.type||'score';
+  var vals=exams.map(function(e){return e.score;});
+  var latest=vals.length?vals[vals.length-1]:null;
+  var maxVal=vals.length?Math.max.apply(null,vals):null;
+  var unit=type==='count'?'개':'점';
+  var history=S.pauseHistory.filter(function(h){return h.sid===st.id&&h.subj===subj.name;}).sort(function(a,b){return b.date.localeCompare(a.date);});
+  var rows=[].concat(exams).reverse().map(function(e){
+    var g=type==='score'?gradeScore(e.score):null;
+    var et=e.examType||'academy';
+    return'<div class="ei"><div class="ei-date">'+e.date+'</div>'+
+      '<div style="flex:1"><div style="font-size:13px;font-weight:600;">'+e.name+'</div><div class="ei-bar"><div class="ei-bar-f" style="width:'+Math.min(100,e.score)+'%"></div></div></div>'+
+      '<span class="etb '+(et==='school'?'etb-s':'etb-a')+'">'+(et==='school'?'학교':'학원')+'</span>'+
+      '<div><span style="font-size:18px;font-weight:800;">'+e.score+'</span><span style="font-size:10px;color:var(--muted);">'+unit+'</span></div>'+
+      (g?'<div class="gb g'+g+'">'+g+'</div>':'')+
+      '<div class="ea"><button class="eeb" onclick="openEditExam('+e.id+')">✏️</button><button class="edb" onclick="delExam('+e.id+')">🗑</button></div>'+
     '</div>';
   }).join('');
-
-  var historyHTML = history.length ? history.map(function(h) {
-    return '<div class="history-item">' +
-      '<div class="hi-icon ' + (h.type === 'paused' ? 'hi-paused' : 'hi-resumed') + '">' + (h.type === 'paused' ? '⏸' : '✅') + '</div>' +
-      '<div class="hi-info"><div class="hi-title">' + (h.type === 'paused' ? '휴회 처리' : '재원 복귀') + '</div><div class="hi-meta">' + h.date + '</div>' + (h.reason ? '<div class="hi-reason">"' + h.reason + '"</div>' : '') + '</div>' +
-      (h.returnDate ? '<div style="font-size:11px;color:#d97706;font-weight:600;">복귀 예정: ' + h.returnDate + '</div>' : '') +
+  var histHTML=history.length?history.map(function(h){
+    return'<div class="hi"><div class="hi-icon '+(h.type==='paused'?'hi-p':'hi-r')+'">'+(h.type==='paused'?'⏸':'✅')+'</div>'+
+      '<div class="hi-info"><div class="hi-t">'+(h.type==='paused'?'휴회 처리':'재원 복귀')+'</div><div class="hi-m">'+h.date+(h.reason?' · '+h.reason:'')+'</div></div>'+
+      (h.returnDate?'<div style="font-size:11px;color:#d97706;font-weight:600;">복귀예정: '+h.returnDate+'</div>':'')+
     '</div>';
-  }).join('') : '<div style="text-align:center;color:var(--muted);padding:20px;">이력 없음</div>';
-
-  var pauseBanner = '';
-  if (isPaused) {
-    pauseBanner = '<div class="pause-banner">' +
-      '<div class="pb-icon">⏸</div>' +
-      '<div class="pb-info">' +
-        '<div class="pb-title">휴회 중 · ' + days + '일째</div>' +
-        '<div class="pb-meta">' + (subj.pauseDate || '') + ' 부터 휴회' + (st.school ? ' · ' + st.school : '') + '</div>' +
-        (subj.pauseReason ? '<div class="pb-reason">📌 사유: ' + subj.pauseReason + '</div>' : '') +
-        (returnD !== null ? '<div class="pb-return">🔄 복귀 예정일: ' + subj.returnDate + ' (' + (returnD >= 0 ? returnD + '일 남음' : '예정일 지남') + ')</div>' : '') +
-      '</div>' +
-      '<div class="pb-actions">' +
-        '<button class="btn-resume" onclick="resumeSubj(' + st.id + ',\'' + subj.name + '\')">✅ 재원 복귀</button>' +
-        '<button class="btn-edit-pause" onclick="openPauseSubj(' + st.id + ',\'' + subj.name + '\',true)">📝 수정</button>' +
-      '</div>' +
-    '</div>';
+  }).join(''):'<div style="text-align:center;color:var(--muted);padding:20px;">이력 없음</div>';
+  var pbHTML='';
+  if(ip){
+    pbHTML='<div class="pb"><div style="font-size:36px;flex-shrink:0;">⏸</div>'+
+      '<div class="pb-info"><div class="pb-title">휴회 중 · '+days+'일째</div>'+
+      '<div class="pb-meta">'+(subj.pauseDate||'')+' 부터 휴회</div>'+
+      (subj.pauseReason?'<div class="pb-reason">📌 '+subj.pauseReason+'</div>':'')+
+      (returnD!==null?'<div class="pb-return">🔄 복귀 예정일: '+subj.returnDate+' ('+(returnD>=0?returnD+'일 남음':'예정일 지남')+')</div>':'')+
+      '</div><div class="pb-actions">'+
+      '<button class="btn-resume" onclick="resumeSubj('+st.id+',\''+subj.name+'\')">✅ 재원 복귀</button>'+
+      '<button class="btn-ep" onclick="openPauseSubj('+st.id+',\''+subj.name+'\',true)">📝 수정</button>'+
+      '</div></div>';
   }
-
-  document.getElementById('content').innerHTML = '<div class="ci">' +
-    pauseBanner +
-    '<div class="score-grid">' +
-      '<div class="score-card sc-1"><div class="sc-label">최근 ' + (unit === '개' ? '갯수' : '점수') + '</div><div class="sc-val">' + (latest !== null ? latest : '—') + '<span class="sc-unit">' + unit + '</span></div><div class="sc-sub">' + (exams.length ? exams[exams.length - 1].name : '') + '</div></div>' +
-      '<div class="score-card sc-2"><div class="sc-label">최고 ' + (unit === '개' ? '갯수' : '점수') + '</div><div class="sc-val">' + (maxVal !== null ? maxVal : '—') + '<span class="sc-unit">' + unit + '</span></div></div>' +
-      '<div class="score-card sc-3"><div class="sc-label">시험 횟수</div><div class="sc-val">' + vals.length + '<span class="sc-unit">회</span></div></div>' +
-    '</div>' +
-    '<div class="card"><div class="card-title">시험 기록</div>' +
-      filterTabsHTML() +
-      (rows || '<div style="text-align:center;color:var(--muted);padding:28px;">아직 시험 기록이 없어요</div>') +
-      '<div class="add-form"><div class="form-row">' +
-        '<div class="form-group"><div class="form-label">구분</div><select class="form-select" id="ei-type" style="width:80px;"><option value="academy">학원</option><option value="school">학교</option></select></div>' +
-        '<div class="form-group"><div class="form-label">시험명</div><input class="form-input" id="ei-name" placeholder="예: 4월 단원평가" style="width:140px;"/></div>' +
-        '<div class="form-group"><div class="form-label">날짜</div><input class="form-input" id="ei-date" type="date" value="' + new Date().toISOString().slice(0, 10) + '" style="width:130px;"/></div>' +
-        '<div class="form-group"><div class="form-label">' + (type === 'count' ? '갯수' : '점수') + '</div><input class="form-input" id="ei-score" type="number" min="0" placeholder="예: 85" style="width:80px;"/></div>' +
-        '<div class="form-group" style="justify-content:flex-end;"><button class="btn-primary" onclick="addExam()">+ 추가</button></div>' +
-      '</div></div>' +
-    '</div>' +
-    '<div class="card"><div class="card-title">휴회 / 재원 이력</div>' + historyHTML + '</div>' +
+  document.getElementById('content').innerHTML='<div class="ci">'+pbHTML+
+    '<div class="score-grid">'+
+      '<div class="sc sc1"><div class="sc-label">최근 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(latest!==null?latest:'—')+'<span class="sc-unit">'+unit+'</span></div><div class="sc-sub">'+(exams.length?exams[exams.length-1].name:'')+'</div></div>'+
+      '<div class="sc sc2"><div class="sc-label">최고 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(maxVal!==null?maxVal:'—')+'<span class="sc-unit">'+unit+'</span></div></div>'+
+      '<div class="sc sc3"><div class="sc-label">시험 횟수</div><div class="sc-val">'+vals.length+'<span class="sc-unit">회</span></div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-title">시험 기록</div>'+filterTabsHTML()+
+      (rows||'<div style="text-align:center;color:var(--muted);padding:28px;">아직 시험 기록이 없어요</div>')+
+      '<div class="add-form"><div class="form-row">'+
+        '<div class="fg"><div class="fl">구분</div><select class="fs" id="ei-type" style="width:80px;"><option value="academy">학원</option><option value="school">학교</option></select></div>'+
+        '<div class="fg"><div class="fl">시험명</div><input class="fi" id="ei-name" placeholder="예: 4월 단원평가" style="width:140px;"/></div>'+
+        '<div class="fg"><div class="fl">날짜</div><input class="fi" id="ei-date" type="date" value="'+new Date().toISOString().slice(0,10)+'" style="width:130px;"/></div>'+
+        '<div class="fg"><div class="fl">'+(type==='count'?'갯수':'점수')+'</div><input class="fi" id="ei-score" type="number" min="0" placeholder="예: 85" style="width:80px;"/></div>'+
+        '<div class="fg" style="justify-content:flex-end;"><button class="btn-p" onclick="addExam()">+ 추가</button></div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-title">휴회 / 재원 이력</div>'+histHTML+'</div>'+
   '</div>';
 }
 
 // ── REPORT ──
-function renderReport(st, subj, tc) {
-  var allExams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; }).sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var exams = filteredExams(allExams);
-  var type = subj.type || 'score';
-  var vals = exams.map(function(e) { return e.score; });
-  var latest = vals.length ? vals[vals.length - 1] : null;
-  var maxv = vals.length ? Math.max.apply(null, vals) : null;
-  var unit = type === 'count' ? '개' : '점';
-  var today = new Date().toLocaleDateString('ko-KR');
-
-  var rows = [].concat(exams).reverse().map(function(e) {
-    var g = type === 'score' ? gradeScore(e.score) : null;
-    var et = e.examType || 'academy';
-    return '<div class="re-item">' +
-      '<div style="flex:1"><div class="re-name">' + e.name + '</div><div class="re-meta">' + e.date + '</div></div>' +
-      '<span class="exam-type-badge ' + (et === 'school' ? 'etb-school' : 'etb-academy') + '" style="margin-right:8px;">' + (et === 'school' ? '학교' : '학원') + '</span>' +
-      '<div class="re-score">' + e.score + unit + '</div>' +
-      (g ? '<div class="grade-badge g' + g + '">' + g + '</div>' : '') +
+function renderReport(st,subj,tc){
+  var allExams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name;}).sort(function(a,b){return a.date.localeCompare(b.date);});
+  var exams=filteredExams(allExams);
+  var type=subj.type||'score';
+  var vals=exams.map(function(e){return e.score;});
+  var latest=vals.length?vals[vals.length-1]:null;
+  var maxv=vals.length?Math.max.apply(null,vals):null;
+  var unit=type==='count'?'개':'점';
+  var today=new Date().toLocaleDateString('ko-KR');
+  var rows=[].concat(exams).reverse().map(function(e){
+    var g=type==='score'?gradeScore(e.score):null;
+    var et=e.examType||'academy';
+    return'<div class="ri"><div style="flex:1"><div style="font-size:13px;font-weight:700;">'+e.name+'</div><div style="font-size:10px;color:var(--muted);">'+e.date+'</div></div>'+
+      '<span class="etb '+(et==='school'?'etb-s':'etb-a')+'" style="margin-right:8px;">'+(et==='school'?'학교':'학원')+'</span>'+
+      '<div class="ri-score">'+e.score+unit+'</div>'+(g?'<div class="gb g'+g+'">'+g+'</div>':'')+
     '</div>';
   }).join('');
-
-  var savedMsg = getMsg();
-  document.getElementById('content').innerHTML = '<div class="ci">' +
-    '<div class="report-hero"><div class="rh-g1"></div><div class="rh-g2"></div>' +
-      '<div class="rh-header">' +
-        '<div class="rh-logo"><div class="rh-logo-icon">W</div><div><div class="rh-logo-t1">WAWA</div><div class="rh-logo-t2">코 칭 센 터</div></div></div>' +
-        '<div class="rh-badge">✦ 학습 성과 리포트</div>' +
-        '<div class="rh-date">' + today + ' 발행</div>' +
-      '</div>' +
-      '<div class="rh-name">' + st.name + ' 학생</div>' +
-      '<div class="rh-sub">' + (st.grade || '') + ' · ' + subj.name + ' · ' + (tc ? tc.name + ' 선생님' : '') + '</div>' +
-      '<div class="rh-scores">' +
-        '<div class="rh-box"><div class="rh-box-label">최근</div><div class="rh-box-val gold">' + (latest !== null ? latest : '—') + unit + '</div></div>' +
-        '<div class="rh-box"><div class="rh-box-label">최고</div><div class="rh-box-val green">' + (maxv !== null ? maxv : '—') + (vals.length ? unit : '') + '</div></div>' +
-        '<div class="rh-box"><div class="rh-box-label">시험 횟수</div><div class="rh-box-val blue">' + vals.length + '회</div></div>' +
-      '</div>' +
-    '</div>' +
-    '<div class="card"><div class="card-title">성적 추이</div>' +
-      filterTabsHTML() +
-      (exams.length >= 1 ? '<div class="chart-wrap"><canvas id="score-chart"></canvas></div>' : '<div style="text-align:center;color:var(--muted);padding:24px;">시험 기록을 추가하면 그래프가 표시됩니다</div>') +
-    '</div>' +
-    '<div class="card"><div class="card-title">시험별 성적</div>' + (rows || '<div style="text-align:center;color:var(--muted);padding:24px;">기록 없음</div>') + '</div>' +
-    '<div class="card"><div class="card-title">학부모 안내 메시지</div>' +
-      '<div id="memo-section" style="margin-bottom:14px;">' +
-        '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">' +
-          '<div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>' +
-          '<button onclick="toggleMemo()" id="memo-toggle-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:3px 10px;font-size:11px;color:#7c3aed;font-weight:600;cursor:pointer;">펼치기 ▼</button>' +
-        '</div>' +
-        '<div id="memo-box" style="display:none;background:linear-gradient(135deg,#f5f3ff,#ede9fe);border:1.5px solid #c4b5fd;border-radius:12px;padding:14px 16px;">' +
-          '<textarea id="fb-memo" style="width:100%;min-height:100px;padding:10px 12px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요" oninput="saveMemo()">' + getMemo() + '</textarea>' +
-        '</div>' +
-      '</div>' +
-      '<div id="ai-btn-wrap" style="display:flex;justify-content:center;margin-bottom:14px;">' +
-        '<button class="msg-auto-btn" onclick="autoMsg()">✦ AI로 정리하기</button>' +
-      '</div>' +
-      '<div id="msg-result-box" style="' + (savedMsg ? '' : 'display:none;') + '">' +
-        '<div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:20px 22px;margin-bottom:10px;">' +
-          '<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>' +
-          '<div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);">' + (savedMsg ? '<div style="white-space:pre-wrap;">' + savedMsg + '</div>' : '') + '</div>' +
-        '</div>' +
-        '<div style="display:flex;justify-content:flex-end;gap:8px;">' +
-          '<button class="msg-copy-btn" onclick="copyMsg()">📋 복사</button>' +
-          '<button class="msg-copy-btn" onclick="editMsg()" style="border-color:#c4b5fd;color:#7c3aed;">✏️ 수정</button>' +
-        '</div>' +
-      '</div>' +
-      '<textarea class="msg-textarea" id="msg-area" style="' + (savedMsg ? 'display:none;' : '') + '" placeholder="위에 메모를 입력하고 AI로 정리하기를 눌러보세요." oninput="saveMsg()">' + savedMsg + '</textarea>' +
-    '</div>' +
-    '<div class="report-footer">WAWA 코칭센터 · ' + (tc ? tc.name + ' 선생님' : '담당 선생님') + ' · ' + today + '</div>' +
+  var savedMsg=getMsg();
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="rh"><div class="rh-head">'+
+      '<div class="rh-logo"><div class="rh-logo-i">W</div><div><div class="rh-logo-t">WAWA</div><div style="font-size:9px;color:rgba(255,255,255,.28);">코 칭 센 터</div></div></div>'+
+      '<div class="rh-badge">✦ 학습 성과 리포트</div><div class="rh-date">'+today+'</div>'+
+    '</div>'+
+    '<div class="rh-name">'+st.name+' 학생</div>'+
+    '<div class="rh-sub">'+(st.grade||'')+' · '+subj.name+' · '+(tc?tc.name+' 선생님':'')+'</div>'+
+    '<div class="rh-scores">'+
+      '<div class="rh-box"><div class="rh-box-l">최근</div><div class="rh-box-v gold">'+(latest!==null?latest:'—')+unit+'</div></div>'+
+      '<div class="rh-box"><div class="rh-box-l">최고</div><div class="rh-box-v green">'+(maxv!==null?maxv:'—')+(vals.length?unit:'')+'</div></div>'+
+      '<div class="rh-box"><div class="rh-box-l">시험 횟수</div><div class="rh-box-v blue">'+vals.length+'회</div></div>'+
+    '</div></div>'+
+    '<div class="card"><div class="card-title">성적 추이</div>'+filterTabsHTML()+
+      (exams.length>=1?'<div class="chart-wrap"><canvas id="score-chart"></canvas></div>':'<div style="text-align:center;color:var(--muted);padding:24px;">시험 기록을 추가하면 그래프가 표시됩니다</div>')+
+    '</div>'+
+    '<div class="card"><div class="card-title">시험별 성적</div>'+(rows||'<div style="text-align:center;color:var(--muted);padding:24px;">기록 없음</div>')+'</div>'+
+    '<div class="card"><div class="card-title">학부모 안내 메시지</div>'+
+      '<div style="margin-bottom:14px;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">'+
+        '<div style="font-size:12px;font-weight:700;color:#7c3aed;">✏️ 선생님 메모</div>'+
+        '<button onclick="toggleMemo()" id="memo-btn" style="background:none;border:1.5px solid #c4b5fd;border-radius:7px;padding:3px 10px;font-size:11px;color:#7c3aed;font-weight:600;cursor:pointer;">펼치기 ▼</button>'+
+      '</div>'+
+      '<div id="memo-box" style="display:none;background:#f5f3ff;border:1.5px solid #c4b5fd;border-radius:12px;padding:14px;">'+
+        '<textarea id="fb-memo" style="width:100%;min-height:100px;padding:10px;border:1.5px solid #ddd6fe;border-radius:9px;font-size:13px;line-height:1.8;resize:vertical;outline:none;background:#fff;color:var(--text);font-family:inherit;" placeholder="잘한 점 / 아쉬운 점 / 앞으로의 방향을 자유롭게 적어주세요" oninput="saveMemo()">'+getMemo()+'</textarea>'+
+      '</div></div>'+
+      '<div style="display:flex;justify-content:center;margin-bottom:14px;"><button class="msg-btn" onclick="autoMsg()">✦ AI로 정리하기</button></div>'+
+      '<div id="msg-result" style="'+(savedMsg?'':'display:none;')+'">'+
+        '<div style="background:#fff;border:1.5px solid #e9d5ff;border-radius:14px;padding:20px;margin-bottom:10px;">'+
+          '<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #ede9fe;">📋 학부모 안내 메시지</div>'+
+          '<div id="msg-rendered" style="font-size:13px;line-height:2;color:var(--text);">'+(savedMsg?'<div style="white-space:pre-wrap;">'+savedMsg+'</div>':'')+'</div>'+
+        '</div>'+
+        '<div style="display:flex;justify-content:flex-end;gap:8px;">'+
+          '<button class="msg-copy" onclick="copyMsg()">📋 복사</button>'+
+          '<button class="msg-copy" onclick="editMsg()" style="border-color:#c4b5fd;color:#7c3aed;">✏️ 수정</button>'+
+        '</div>'+
+      '</div>'+
+      '<textarea class="msg-ta" id="msg-area" style="'+(savedMsg?'display:none;':'')+'" placeholder="메모 입력 후 AI로 정리하기를 눌러보세요." oninput="saveMsg()">'+savedMsg+'</textarea>'+
+    '</div>'+
+    '<div class="rfoot">WAWA 코칭센터 · '+(tc?tc.name+' 선생님':'담당 선생님')+' · '+today+'</div>'+
   '</div>';
-
-  if (exams.length >= 1) drawChart(exams, type);
+  if(exams.length>=1)drawChart(exams,type);
 }
 
 // ── CHART ──
-function drawChart(exams, type) {
-  if (S.chartInst) { S.chartInst.destroy(); S.chartInst = null; }
-  var ctx = document.getElementById('score-chart');
-  if (!ctx) return;
-  var unit = type === 'count' ? '개' : '점';
-  var vals = exams.map(function(e) { return e.score; });
-  var maxVal = Math.max.apply(null, vals);
-  var pad = Math.max(2, Math.round(maxVal * 0.1));
-  var pc = exams.length <= 3 ? 1 : 0;
-  var labels = [];
-  var data = [];
-  var colors = [];
-  for (var i = 0; i < pc; i++) { labels.push(''); data.push(null); colors.push('transparent'); }
-  exams.forEach(function(e) {
-    labels.push(e.name);
-    data.push(e.score);
-    colors.push((e.examType || 'academy') === 'school' ? 'rgba(37,99,235,.85)' : 'rgba(124,58,237,.85)');
-  });
-  for (var j = 0; j < pc; j++) { labels.push(''); data.push(null); colors.push('transparent'); }
-  S.chartInst = new Chart(ctx, {
-    type: 'bar',
-    data: {labels: labels, datasets: [{label: '성적', data: data, backgroundColor: colors, borderWidth: 0, borderRadius: 8, borderSkipped: false, maxBarThickness: 100, barPercentage: .7, categoryPercentage: .8}]},
-    options: {
-      layout: {padding: {right: 20}}, responsive: true, maintainAspectRatio: false,
-      plugins: {legend: {display: false}, tooltip: {callbacks: {label: function(c) { return c.parsed.y + unit; }}, backgroundColor: '#111827', padding: 10, cornerRadius: 8}},
-      scales: {y: {min: 0, max: maxVal + pad, grid: {color: 'rgba(0,0,0,.04)'}, ticks: {callback: function(v) { return v + unit; }, font: {size: 11}}}, x: {grid: {display: false}, ticks: {font: {size: 11}, maxRotation: 0}}}
-    }
-  });
+function drawChart(exams,type){
+  if(S.chartInst){S.chartInst.destroy();S.chartInst=null;}
+  var ctx=document.getElementById('score-chart');if(!ctx)return;
+  var unit=type==='count'?'개':'점';
+  var vals=exams.map(function(e){return e.score;});
+  var maxVal=Math.max.apply(null,vals);
+  var pad=Math.max(2,Math.round(maxVal*.1));
+  var pc=exams.length<=3?1:0;
+  var labels=[],data=[],colors=[];
+  for(var i=0;i<pc;i++){labels.push('');data.push(null);colors.push('transparent');}
+  exams.forEach(function(e){labels.push(e.name);data.push(e.score);colors.push((e.examType||'academy')==='school'?'rgba(37,99,235,.85)':'rgba(124,58,237,.85)');});
+  for(var j=0;j<pc;j++){labels.push('');data.push(null);colors.push('transparent');}
+  S.chartInst=new Chart(ctx,{type:'bar',data:{labels:labels,datasets:[{label:'성적',data:data,backgroundColor:colors,borderWidth:0,borderRadius:8,borderSkipped:false,maxBarThickness:100,barPercentage:.7,categoryPercentage:.8}]},
+    options:{layout:{padding:{right:20}},responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return c.parsed.y+unit;}},backgroundColor:'#111827',padding:10,cornerRadius:8}},
+      scales:{y:{min:0,max:maxVal+pad,grid:{color:'rgba(0,0,0,.04)'},ticks:{callback:function(v){return v+unit;},font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11},maxRotation:0}}}}});
 }
 
-// ── MEMO / MSG ──
-function toggleMemo() {
-  var b = document.getElementById('memo-box');
-  var btn = document.getElementById('memo-toggle-btn');
-  if (!b || !btn) return;
-  var open = b.style.display === 'block';
-  b.style.display = open ? 'none' : 'block';
-  btn.textContent = open ? '펼치기 ▼' : '접기 ▲';
-}
-function memoKey() { return 'memo_' + (S.sel ? S.sel.sid : '') + '_' + (S.sel ? S.sel.subj : ''); }
-function getMemo() { return S.sel ? (localStorage.getItem(memoKey()) || '') : ''; }
-function saveMemo() { var a = document.getElementById('fb-memo'); if (a) localStorage.setItem(memoKey(), a.value); }
-function msgKey() { return 'msg_' + (S.sel ? S.sel.sid : '') + '_' + (S.sel ? S.sel.subj : ''); }
-function getMsg() { return S.sel ? (localStorage.getItem(msgKey()) || '') : ''; }
-function saveMsg() { var a = document.getElementById('msg-area'); if (a) localStorage.setItem(msgKey(), a.value); }
-function copyMsg() {
-  var txt = (document.getElementById('msg-rendered') ? document.getElementById('msg-rendered').textContent : '') || (document.getElementById('msg-area') ? document.getElementById('msg-area').value : '') || '';
-  if (!txt) return;
-  navigator.clipboard.writeText(txt).then(function() { showToast('📋 복사됐어요'); });
-}
-function editMsg() {
-  var r = document.getElementById('msg-result-box');
-  var t = document.getElementById('msg-area');
-  if (r && t) { r.style.display = 'none'; t.style.display = 'block'; t.focus(); }
-}
+// ── MEMO/MSG ──
+function toggleMemo(){var b=document.getElementById('memo-box');var btn=document.getElementById('memo-btn');if(!b||!btn)return;var o=b.style.display==='block';b.style.display=o?'none':'block';btn.textContent=o?'펼치기 ▼':'접기 ▲';}
+function memoKey(){return'memo_'+(S.sel?S.sel.sid:'')+'_'+(S.sel?S.sel.subj:'');}
+function getMemo(){return S.sel?(localStorage.getItem(memoKey())||''):'';}
+function saveMemo(){var a=document.getElementById('fb-memo');if(a)localStorage.setItem(memoKey(),a.value);}
+function msgKey(){return'msg_'+(S.sel?S.sel.sid:'')+'_'+(S.sel?S.sel.subj:'');}
+function getMsg(){return S.sel?(localStorage.getItem(msgKey())||''):'';}
+function saveMsg(){var a=document.getElementById('msg-area');if(a)localStorage.setItem(msgKey(),a.value);}
+function copyMsg(){var txt=(document.getElementById('msg-rendered')?document.getElementById('msg-rendered').textContent:'')|| (document.getElementById('msg-area')?document.getElementById('msg-area').value:'')||'';if(!txt)return;navigator.clipboard.writeText(txt).then(function(){showToast('📋 복사됐어요');});}
+function editMsg(){var r=document.getElementById('msg-result');var t=document.getElementById('msg-area');if(r&&t){r.style.display='none';t.style.display='block';t.focus();}}
 
-async function autoMsg() {
-  var st = S.students.find(function(s) { return s.id === S.sel.sid; });
-  var tc = S.teachers.find(function(t) { return t.id === S.sel.tid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === S.sel.subj; }) || {type: 'score'};
-  var exams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === S.sel.subj; }).sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var unit = subj.type === 'count' ? '개' : '점';
-  var vals = exams.map(function(e) { return e.score; });
-  var latest = vals.length ? vals[vals.length - 1] : null;
-  var memo = (document.getElementById('fb-memo') ? document.getElementById('fb-memo').value : '') || '';
-  if (!memo.trim()) { showToast('선생님 메모를 먼저 입력해주세요!'); return; }
-  var resultBox = document.getElementById('msg-result-box');
-  var rendered = document.getElementById('msg-rendered');
-  if (rendered) rendered.innerHTML = '<div style="text-align:center;padding:20px;color:#7c3aed;">✦ AI가 정리 중...</div>';
-  if (resultBox) resultBox.style.display = 'block';
-  try {
-    var res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json', 'x-api-key': '', 'anthropic-version': '2023-06-01'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 900,
-        messages: [{role: 'user', content: '아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘.\n학생: ' + st.name + '(' + (st.grade || '') + ') / 과목: ' + S.sel.subj + ' / 담당: ' + (tc ? tc.name : '선생님') + ' / 최근성적: ' + (latest !== null ? latest : '없음') + unit + '\n[메모] ' + memo + '\nJSON: {"greeting":"인사+강사소개(1~2문장)","good":"잘한점(2~3문장)","bad":"보완점(2~3문장)","next":"학습방향(2~3문장)","closing":"마무리(강사이름으로끝)"}'}]
-      })
-    });
-    var raw = await res.text();
-    var d;
-    try { d = JSON.parse(raw); } catch(e) { if (rendered) rendered.innerHTML = '파싱오류'; return; }
-    if (d.error) { if (rendered) rendered.innerHTML = '오류: ' + JSON.stringify(d.error); return; }
-    var txt = (d.content && d.content[0] ? d.content[0].text : '') || '';
-    var obj;
-    try { obj = JSON.parse(txt.replace(/```json|```/g, '').trim()); } catch(e) {
-      if (rendered) rendered.innerHTML = '<div style="white-space:pre-wrap;">' + txt + '</div>';
-      localStorage.setItem(msgKey(), txt); return;
-    }
-    var full = obj.greeting + '\n\n✅ 잘한 점\n' + obj.good + '\n\n📝 보완이 필요한 부분\n' + obj.bad + '\n\n📚 앞으로의 학습 방향\n' + obj.next + '\n\n' + obj.closing;
-    localStorage.setItem(msgKey(), full);
-    if (rendered) rendered.innerHTML =
-      '<div style="font-size:13px;line-height:2;color:#374151;margin-bottom:14px;">' + obj.greeting.replace(/\n/g, '<br>') + '</div>' +
-      '<div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:5px;">✅ 잘한 점</div><div style="font-size:13px;line-height:1.9;color:#374151;">' + obj.good.replace(/\n/g, '<br>') + '</div></div>' +
-      '<div style="background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:5px;">📝 보완이 필요한 부분</div><div style="font-size:13px;line-height:1.9;color:#374151;">' + obj.bad.replace(/\n/g, '<br>') + '</div></div>' +
-      '<div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:5px;">📚 앞으로의 학습 방향</div><div style="font-size:13px;line-height:1.9;color:#374151;">' + obj.next.replace(/\n/g, '<br>') + '</div></div>' +
-      '<div style="font-size:13px;line-height:2;color:#374151;">' + obj.closing.replace(/\n/g, '<br>') + '</div>';
-    var ta = document.getElementById('msg-area');
-    if (ta) { ta.value = full; ta.style.display = 'none'; }
-  } catch(e) { if (rendered) rendered.innerHTML = '오류: ' + e.message; }
+async function autoMsg(){
+  var st=S.students.find(function(s){return s.id===S.sel.sid;});
+  var tc=S.teachers.find(function(t){return t.id===S.sel.tid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===S.sel.subj;})||{type:'score'};
+  var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===S.sel.subj;}).sort(function(a,b){return a.date.localeCompare(b.date);});
+  var unit=subj.type==='count'?'개':'점';
+  var vals=exams.map(function(e){return e.score;});
+  var latest=vals.length?vals[vals.length-1]:null;
+  var memo=(document.getElementById('fb-memo')?document.getElementById('fb-memo').value:'')||'';
+  if(!memo.trim()){showToast('선생님 메모를 먼저 입력해주세요!');return;}
+  var resultBox=document.getElementById('msg-result');
+  var rendered=document.getElementById('msg-rendered');
+  if(rendered)rendered.innerHTML='<div style="text-align:center;padding:20px;color:#7c3aed;">✦ AI가 정리 중...</div>';
+  if(resultBox)resultBox.style.display='block';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
+        messages:[{role:'user',content:'아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘.\n학생: '+st.name+'('+( st.grade||'')+') / 과목: '+S.sel.subj+' / 담당: '+(tc?tc.name:'선생님')+' / 최근성적: '+(latest!==null?latest:'없음')+unit+'\n[메모] '+memo+'\nJSON: {"greeting":"인사+강사소개","good":"잘한점","bad":"보완점","next":"학습방향","closing":"마무리"}'}]})});
+    var raw=await res.text();var d;
+    try{d=JSON.parse(raw);}catch(e){if(rendered)rendered.innerHTML='파싱오류';return;}
+    if(d.error){if(rendered)rendered.innerHTML='오류: '+JSON.stringify(d.error);return;}
+    var txt=(d.content&&d.content[0]?d.content[0].text:'')||'';
+    var obj;try{obj=JSON.parse(txt.replace(/```json|```/g,'').trim());}catch(e){if(rendered)rendered.innerHTML='<div style="white-space:pre-wrap;">'+txt+'</div>';localStorage.setItem(msgKey(),txt);return;}
+    var full=obj.greeting+'\n\n✅ 잘한 점\n'+obj.good+'\n\n📝 보완이 필요한 부분\n'+obj.bad+'\n\n📚 앞으로의 학습 방향\n'+obj.next+'\n\n'+obj.closing;
+    localStorage.setItem(msgKey(),full);
+    if(rendered)rendered.innerHTML=
+      '<div style="font-size:13px;line-height:2;color:#374151;margin-bottom:14px;">'+obj.greeting.replace(/\n/g,'<br>')+'</div>'+
+      '<div style="background:#f0fdf4;border-left:4px solid #059669;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#059669;margin-bottom:5px;">✅ 잘한 점</div><div style="font-size:13px;line-height:1.9;color:#374151;">'+obj.good.replace(/\n/g,'<br>')+'</div></div>'+
+      '<div style="background:#fffbeb;border-left:4px solid #d97706;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:10px;"><div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:5px;">📝 보완이 필요한 부분</div><div style="font-size:13px;line-height:1.9;color:#374151;">'+obj.bad.replace(/\n/g,'<br>')+'</div></div>'+
+      '<div style="background:#eff6ff;border-left:4px solid #2563eb;border-radius:0 10px 10px 0;padding:12px 16px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#2563eb;margin-bottom:5px;">📚 앞으로의 학습 방향</div><div style="font-size:13px;line-height:1.9;color:#374151;">'+obj.next.replace(/\n/g,'<br>')+'</div></div>'+
+      '<div style="font-size:13px;line-height:2;color:#374151;">'+obj.closing.replace(/\n/g,'<br>')+'</div>';
+    var ta=document.getElementById('msg-area');if(ta){ta.value=full;ta.style.display='none';}
+  }catch(e){if(rendered)rendered.innerHTML='오류: '+e.message;}
 }
 
 // ── EXAM CRUD ──
-function addExam() {
-  var examType = document.getElementById('ei-type').value;
-  var name = document.getElementById('ei-name').value.trim();
-  var date = document.getElementById('ei-date').value;
-  var score = parseFloat(document.getElementById('ei-score').value);
-  if (!name || !date || isNaN(score) || score < 0) { showToast('모든 항목을 입력해주세요'); return; }
-  S.exams.push({id: nid(), sid: S.sel.sid, subj: S.sel.subj, name: name, date: date, score: score, examType: examType});
-  save(); renderMain(); showToast('✅ 추가됐어요');
+function addExam(){
+  var examType=document.getElementById('ei-type').value;
+  var name=document.getElementById('ei-name').value.trim();
+  var date=document.getElementById('ei-date').value;
+  var score=parseFloat(document.getElementById('ei-score').value);
+  if(!name||!date||isNaN(score)||score<0){showToast('모든 항목을 입력해주세요');return;}
+  S.exams.push({id:nid(),sid:S.sel.sid,subj:S.sel.subj,name:name,date:date,score:score,examType:examType});
+  save();renderMain();showToast('✅ 추가됐어요');
 }
-function openEditExam(id) {
-  var e = S.exams.find(function(x) { return x.id === id; });
-  if (!e) return;
-  var st = S.students.find(function(s) { return s.id === e.sid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === e.subj; }) || {type: 'score'};
-  showModal(
-    '<div class="modal-title"><div class="modal-icon">✏️</div>시험 수정</div>' +
-    '<div class="modal-label">구분</div><select class="modal-input" id="me-type"><option value="academy"' + ((e.examType || 'academy') === 'academy' ? ' selected' : '') + '>학원</option><option value="school"' + (e.examType === 'school' ? ' selected' : '') + '>학교</option></select>' +
-    '<div class="modal-label">시험명</div><input class="modal-input" id="me-name" value="' + e.name + '"/>' +
-    '<div class="modal-label">날짜</div><input class="modal-input" id="me-date" type="date" value="' + e.date + '"/>' +
-    '<div class="modal-label">' + (subj.type === 'count' ? '갯수' : '점수') + '</div><input class="modal-input" id="me-score" type="number" value="' + e.score + '" min="0"/>' +
-    '<div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="saveEditExam(' + id + ')">저장</button></div>'
-  );
+function openEditExam(id){
+  var e=S.exams.find(function(x){return x.id===id;});if(!e)return;
+  var st=S.students.find(function(s){return s.id===e.sid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===e.subj;})||{type:'score'};
+  showModal('<div class="modal-title"><div class="modal-icon">✏️</div>시험 수정</div>'+
+    '<div class="ml">구분</div><select class="mi" id="me-type"><option value="academy"'+((e.examType||'academy')==='academy'?' selected':'')+'>학원</option><option value="school"'+(e.examType==='school'?' selected':'')+'>학교</option></select>'+
+    '<div class="ml">시험명</div><input class="mi" id="me-name" value="'+e.name+'"/>'+
+    '<div class="ml">날짜</div><input class="mi" id="me-date" type="date" value="'+e.date+'"/>'+
+    '<div class="ml">'+(subj.type==='count'?'갯수':'점수')+'</div><input class="mi" id="me-score" type="number" value="'+e.score+'" min="0"/>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveEditExam('+id+')">저장</button></div>');
 }
-function saveEditExam(id) {
-  var e = S.exams.find(function(x) { return x.id === id; });
-  e.examType = document.getElementById('me-type').value;
-  e.name = document.getElementById('me-name').value.trim();
-  e.date = document.getElementById('me-date').value;
-  e.score = parseFloat(document.getElementById('me-score').value);
-  save(); closeModal(); renderMain(); showToast('✅ 수정됐어요');
+function saveEditExam(id){
+  var e=S.exams.find(function(x){return x.id===id;});
+  e.examType=document.getElementById('me-type').value;
+  e.name=document.getElementById('me-name').value.trim();
+  e.date=document.getElementById('me-date').value;
+  e.score=parseFloat(document.getElementById('me-score').value);
+  save();closeModal();renderMain();showToast('✅ 수정됐어요');
 }
-function delExam(id) {
-  if (!confirm('삭제할까요?')) return;
-  S.exams = S.exams.filter(function(e) { return e.id !== id; });
-  save(); renderMain(); showToast('🗑 삭제됐어요');
-}
+function delExam(id){if(!confirm('삭제할까요?'))return;S.exams=S.exams.filter(function(e){return e.id!==id;});save();renderMain();showToast('🗑 삭제됐어요');}
 
 // ── TEACHER CRUD ──
-function openAddTeacher() {
-  showModal(
-    '<div class="modal-title"><div class="modal-icon">👤</div>강사 추가</div>' +
-    '<div class="modal-label">이름</div>' +
-    '<input class="modal-input" id="tn" placeholder="예: 김선생님"/>' +
-    '<div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addTeacher()">추가</button></div>'
-  );
+function openAddTeacher(){
+  showModal('<div class="modal-title"><div class="modal-icon">👤</div>강사 추가</div>'+
+    '<div class="ml">이름</div><input class="mi" id="tn" placeholder="예: 김선생님"/>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="addTeacher()">추가</button></div>');
 }
-function addTeacher() {
-  var n = document.getElementById('tn').value.trim();
-  if (!n) { showToast('이름을 입력해주세요'); return; }
-  if (S.teachers.find(function(t) { return t.name === n; })) { showToast('이미 있는 강사예요'); return; }
-  S.teachers.push({id: nid(), name: n});
-  save(); closeModal(); renderSidebar(); showToast('✅ ' + n + ' 선생님 추가');
+function addTeacher(){
+  var n=document.getElementById('tn').value.trim();
+  if(!n){showToast('이름을 입력해주세요');return;}
+  if(S.teachers.find(function(t){return t.name===n;})){showToast('이미 있는 강사예요');return;}
+  S.teachers.push({id:nid(),name:n});
+  save();closeModal();renderSidebar();showToast('✅ '+n+' 선생님 추가');
 }
 
 // ── STUDENT CRUD ──
-function openAddStudent() {
-  var teacherSelect = S.teachers.length > 0
-    ? '<div class="modal-label">강사 선택</div><select class="modal-input" id="new-tid">' + S.teachers.map(function(t) { return '<option value="' + t.id + '">' + t.name + ' 선생님</option>'; }).join('') + '</select>'
-    : '<div style="padding:10px 14px;background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;font-size:12px;color:#92400e;margin-bottom:12px;">⚠️ 강사가 없어요. 학생 추가 후 강사 추가도 해주세요.</div><input type="hidden" id="new-tid" value="0"/>';
-  showModal(
-    '<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div>' +
-    teacherSelect +
-    '<div class="modal-label">이름</div><input class="modal-input" id="new-name" placeholder="예: 홍길동"/>' +
-    '<div class="modal-label">학년</div><input class="modal-input" id="new-grade" placeholder="예: 중2"/>' +
-    '<div class="modal-label">학교 이름</div><input class="modal-input" id="new-school" placeholder="예: 광주중학교"/>' +
-    '<div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addStudent()">추가</button></div>'
-  );
+function openAddStudent(){
+  var tcOpts=S.teachers.length>0
+    ?'<div class="ml">강사 선택</div><select class="mi" id="new-tid">'+S.teachers.map(function(t){return'<option value="'+t.id+'">'+t.name+' 선생님</option>';}).join('')+'</select>'
+    :'<div style="padding:10px;background:#fef3c7;border:1px solid #fcd34d;border-radius:10px;font-size:12px;color:#92400e;margin-bottom:12px;">⚠️ 강사를 먼저 추가해주세요.</div><input type="hidden" id="new-tid" value="0"/>';
+  showModal('<div class="modal-title"><div class="modal-icon">🎓</div>학생 추가</div>'+tcOpts+
+    '<div class="ml">이름</div><input class="mi" id="new-name" placeholder="예: 홍길동"/>'+
+    '<div class="ml">학년</div><input class="mi" id="new-grade" placeholder="예: 중2"/>'+
+    '<div class="ml">학교 이름</div><input class="mi" id="new-school" placeholder="예: 광주중학교"/>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="addStudent()">추가</button></div>');
 }
-function addStudent() {
-  var tidEl = document.getElementById('new-tid');
-  var nameEl = document.getElementById('new-name');
-  var gradeEl = document.getElementById('new-grade');
-  var schoolEl = document.getElementById('new-school');
-  var name = nameEl ? nameEl.value.trim() : '';
-  var grade = gradeEl ? gradeEl.value.trim() : '';
-  var school = schoolEl ? schoolEl.value.trim() : '';
-  var tid = tidEl ? parseInt(tidEl.value, 10) : 0;
-  if (!name) { showToast('이름을 입력해주세요'); return; }
-  // 선생님 이름도 함께 저장
-  var tc = S.teachers.find(function(t) { return t.id == tid; });
-  var tcName = tc ? tc.name : '';
-  S.students.push({id: nid(), tid: tid, tcName: tcName, name: name, grade: grade, school: school, subjects: []});
-  save(); closeModal(); SB.teacherF = 'all'; renderSidebar(); showToast('✅ ' + name + ' 추가됐어요');
+function addStudent(){
+  var tidEl=document.getElementById('new-tid');
+  var name=(document.getElementById('new-name')||{}).value||'';name=name.trim();
+  var grade=((document.getElementById('new-grade')||{}).value||'').trim();
+  var school=((document.getElementById('new-school')||{}).value||'').trim();
+  var tid=tidEl?parseInt(tidEl.value,10):0;
+  if(!name){showToast('이름을 입력해주세요');return;}
+  // 선생님 이름 직접 저장
+  var tc=S.teachers.find(function(t){return t.id===tid;});
+  var tcName=tc?tc.name:'';
+  S.students.push({id:nid(),tid:tid,tcName:tcName,name:name,grade:grade,school:school,subjects:[]});
+  save();closeModal();SB.tcF='all';renderSidebar();showToast('✅ '+name+' 추가됐어요');
 }
-function delStudent(id) {
-  if (!confirm('학생과 모든 데이터가 삭제됩니다')) return;
-  S.students = S.students.filter(function(s) { return s.id !== id; });
-  S.exams = S.exams.filter(function(e) { return e.sid !== id; });
-  S.pauseHistory = S.pauseHistory.filter(function(h) { return h.sid !== id; });
-  if (S.sel && S.sel.sid === id) S.sel = null;
-  save(); renderSidebar(); renderMain();
+function delStudent(id){
+  if(!confirm('학생과 모든 데이터가 삭제됩니다'))return;
+  S.students=S.students.filter(function(s){return s.id!==id;});
+  S.exams=S.exams.filter(function(e){return e.sid!==id;});
+  S.pauseHistory=S.pauseHistory.filter(function(h){return h.sid!==id;});
+  if(S.sel&&S.sel.sid===id)S.sel=null;
+  save();renderSidebar();renderMain();
 }
 
 // ── SUBJECT CRUD ──
-function openAddSubj(sid) {
-  showModal(
-    '<div class="modal-title"><div class="modal-icon">📚</div>과목 추가</div>' +
-    '<div class="modal-label">과목명</div><input class="modal-input" id="new-subj" placeholder="예: 수학, 영어"/>' +
-    '<div class="modal-label">점수 유형</div>' +
-    '<div class="type-toggle">' +
-      '<button class="type-btn on" id="tb-score" onclick="selType(\'score\')">📊 점수 (0~100점)</button>' +
-      '<button class="type-btn" id="tb-count" onclick="selType(\'count\')">🔢 갯수 (개수)</button>' +
-    '</div>' +
-    '<div class="modal-actions"><button class="btn-ghost" onclick="closeModal()">취소</button><button class="btn-primary" onclick="addSubj(' + sid + ')">추가</button></div>'
-  );
-  window._subjType = 'score';
+function openAddSubj(sid){
+  window._addSubjSid=sid;
+  window._addSubjType='score';
+  showModal('<div class="modal-title"><div class="modal-icon">📚</div>과목 추가</div>'+
+    '<div class="ml">과목명</div><input class="mi" id="new-subj" placeholder="예: 수학, 영어"/>'+
+    '<div class="ml">점수 유형</div>'+
+    '<div class="type-toggle"><button class="type-btn on" id="tb-score" onclick="selType(\'score\')">📊 점수 (0~100점)</button><button class="type-btn" id="tb-count" onclick="selType(\'count\')">🔢 갯수</button></div>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="addSubj()">추가</button></div>');
 }
-function selType(t) {
-  window._subjType = t;
-  document.getElementById('tb-score').classList.toggle('on', t === 'score');
-  document.getElementById('tb-count').classList.toggle('on', t === 'count');
+function selType(t){window._addSubjType=t;document.getElementById('tb-score').classList.toggle('on',t==='score');document.getElementById('tb-count').classList.toggle('on',t==='count');}
+function addSubj(){
+  var sid=window._addSubjSid;
+  var n=document.getElementById('new-subj').value.trim();
+  if(!n){showToast('과목명을 입력해주세요');return;}
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st.subjects)st.subjects=[];
+  if(st.subjects.find(function(s){return s.name===n;})){showToast('이미 있는 과목이에요');return;}
+  st.subjects.push({name:n,type:window._addSubjType||'score'});
+  save();closeModal();renderSidebar();
+  if(window._afterAddSubj){window._afterAddSubj();window._afterAddSubj=null;}
+  showToast('✅ '+n+' 과목 추가');
 }
-function addSubj(sid) {
-  var n = document.getElementById('new-subj').value.trim();
-  if (!n) { showToast('과목명을 입력해주세요'); return; }
-  var st = S.students.find(function(s) { return s.id === sid; });
-  if (!st.subjects) st.subjects = [];
-  if (st.subjects.find(function(s) { return s.name === n; })) { showToast('이미 있는 과목이에요'); return; }
-  st.subjects.push({name: n, type: window._subjType || 'score'});
-  save(); closeModal(); renderSidebar(); showToast('✅ ' + n + ' 과목 추가');
-}
-function delSubj(sid, subj) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  st.subjects = st.subjects.filter(function(s) { return s.name !== subj; });
-  S.exams = S.exams.filter(function(e) { return !(e.sid === sid && e.subj === subj); });
-  S.pauseHistory = S.pauseHistory.filter(function(h) { return !(h.sid === sid && h.subj === subj); });
-  if (S.sel && S.sel.sid === sid && S.sel.subj === subj) S.sel = null;
-  save(); renderSidebar(); renderMain();
+function delSubj(sid,subj){
+  var st=S.students.find(function(s){return s.id===sid;});
+  st.subjects=st.subjects.filter(function(s){return s.name!==subj;});
+  S.exams=S.exams.filter(function(e){return!(e.sid===sid&&e.subj===subj);});
+  S.pauseHistory=S.pauseHistory.filter(function(h){return!(h.sid===sid&&h.subj===subj);});
+  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subj)S.sel=null;
+  save();renderSidebar();renderMain();
 }
 
 // ── 휴회 처리 ──
-function openPauseSubj(sid, subjName, isEdit) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === subjName; }) || {};
-  showModal(
-    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);">⏸</div>' + (isEdit ? '휴회 정보 수정' : '휴회 처리') + '</div>' +
-    '<div style="font-size:13px;color:var(--muted);margin-bottom:14px;padding:10px 14px;background:#fff5f5;border-radius:10px;border:1px solid #fca5a5;"><strong style="color:#dc2626;">' + st.name + '</strong> · <strong>' + subjName + '</strong></div>' +
-    '<div class="modal-label">휴회 시작일</div>' +
-    '<input class="modal-input" id="pause-date" type="date" value="' + (subj.pauseDate || new Date().toISOString().slice(0, 10)) + '"/>' +
-    '<div class="modal-label">휴회 사유</div>' +
-    '<input class="modal-input" id="pause-reason" placeholder="예: 이사, 개인 사정, 방학" value="' + (subj.pauseReason || '') + '"/>' +
-    '<div class="modal-label">복귀 예정일 (선택)</div>' +
-    '<input class="modal-input" id="pause-return" type="date" value="' + (subj.returnDate || '') + '"/>' +
-    '<div class="modal-actions">' +
-      '<button class="btn-ghost" onclick="closeModal()">취소</button>' +
-      '<button class="btn-primary" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="pauseSubj(' + sid + ',\'' + subjName + '\',' + (isEdit ? 'true' : 'false') + ')">' + (isEdit ? '수정 저장' : '휴회 처리') + '</button>' +
-    '</div>'
-  );
+function openPauseSubj(sid,subjName,isEdit){
+  var st=S.students.find(function(s){return s.id===sid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;})||{};
+  showModal('<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);">⏸</div>'+(isEdit?'휴회 정보 수정':'휴회 처리')+'</div>'+
+    '<div style="padding:10px 14px;background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;margin-bottom:14px;font-size:13px;"><strong style="color:#dc2626;">'+st.name+'</strong> · <strong>'+subjName+'</strong></div>'+
+    '<div class="ml">휴회 시작일</div><input class="mi" id="pause-date" type="date" value="'+(subj.pauseDate||new Date().toISOString().slice(0,10))+'"/>'+
+    '<div class="ml">휴회 사유</div><input class="mi" id="pause-reason" placeholder="예: 이사, 개인 사정" value="'+(subj.pauseReason||'')+'"/>'+
+    '<div class="ml">복귀 예정일 (선택)</div><input class="mi" id="pause-return" type="date" value="'+(subj.returnDate||'')+'"/>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button>'+
+    '<button class="btn-p" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="pauseSubj('+sid+',\''+subjName+'\','+(isEdit?'true':'false')+')">'+( isEdit?'수정 저장':'휴회 처리')+'</button></div>');
 }
-
-function pauseSubj(sid, subjName, isEdit) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === subjName; });
-  if (!subj) return;
-  var pauseDate = document.getElementById('pause-date').value;
-  var reason = document.getElementById('pause-reason').value.trim() || '사유 없음';
-  var returnDate = document.getElementById('pause-return').value || '';
-  subj.paused = true;
-  subj.pauseDate = pauseDate;
-  subj.pauseReason = reason;
-  subj.returnDate = returnDate;
-  if (!isEdit) {
-    S.pauseHistory.push({id: nid(), sid: sid, subj: subjName, type: 'paused', date: pauseDate, reason: reason, returnDate: returnDate});
-    if (S.sel && S.sel.sid === sid && S.sel.subj === subjName) S.sel = null;
-  } else {
-    var last = null;
-    S.pauseHistory.filter(function(h) { return h.sid === sid && h.subj === subjName && h.type === 'paused'; }).forEach(function(h) { last = h; });
-    if (last) { last.date = pauseDate; last.reason = reason; last.returnDate = returnDate; }
+function pauseSubj(sid,subjName,isEdit){
+  var st=S.students.find(function(s){return s.id===sid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
+  if(!subj)return;
+  var pauseDate=document.getElementById('pause-date').value;
+  var reason=document.getElementById('pause-reason').value.trim()||'사유 없음';
+  var returnDate=document.getElementById('pause-return').value||'';
+  subj.paused=true;subj.pauseDate=pauseDate;subj.pauseReason=reason;subj.returnDate=returnDate;
+  if(!isEdit){
+    S.pauseHistory.push({id:nid(),sid:sid,subj:subjName,type:'paused',date:pauseDate,reason:reason,returnDate:returnDate});
+    if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName)S.sel=null;
+  }else{
+    var last=null;S.pauseHistory.filter(function(h){return h.sid===sid&&h.subj===subjName&&h.type==='paused';}).forEach(function(h){last=h;});
+    if(last){last.date=pauseDate;last.reason=reason;last.returnDate=returnDate;}
   }
-  save(); closeModal(); renderSidebar(); renderMain(); showToast('⏸ 휴회 처리됐어요');
+  save();closeModal();renderSidebar();renderMain();showToast('⏸ 휴회 처리됐어요');
 }
-
-function resumeSubj(sid, subjName) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === subjName; });
-  if (!subj) return;
-  if (!confirm(st.name + ' · ' + subjName + '\n재원 복귀 처리할까요?')) return;
-  var today = new Date().toISOString().slice(0, 10);
-  subj.paused = false;
-  subj.pauseDate = '';
-  subj.pauseReason = '';
-  subj.returnDate = '';
-  S.pauseHistory.push({id: nid(), sid: sid, subj: subjName, type: 'resumed', date: today, reason: '재원 복귀'});
-  save();
-  closeModal();
-  renderSidebar();
-  if (S.sel && S.sel.sid === sid && S.sel.subj === subjName) { S.tab = 'detail'; renderMain(); }
-  else { S.sel = null; renderMain(); }
+function resumeSubj(sid,subjName){
+  var st=S.students.find(function(s){return s.id===sid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
+  if(!subj)return;
+  if(!confirm(st.name+' · '+subjName+'\n재원 복귀 처리할까요?'))return;
+  var today=new Date().toISOString().slice(0,10);
+  subj.paused=false;subj.pauseDate='';subj.pauseReason='';subj.returnDate='';
+  S.pauseHistory.push({id:nid(),sid:sid,subj:subjName,type:'resumed',date:today,reason:'재원 복귀'});
+  save();closeModal();renderSidebar();
+  if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName){S.tab='detail';renderMain();}
+  else{S.sel=null;renderMain();}
   showToast('✅ 재원 복귀됐어요');
 }
 
 // ── 휴회 현황 ──
-function showPausedOverview() {
-  S.sel = null;
-  document.getElementById('h-tabs').style.display = 'none';
-  document.getElementById('save-btn').style.display = 'none';
-  document.getElementById('h-name').textContent = '휴회 현황';
-  document.getElementById('h-meta').textContent = '전체 휴회 학생 · 과목 현황';
-  renderPausedOverview();
+function showPausedOv(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='휴회 현황';
+  document.getElementById('h-meta').textContent='전체 휴회 학생 · 과목 현황';
+  renderPausedOv();
 }
-
-function renderPausedOverview() {
-  var pausedItems = [];
-  S.students.forEach(function(st) {
-    var tc = S.teachers.find(function(t) { return t.id === st.tid; });
-    (st.subjects || []).filter(function(s) { return s.paused; }).forEach(function(subj) {
-      var days = pauseDays(subj.pauseDate);
-      var returnD = subj.returnDate ? daysUntilReturn(subj.returnDate) : null;
-      pausedItems.push({st: st, tc: tc, subj: subj, days: days, returnD: returnD});
+function renderPausedOv(){
+  var items=[];
+  S.students.forEach(function(st){
+    var tc=S.teachers.find(function(t){return t.id===st.tid;});
+    (st.subjects||[]).filter(function(s){return s.paused;}).forEach(function(subj){
+      items.push({st:st,tc:tc,subj:subj,days:pauseDays(subj.pauseDate),returnD:subj.returnDate?daysUntilReturn(subj.returnDate):null});
     });
   });
-  pausedItems.sort(function(a, b) { return b.days - a.days; });
-
-  var thisMonth = new Date().toISOString().slice(0, 7);
-  var returningSoon = pausedItems.filter(function(p) { return p.subj.returnDate && p.subj.returnDate.slice(0, 7) === thisMonth; });
-  var overdue = pausedItems.filter(function(p) { return p.returnD !== null && p.returnD < 0; });
-
-  var overdueHTML = '';
-  if (overdue.length) {
-    overdueHTML = '<div style="padding:14px 18px;background:#fff5f5;border:1px solid #fca5a5;border-radius:12px;margin-bottom:16px;">' +
-      '<div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">⚠️ 복귀 예정일이 지난 학생</div>' +
-      overdue.map(function(p) {
-        return '<div style="font-size:13px;margin-bottom:4px;">• <strong>' + p.st.name + '</strong> · ' + p.subj.name + ' <span style="color:#dc2626;font-weight:600;">(' + Math.abs(p.returnD) + '일 초과)</span></div>';
-      }).join('') +
+  items.sort(function(a,b){return b.days-a.days;});
+  var thisMonth=new Date().toISOString().slice(0,7);
+  var returning=items.filter(function(p){return p.subj.returnDate&&p.subj.returnDate.slice(0,7)===thisMonth;});
+  var overdue=items.filter(function(p){return p.returnD!==null&&p.returnD<0;});
+  var overdueHTML=overdue.length?'<div style="padding:14px 18px;background:#fff5f5;border:1px solid #fca5a5;border-radius:12px;margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:8px;">⚠️ 복귀 예정일이 지난 학생</div>'+overdue.map(function(p){return'<div style="font-size:13px;margin-bottom:4px;">• <strong>'+p.st.name+'</strong> · '+p.subj.name+' <span style="color:#dc2626;font-weight:600;">('+Math.abs(p.returnD)+'일 초과)</span></div>';}).join('')+'</div>':'';
+  var retHTML=returning.length?'<div style="padding:14px 18px;background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;margin-bottom:16px;"><div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:8px;">📅 이번 달 복귀 예정</div>'+returning.map(function(p){return'<div style="font-size:13px;margin-bottom:4px;">• <strong>'+p.st.name+'</strong> · '+p.subj.name+' <span style="color:#d97706;font-weight:600;">'+p.subj.returnDate+'</span></div>';}).join('')+'</div>':'';
+  var listHTML=items.length?items.map(function(p){
+    var tcName=getTcName(p.st);
+    return'<div class="pi-item"><div class="pi-dot"></div>'+
+      '<div class="pi-info"><div class="pi-name">'+p.st.name+' <span style="font-size:12px;color:var(--muted);font-weight:400;">'+(p.st.grade||'')+' · '+p.subj.name+'</span></div>'+
+      '<div class="pi-meta">'+(tcName?tcName+' 선생님':'')+(p.st.school?' · '+p.st.school:'')+'</div>'+
+      '<div><span class="pi-tag">📌 '+(p.subj.pauseReason||'사유 없음')+'</span>'+
+      (p.subj.returnDate?'<span class="pi-ret">🔄 '+p.subj.returnDate+(p.returnD>=0?' ('+p.returnD+'일 후)':' (예정일 지남)')+'</span>':'')+
+      '</div></div>'+
+      '<div style="text-align:center;margin:0 12px;"><div class="pi-days">'+p.days+'</div><div class="pi-dl">일째</div></div>'+
+      '<button class="btn-rs-sm" onclick="resumeSubjFromOv('+p.st.id+',\''+p.subj.name+'\')">복귀 ✅</button>'+
     '</div>';
-  }
-
-  var returningHTML = '';
-  if (returningSoon.length) {
-    returningHTML = '<div style="padding:14px 18px;background:#fffbeb;border:1px solid #fcd34d;border-radius:12px;margin-bottom:16px;">' +
-      '<div style="font-size:12px;font-weight:700;color:#d97706;margin-bottom:8px;">📅 이번 달 복귀 예정</div>' +
-      returningSoon.map(function(p) {
-        return '<div style="font-size:13px;margin-bottom:4px;">• <strong>' + p.st.name + '</strong> · ' + p.subj.name + ' <span style="color:#d97706;font-weight:600;">' + p.subj.returnDate + '</span></div>';
-      }).join('') +
-    '</div>';
-  }
-
-  var itemsHTML = pausedItems.length ? pausedItems.map(function(p) {
-    var reasonSpan = p.subj.pauseReason ? '<span class="pti-reason">📌 ' + p.subj.pauseReason + '</span>' : '';
-    var returnSpan = p.subj.returnDate ? '<span class="pti-return">🔄 ' + p.subj.returnDate + (p.returnD >= 0 ? ' (' + p.returnD + '일 후)' : ' (예정일 지남)') + '</span>' : '';
-    return '<div class="paused-table-item">' +
-      '<div class="pti-dot"></div>' +
-      '<div class="pti-info">' +
-        '<div class="pti-name">' + p.st.name + ' <span style="font-size:12px;color:var(--muted);font-weight:400;">' + (p.st.grade || '') + ' · ' + p.subj.name + '</span></div>' +
-        '<div class="pti-meta">' + (p.tc ? p.tc.name + ' 선생님' : '') + (p.st.school ? ' · ' + p.st.school : '') + '</div>' +
-        '<div>' + reasonSpan + returnSpan + '</div>' +
-      '</div>' +
-      '<div style="text-align:center;margin:0 12px;"><div class="pti-days">' + p.days + '</div><div class="pti-days-label">일째</div></div>' +
-      '<button class="btn-resume-sm" onclick="resumeSubjFromOverview(' + p.st.id + ',\'' + p.subj.name + '\')">복귀 ✅</button>' +
-    '</div>';
-  }).join('') : '<div class="ov-empty">😊 현재 휴회 중인 학생이 없어요</div>';
-
-  document.getElementById('content').innerHTML = '<div class="ci">' +
-    '<div class="pause-stat-grid">' +
-      '<div class="pause-stat-card"><div class="psc-num" style="color:#ef4444;">' + pausedItems.length + '</div><div class="psc-label">전체 휴회</div></div>' +
-      '<div class="pause-stat-card"><div class="psc-num" style="color:#d97706;">' + returningSoon.length + '</div><div class="psc-label">이번 달 복귀 예정</div></div>' +
-      '<div class="pause-stat-card"><div class="psc-num" style="color:#7c3aed;">' + overdue.length + '</div><div class="psc-label">복귀일 지남</div></div>' +
-    '</div>' +
-    overdueHTML + returningHTML +
-    '<div class="card"><div class="card-title">휴회 학생 목록</div>' + itemsHTML + '</div>' +
+  }).join(''):'<div class="ov-empty">😊 현재 휴회 중인 학생이 없어요</div>';
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="ps-grid">'+
+      '<div class="ps-card"><div class="ps-num" style="color:#ef4444;">'+items.length+'</div><div class="ps-label">전체 휴회</div></div>'+
+      '<div class="ps-card"><div class="ps-num" style="color:#d97706;">'+returning.length+'</div><div class="ps-label">이번 달 복귀 예정</div></div>'+
+      '<div class="ps-card"><div class="ps-num" style="color:#7c3aed;">'+overdue.length+'</div><div class="ps-label">복귀일 지남</div></div>'+
+    '</div>'+overdueHTML+retHTML+
+    '<div class="card"><div class="card-title">휴회 학생 목록</div>'+listHTML+'</div>'+
   '</div>';
 }
-
-function resumeSubjFromOverview(sid, subjName) {
-  var st = S.students.find(function(s) { return s.id === sid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === subjName; });
-  if (!subj) return;
-  if (!confirm(st.name + ' · ' + subjName + '\n재원 복귀 처리할까요?')) return;
-  var today = new Date().toISOString().slice(0, 10);
-  subj.paused = false;
-  subj.pauseDate = '';
-  subj.pauseReason = '';
-  subj.returnDate = '';
-  S.pauseHistory.push({id: nid(), sid: sid, subj: subjName, type: 'resumed', date: today, reason: '재원 복귀'});
-  save();
-  renderSidebar();
-  renderPausedOverview();
-  showToast('✅ 재원 복귀됐어요');
+function resumeSubjFromOv(sid,subjName){
+  var st=S.students.find(function(s){return s.id===sid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
+  if(!subj)return;
+  if(!confirm(st.name+' · '+subjName+'\n재원 복귀 처리할까요?'))return;
+  var today=new Date().toISOString().slice(0,10);
+  subj.paused=false;subj.pauseDate='';subj.pauseReason='';subj.returnDate='';
+  S.pauseHistory.push({id:nid(),sid:sid,subj:subjName,type:'resumed',date:today,reason:'재원 복귀'});
+  save();renderSidebar();renderPausedOv();showToast('✅ 재원 복귀됐어요');
 }
 
 // ── 전체 현황 ──
-function getTeacherName(tid, tcNameFallback) {
-  // 1. 저장된 이름 우선 사용
-  if (tcNameFallback) return tcNameFallback;
-  // 2. tid로 찾기
-  for (var i = 0; i < S.teachers.length; i++) {
-    if (S.teachers[i].id == tid) return S.teachers[i].name;
-  }
-  // 3. 선생님이 1명이면 그 이름
-  if (S.teachers.length === 1) return S.teachers[0].name;
-  return '—';
-}
-
-function showOverview() {
-  S.sel = null;
-  document.getElementById('h-tabs').style.display = 'none';
-  document.getElementById('save-btn').style.display = 'none';
-  document.getElementById('h-name').textContent = '전체 학생 현황';
-  document.getElementById('h-meta').textContent = '모든 강사 · 학생 · 과목 통합 보기';
-  OV.gradeF = 'all'; OV.subjF = 'all'; OV.sort = {key: 'grade', dir: 1};
+function showOverview(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='전체 학생 현황';
+  document.getElementById('h-meta').textContent='모든 강사 · 학생 · 과목 통합 보기';
+  OV.gradeF='all';OV.subjF='all';OV.sort={key:'grade',dir:1};
   renderOverview();
 }
-
-function renderOverview() {
-  var mergedMap = {};
-  S.students.forEach(function(st) {
-    var key = st.name + '__' + (st.school || '') + '__' + (st.grade || '');
-    if (!mergedMap[key]) {
-      mergedMap[key] = {st: st, subjData: [], go: gradeOrder(st.grade || '')};
-    }
-    // 선생님 찾기 - tid 타입 무관하게 매칭
-    var tc = null;
-    for (var ti = 0; ti < S.teachers.length; ti++) {
-      if (String(S.teachers[ti].id) === String(st.tid)) {
-        tc = S.teachers[ti]; break;
-      }
-    }
-    // tid가 숫자 0이거나 없으면 첫번째 선생님으로 fallback 안함, 그냥 null 유지
-    var activeSubjs = (st.subjects || []).filter(function(s) { return !s.paused; });
-    if (activeSubjs.length === 0) {
-      mergedMap[key].subjData.push({
-        subj: {name: '—', type: 'score'}, tc: tc,
-        sid: st.id, tid: st.tid, aEx: [], sEx: [], acAvg: null, scAvg: null
-      });
+function renderOverview(){
+  // 학생 이름+학교+학년으로 묶기
+  var map={};
+  S.students.forEach(function(st){
+    var key=st.name+'__'+(st.school||'')+'__'+(st.grade||'');
+    if(!map[key])map[key]={st:st,rows:[],go:gradeOrder(st.grade||'')};
+    var activeSubjs=(st.subjects||[]).filter(function(s){return!s.paused;});
+    var tcName=getTcName(st);
+    if(activeSubjs.length===0){
+      map[key].rows.push({subjName:'—',tcName:tcName,sid:st.id,tid:st.tid,acAvg:null,scAvg:null,aEx:[],sEx:[]});
     } else {
-      activeSubjs.forEach(function(subj) {
-        var exams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === subj.name; });
-        var aEx = exams.filter(function(e) { return (e.examType || 'academy') === 'academy'; });
-        var sEx = exams.filter(function(e) { return e.examType === 'school'; });
-        var avg = function(arr) { return arr.length ? Math.round(arr.reduce(function(a,e){return a+e.score;},0)/arr.length) : null; };
-        mergedMap[key].subjData.push({
-          subj: subj, tc: tc, sid: st.id, tid: st.tid,
-          aEx: aEx, sEx: sEx, acAvg: avg(aEx), scAvg: avg(sEx)
-        });
+      activeSubjs.forEach(function(subj){
+        var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name;});
+        var aEx=exams.filter(function(e){return(e.examType||'academy')==='academy';});
+        var sEx=exams.filter(function(e){return e.examType==='school';});
+        var avg=function(arr){return arr.length?Math.round(arr.reduce(function(a,e){return a+e.score;},0)/arr.length):null;};
+        map[key].rows.push({subjName:subj.name,tcName:tcName,sid:st.id,tid:st.tid,acAvg:avg(aEx),scAvg:avg(sEx),aEx:aEx,sEx:sEx});
       });
     }
   });
-  var studentRows = Object.keys(mergedMap).map(function(k){ return mergedMap[k]; });
-
-  var rows = studentRows.filter(function(r) {
-    if (OV.gradeF !== 'all' && !(r.st.grade && r.st.grade.startsWith(OV.gradeF))) return false;
-    if (OV.subjF !== 'all' && !r.subjData.find(function(s) { return s.subj.name === OV.subjF; })) return false;
+  var all=Object.keys(map).map(function(k){return map[k];});
+  var gf=OV.gradeF,sf=OV.subjF;
+  var rows=all.filter(function(r){
+    if(gf!=='all'&&!(r.st.grade&&r.st.grade.startsWith(gf)))return false;
+    if(sf!=='all'&&!r.rows.find(function(x){return x.subjName===sf;}))return false;
     return true;
-  }).map(function(r) {
-    return Object.assign({}, r, {subjData: OV.subjF === 'all' ? r.subjData : r.subjData.filter(function(s) { return s.subj.name === OV.subjF; })});
+  }).map(function(r){
+    return Object.assign({},r,{rows:sf==='all'?r.rows:r.rows.filter(function(x){return x.subjName===sf;})});
   });
-
-  rows.sort(function(a, b) {
-    var key = OV.sort.key, dir = OV.sort.dir;
-    if (key === 'name') return dir * a.st.name.localeCompare(b.st.name);
-    return dir * (a.go - b.go);
+  rows.sort(function(a,b){
+    if(OV.sort.key==='name')return OV.sort.dir*a.st.name.localeCompare(b.st.name);
+    return OV.sort.dir*(a.go-b.go);
   });
-
-  var total = rows.reduce(function(a, r) { return a + r.subjData.length; }, 0);
-  var allGrades = [];
-  S.students.forEach(function(s) { if (s.grade && allGrades.indexOf(s.grade) < 0) allGrades.push(s.grade); });
-  allGrades.sort(function(a, b) { return gradeOrder(a) - gradeOrder(b); });
-  var gradeGroups = [];
-  allGrades.forEach(function(g) { var k = g.replace(/[0-9]/g, ''); if (gradeGroups.indexOf(k) < 0) gradeGroups.push(k); });
-  var allSubjs = [];
-  S.students.forEach(function(st) { (st.subjects || []).filter(function(s) { return !s.paused; }).forEach(function(s) { if (allSubjs.indexOf(s.name) < 0) allSubjs.push(s.name); }); });
-
-  var si = function(k) { return OV.sort.key === k ? (OV.sort.dir === 1 ? '↑' : '↓') : '<span style="color:#ddd;font-size:9px;">⇅</span>'; };
-
-  var tableRows = rows.map(function(r) {
-    return r.subjData.map(function(sd, i) {
-      var g = sd.acAvg !== null ? gradeScore(sd.acAvg) : null;
-      var diff = (sd.acAvg !== null && sd.scAvg !== null) ? sd.acAvg - sd.scAvg : null;
-      var diffTxt = diff !== null ? (diff > 0 ? '+' + diff : diff === 0 ? '±0' : '' + diff) : '—';
-      var diffColor = diff === null ? '#94a3b8' : diff > 0 ? '#059669' : diff < 0 ? '#dc2626' : '#64748b';
-      var firstCols = i === 0
-        ? '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;color:var(--muted);font-size:12px;">' + (r.st.grade || '—') + '</td>' +
-          '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-weight:700;">' + r.st.name + '</td>' +
-          '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">' + (r.st.school || '—') + '</td>' +
-          '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">' + (r.tc ? r.tc.name + ' 선생님' : '—') + '</td>'
-        : '';
-      var hasRealSubj = r.subjData[0].subj.name !== '—';
-      var hasRealSubj = r.subjData[0].subj.name !== '—';
-      var lastCol = i === 0
-        ? '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;">' +
-            '<div style="display:flex;flex-direction:column;gap:5px;">' +
-              (hasRealSubj
-                ? '<button class="ov-edit-btn" onclick="goToStudent(' + r.st.tid + ',' + r.st.id + ',\'' + r.subjData[0].subj.name + '\')">상세 →</button>'
-                : '<button class="ov-edit-btn" style="border-color:#f59e0b;color:#d97706;" onclick="openAddSubj(' + r.st.id + ')">+ 과목 추가</button>') +
-              '<button class="ov-edit-btn" style="border-color:#fca5a5;color:#dc2626;" onclick="delStudentFromOverview(' + r.st.id + ')">🗑 삭제</button>' +
-            '</div>' +
-          '</td>'
-        : '';
-      return '<tr>' + firstCols +
-        '<td><span class="ov-subj-badge">' + sd.subj.name + '</span></td>' +
-        '<td><span class="ov-score">' + (sd.acAvg !== null ? sd.acAvg + '점' : '—') + '</span><span class="ov-score-sub">' + (sd.aEx.length ? '(' + sd.aEx.length + '회)' : '') + '</span></td>' +
-        '<td class="th-school"><span class="ov-score" style="color:#2563eb;">' + (sd.scAvg !== null ? sd.scAvg + '점' : '—') + '</span><span class="ov-score-sub">' + (sd.sEx.length ? '(' + sd.sEx.length + '회)' : '') + '</span></td>' +
-        '<td style="font-weight:700;color:' + diffColor + ';">' + diffTxt + '</td>' +
-        '<td>' + (g ? '<span class="ov-grade g' + g + '">' + g + '</span>' : '<span style="color:#ddd;">—</span>') + '</td>' +
-        lastCol + '</tr>';
+  var allGrades=[];S.students.forEach(function(s){if(s.grade&&allGrades.indexOf(s.grade)<0)allGrades.push(s.grade);});
+  allGrades.sort(function(a,b){return gradeOrder(a)-gradeOrder(b);});
+  var gg=[];allGrades.forEach(function(g){var k=g.replace(/[0-9]/g,'');if(gg.indexOf(k)<0)gg.push(k);});
+  var allSubjs=[];S.students.forEach(function(st){(st.subjects||[]).filter(function(s){return!s.paused;}).forEach(function(s){if(allSubjs.indexOf(s.name)<0)allSubjs.push(s.name);});});
+  var si=function(k){return OV.sort.key===k?(OV.sort.dir===1?'↑':'↓'):'<span style="color:#ddd;font-size:9px;">⇅</span>';};
+  var tableRows=rows.map(function(r){
+    var subjHTML=r.rows.filter(function(x){return x.subjName!=='—';}).map(function(x){
+      var g=x.acAvg!==null?gradeScore(x.acAvg):null;
+      var diff=(x.acAvg!==null&&x.scAvg!==null)?x.acAvg-x.scAvg:null;
+      var diffTxt=diff!==null?(diff>0?'+'+diff:diff===0?'±0':''+diff):'';
+      var dc=diff===null?'#94a3b8':diff>0?'#059669':diff<0?'#dc2626':'#64748b';
+      return'<div class="sc-card">'+
+        '<span class="sc-badge">'+x.subjName+'</span>'+
+        '<span class="sc-tc">👤 '+(x.tcName||'—')+' 선생님</span>'+
+        '<span class="sc-avg">🏫 '+(x.acAvg!==null?x.acAvg+'점':'—')+'</span>'+
+        '<span class="sc-savg">📚 '+(x.scAvg!==null?x.scAvg+'점':'—')+'</span>'+
+        (diffTxt?'<span style="font-size:12px;font-weight:700;color:'+dc+';">'+diffTxt+'</span>':'')+
+        (g?'<span class="gb-sm g'+g+'">'+g+'</span>':'')+
+      '</div>';
     }).join('');
+    // 과목 없는 경우 추가 버튼만
+    if(r.rows.length===0||r.rows[0].subjName==='—'){
+      subjHTML='<div style="color:var(--muted);font-size:12px;">과목 없음</div>';
+    }
+    var firstRow=r.rows[0];
+    return'<tr style="border-bottom:2px solid #e2e8f0;">'+
+      '<td style="color:var(--muted);font-size:12px;vertical-align:middle;">'+(r.st.grade||'—')+'</td>'+
+      '<td style="font-weight:700;vertical-align:middle;">'+r.st.name+'</td>'+
+      '<td style="font-size:12px;color:var(--muted);vertical-align:middle;">'+(r.st.school||'—')+'</td>'+
+      '<td style="vertical-align:middle;">'+
+        subjHTML+
+        '<button onclick="openAddSubj('+r.st.id+')" style="margin-top:6px;padding:4px 12px;border:1.5px dashed #c4b5fd;border-radius:8px;background:#faf8ff;color:#7c3aed;font-size:11px;font-weight:600;cursor:pointer;">＋ 과목 추가</button>'+
+      '</td>'+
+      '<td style="vertical-align:middle;">'+
+        '<div style="display:flex;flex-direction:column;gap:5px;">'+
+          (firstRow&&firstRow.subjName!=='—'?'<button class="ov-eb" onclick="goToStudent('+firstRow.tid+','+firstRow.sid+',\''+firstRow.subjName+'\')">상세 →</button>':'')+
+          '<button class="ov-eb" style="border-color:#fca5a5;color:#dc2626;" onclick="delStudentFromOv('+r.st.id+')">🗑 삭제</button>'+
+        '</div>'+
+      '</td>'+
+    '</tr>';
   }).join('');
 
-  document.getElementById('content').innerHTML = '<div class="ci">' +
-    '<div style="font-size:14px;font-weight:700;margin-bottom:14px;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">(' + total + '건)</span></div>' +
-    '<div class="ov-filter-bar">' +
-      '<div class="ov-filter-group">' +
-        '<button class="ov-btn' + (OV.gradeF === 'all' ? ' on' : '') + '" onclick="setOvFilter(\'grade\',\'all\')">전체</button>' +
-        gradeGroups.map(function(g) { var label = g === '초' ? '초등' : g === '중' ? '중학' : g === '고' ? '고등' : g; return '<button class="ov-btn' + (OV.gradeF === g ? ' on' : '') + '" onclick="setOvFilter(\'grade\',\'' + g + '\')">' + label + '</button>'; }).join('') +
-      '</div>' +
-      '<div class="ov-filter-group">' +
-        '<button class="ov-btn' + (OV.subjF === 'all' ? ' on' : '') + '" onclick="setOvFilter(\'subj\',\'all\')">전체</button>' +
-        allSubjs.map(function(s) { return '<button class="ov-btn' + (OV.subjF === s ? ' on' : '') + '" onclick="setOvFilter(\'subj\',\'' + s + '\')">' + s + '</button>'; }).join('') +
-      '</div>' +
-    '</div>' +
-    (rows.length === 0 ? '<div class="ov-empty">📭 학생이 없어요</div>' :
-      '<table class="ov-table"><thead><tr>' +
-        '<th onclick="setOvSort(\'grade\')">학년 ' + si('grade') + '</th>' +
-        '<th onclick="setOvSort(\'name\')">이름 ' + si('name') + '</th>' +
-        '<th>학교</th>' +
-        '<th>과목 · 선생님 · 학원평균 · 학교평균 · 등급</th>' +
-        '<th></th>' +
-      '</tr></thead><tbody>' + tableRows + '</tbody></table>') +
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div style="font-size:14px;font-weight:700;margin-bottom:14px;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">('+rows.length+'명)</span></div>'+
+    '<div class="ov-fb">'+
+      '<div class="ov-fg"><button class="ov-btn'+(OV.gradeF==='all'?' on':'')+'" onclick="setOvF(\'grade\',\'all\')">전체</button>'+
+        gg.map(function(g){var lb=g==='초'?'초등':g==='중'?'중학':g==='고'?'고등':g;return'<button class="ov-btn'+(OV.gradeF===g?' on':'')+'" onclick="setOvF(\'grade\',\''+g+'\')">'+lb+'</button>';}).join('')+
+      '</div>'+
+      '<div class="ov-fg"><button class="ov-btn'+(OV.subjF==='all'?' on':'')+'" onclick="setOvF(\'subj\',\'all\')">전체</button>'+
+        allSubjs.map(function(s){return'<button class="ov-btn'+(OV.subjF===s?' on':'')+'" onclick="setOvF(\'subj\',\''+s+'\')">'+s+'</button>';}).join('')+
+      '</div>'+
+    '</div>'+
+    (rows.length===0?'<div class="ov-empty">📭 학생이 없어요</div>':
+      '<table class="ov-table"><thead><tr>'+
+        '<th onclick="setOvSort(\'grade\')">학년 '+si('grade')+'</th>'+
+        '<th onclick="setOvSort(\'name\')">이름 '+si('name')+'</th>'+
+        '<th>학교</th><th>과목 · 선생님 · 학원평균 · 학교평균</th><th></th>'+
+      '</tr></thead><tbody>'+tableRows+'</tbody></table>')+
   '</div>';
-}
 
-function openAddSubjFromOverview(sid) {
-  openAddSubj(sid);
-  // 과목 추가 후 전체현황으로 돌아오게
-  var origAddSubj = window._addSubjCallback;
-  window._addSubjCallback = function() {
-    renderSidebar();
-    renderOverview();
-  };
+  // 과목 추가 후 전체현황 새로고침
+  window._afterAddSubj=function(){renderSidebar();renderOverview();};
 }
-
-function delStudentFromOverview(id) {
-  var st = S.students.find(function(s) { return s.id === id; });
-  if (!st) return;
-  if (!confirm(st.name + ' 학생을 삭제할까요?\n(시험 기록도 모두 삭제됩니다)')) return;
-  S.students = S.students.filter(function(s) { return s.id !== id; });
-  S.exams = S.exams.filter(function(e) { return e.sid !== id; });
-  S.pauseHistory = S.pauseHistory.filter(function(h) { return h.sid !== id; });
-  if (S.sel && S.sel.sid === id) S.sel = null;
-  save(); renderSidebar(); renderOverview(); showToast('🗑 ' + st.name + ' 삭제됐어요');
+function setOvF(type,val){if(type==='grade')OV.gradeF=val;else OV.subjF=val;renderOverview();}
+function setOvSort(k){if(OV.sort.key===k)OV.sort.dir*=-1;else{OV.sort.key=k;OV.sort.dir=1;}renderOverview();}
+function goToStudent(tid,sid,subj){S.sel={tid:tid,sid:sid,subj:subj};S.tab='detail';S.examFilter='all';renderSidebar();renderMain();}
+function delStudentFromOv(id){
+  var st=S.students.find(function(s){return s.id===id;});if(!st)return;
+  if(!confirm(st.name+' 학생을 삭제할까요?\n(시험 기록도 모두 삭제됩니다)'))return;
+  S.students=S.students.filter(function(s){return s.id!==id;});
+  S.exams=S.exams.filter(function(e){return e.sid!==id;});
+  S.pauseHistory=S.pauseHistory.filter(function(h){return h.sid!==id;});
+  if(S.sel&&S.sel.sid===id)S.sel=null;
+  save();renderSidebar();renderOverview();showToast('🗑 '+st.name+' 삭제됐어요');
 }
-
-function setOvFilter(type, val) { if (type === 'grade') OV.gradeF = val; else OV.subjF = val; renderOverview(); }
-function setOvSort(k) { if (OV.sort.key === k) OV.sort.dir *= -1; else { OV.sort.key = k; OV.sort.dir = 1; } renderOverview(); }
-function goToStudent(tid, sid, subj) { S.sel = {tid: tid, sid: sid, subj: subj}; S.tab = 'detail'; S.examFilter = 'all'; renderSidebar(); renderMain(); }
 
 // ── 이미지 저장 ──
-async function saveReportImage() {
-  if (!S.sel) return;
+async function saveImg(){
+  if(!S.sel)return;
   showToast('📸 이미지 생성 중...');
-  var st = S.students.find(function(s) { return s.id === S.sel.sid; });
-  var tc = S.teachers.find(function(t) { return t.id === S.sel.tid; });
-  var subj = (st.subjects || []).find(function(s) { return s.name === S.sel.subj; }) || {type: 'score'};
-  var allExams = S.exams.filter(function(e) { return e.sid === st.id && e.subj === S.sel.subj; }).sort(function(a, b) { return a.date.localeCompare(b.date); });
-  var exams = filteredExams(allExams);
-  var type = subj.type || 'score';
-  var vals = exams.map(function(e) { return e.score; });
-  var unit = type === 'count' ? '개' : '점';
-  var latest = vals.length ? vals[vals.length - 1] : null;
-  var maxv = vals.length ? Math.max.apply(null, vals) : null;
-  var today = new Date().toLocaleDateString('ko-KR');
-  var msg = (document.getElementById('msg-rendered') ? document.getElementById('msg-rendered').innerHTML : '') || (document.getElementById('msg-area') ? document.getElementById('msg-area').value : '') || '';
-  var examRows = [].concat(exams).reverse().map(function(e) {
-    var et = e.examType || 'academy';
-    return '<div style="display:flex;align-items:center;padding:11px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">' +
-      '<div style="flex:1"><div style="font-size:13px;font-weight:700;">' + e.name + '</div><div style="font-size:10px;color:#64748b;margin-top:2px;">' + e.date + '</div></div>' +
-      '<span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:' + (et === 'school' ? '#dbeafe' : '#d1fae5') + ';color:' + (et === 'school' ? '#1d4ed8' : '#065f46') + ';margin-right:10px;">' + (et === 'school' ? '학교' : '학원') + '</span>' +
-      '<div style="font-size:18px;font-weight:900;">' + e.score + unit + '</div>' +
-    '</div>';
+  var st=S.students.find(function(s){return s.id===S.sel.sid;});
+  var tc=S.teachers.find(function(t){return t.id===S.sel.tid;});
+  var subj=(st.subjects||[]).find(function(s){return s.name===S.sel.subj;})||{type:'score'};
+  var allExams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===S.sel.subj;}).sort(function(a,b){return a.date.localeCompare(b.date);});
+  var exams=filteredExams(allExams);
+  var type=subj.type||'score';
+  var vals=exams.map(function(e){return e.score;});
+  var unit=type==='count'?'개':'점';
+  var latest=vals.length?vals[vals.length-1]:null;
+  var maxv=vals.length?Math.max.apply(null,vals):null;
+  var today=new Date().toLocaleDateString('ko-KR');
+  var msg=(document.getElementById('msg-rendered')?document.getElementById('msg-rendered').innerHTML:'')||(document.getElementById('msg-area')?document.getElementById('msg-area').value:'')||'';
+  var chartImg='';var cc=document.getElementById('score-chart');if(cc)chartImg=cc.toDataURL('image/png');
+  var examRows=[].concat(exams).reverse().map(function(e){
+    var et=e.examType||'academy';
+    return'<div style="display:flex;align-items:center;padding:11px 16px;border-radius:10px;border:1px solid #e2e8f0;margin-bottom:7px;background:#fff;">'+
+      '<div style="flex:1"><div style="font-size:13px;font-weight:700;">'+e.name+'</div><div style="font-size:10px;color:#64748b;margin-top:2px;">'+e.date+'</div></div>'+
+      '<span style="font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;background:'+(et==='school'?'#dbeafe':'#d1fae5')+';color:'+(et==='school'?'#1d4ed8':'#065f46')+';margin-right:10px;">'+(et==='school'?'학교':'학원')+'</span>'+
+      '<div style="font-size:18px;font-weight:900;">'+e.score+unit+'</div></div>';
   }).join('');
-  var chartImg = '';
-  var cc = document.getElementById('score-chart');
-  if (cc) chartImg = cc.toDataURL('image/png');
-  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="font-family:sans-serif;background:#eef0f8;padding:32px;width:800px;">' +
-    '<div style="background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;">' +
-      '<div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;">' + st.name + ' 학생</div>' +
-      '<div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:18px;">' + (st.grade || '') + ' · ' + S.sel.subj + ' · ' + (tc ? tc.name + ' 선생님' : '') + '</div>' +
-      '<div style="display:flex;gap:10px;">' +
-        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">최근</div><div style="font-size:22px;font-weight:900;color:#fbbf24;">' + (latest !== null ? latest : '—') + unit + '</div></div>' +
-        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">최고</div><div style="font-size:22px;font-weight:900;color:#34d399;">' + (maxv !== null ? maxv : '—') + unit + '</div></div>' +
-        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">시험 횟수</div><div style="font-size:22px;font-weight:900;color:#60a5fa;">' + vals.length + '회</div></div>' +
-      '</div>' +
-    '</div>' +
-    (chartImg ? '<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">성적 추이</div><img src="' + chartImg + '" style="width:100%;"/></div>' : '') +
-    '<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">시험별 성적</div>' + examRows + '</div>' +
-    (msg ? '<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">학부모 안내 메시지</div><div style="border:1.5px solid #e9d5ff;border-radius:14px;padding:18px 20px;">' + msg + '</div></div>' : '') +
-    '<div style="text-align:center;padding:12px;color:#64748b;font-size:10px;">WAWA 코칭센터 · ' + (tc ? tc.name + ' 선생님' : '') + ' · ' + today + '</div>' +
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="font-family:sans-serif;background:#eef0f8;padding:32px;width:800px;">'+
+    '<div style="background:linear-gradient(135deg,#0a0f1e,#1e2d4a,#2d1b69);border-radius:20px;padding:28px;margin-bottom:18px;">'+
+      '<div style="font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;">'+st.name+' 학생</div>'+
+      '<div style="font-size:12px;color:rgba(255,255,255,.4);margin-bottom:18px;">'+(st.grade||'')+' · '+S.sel.subj+' · '+(tc?tc.name+' 선생님':'')+'</div>'+
+      '<div style="display:flex;gap:10px;">'+
+        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">최근</div><div style="font-size:22px;font-weight:900;color:#fbbf24;">'+(latest!==null?latest:'—')+unit+'</div></div>'+
+        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">최고</div><div style="font-size:22px;font-weight:900;color:#34d399;">'+(maxv!==null?maxv:'—')+unit+'</div></div>'+
+        '<div style="background:rgba(255,255,255,.07);border-radius:12px;padding:13px 20px;"><div style="font-size:9px;color:rgba(255,255,255,.3);margin-bottom:6px;">시험 횟수</div><div style="font-size:22px;font-weight:900;color:#60a5fa;">'+vals.length+'회</div></div>'+
+      '</div></div>'+
+    (chartImg?'<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">성적 추이</div><img src="'+chartImg+'" style="width:100%;"/></div>':'')+
+    '<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">시험별 성적</div>'+examRows+'</div>'+
+    (msg?'<div style="background:#fff;border-radius:16px;border:1px solid #e2e8f0;padding:22px 24px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;margin-bottom:14px;">학부모 안내 메시지</div><div style="border:1.5px solid #e9d5ff;border-radius:14px;padding:18px 20px;">'+msg+'</div></div>':'')+
+    '<div style="text-align:center;padding:12px;color:#64748b;font-size:10px;">WAWA 코칭센터 · '+(tc?tc.name+' 선생님':'')+' · '+today+'</div>'+
   '</body></html>';
-  var iframe = document.createElement('iframe');
-  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:800px;height:100vh;border:none;visibility:hidden;';
+  var iframe=document.createElement('iframe');
+  iframe.style.cssText='position:fixed;left:-9999px;top:0;width:800px;height:100vh;border:none;visibility:hidden;';
   document.body.appendChild(iframe);
-  iframe.contentDocument.open();
-  iframe.contentDocument.write(html);
-  iframe.contentDocument.close();
-  await new Promise(function(r) { setTimeout(r, 800); });
-  try {
-    var iDoc = iframe.contentDocument.body;
-    var canvas = await html2canvas(iDoc, {backgroundColor: '#eef0f8', scale: 2, useCORS: true, width: 800, height: iDoc.scrollHeight});
-    var link = document.createElement('a');
-    link.download = 'WAWA_' + st.name + '_' + S.sel.subj + '_' + today.replace(/\./g, '').replace(/ /g, '') + '.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    showToast('✅ 저장됐어요');
-  } catch(e) { showToast('저장 실패: ' + e.message); }
+  iframe.contentDocument.open();iframe.contentDocument.write(html);iframe.contentDocument.close();
+  await new Promise(function(r){setTimeout(r,800);});
+  try{
+    if(typeof html2canvas==='undefined'){showToast('html2canvas 로드 필요');document.body.removeChild(iframe);return;}
+    var iDoc=iframe.contentDocument.body;
+    var canvas=await html2canvas(iDoc,{backgroundColor:'#eef0f8',scale:2,useCORS:true,width:800,height:iDoc.scrollHeight});
+    var link=document.createElement('a');
+    link.download='WAWA_'+st.name+'_'+S.sel.subj+'_'+today.replace(/\./g,'').replace(/ /g,'')+'.png';
+    link.href=canvas.toDataURL('image/png');link.click();showToast('✅ 저장됐어요');
+  }catch(e){showToast('저장 실패: '+e.message);}
   document.body.removeChild(iframe);
-}
-
-// ── 구버전 호환: fixTeachers 함수 (구버전 HTML에 이 버튼이 있음) ──
-function fixTeachers() {
-  var seen = {};
-  S.teachers = S.teachers.filter(function(t) {
-    if (seen[t.name]) return false;
-    seen[t.name] = true;
-    return true;
-  });
-  save(); renderSidebar(); showToast('✅ 중복 강사 제거됐어요');
 }
 
 // ── INIT ──
