@@ -798,12 +798,20 @@ function openPauseSubj(sid,subjName,isEdit){
 }
 function pauseSubj(sid,subjName,isEdit){
   var st=S.students.find(function(s){return s.id===sid;});
-  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
-  if(!subj)return;
   var pauseDate=document.getElementById('pause-date').value;
   var reason=document.getElementById('pause-reason').value.trim()||'사유 없음';
   var returnDate=document.getElementById('pause-return').value||'';
-  subj.paused=true;subj.pauseDate=pauseDate;subj.pauseReason=reason;subj.returnDate=returnDate;
+  // 과목이 있으면 과목에 휴회 처리
+  var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
+  if(subj){
+    subj.paused=true;subj.pauseDate=pauseDate;subj.pauseReason=reason;subj.returnDate=returnDate;
+  }
+  // 모든 과목이 휴회이거나 과목이 없으면 학생 자체도 paused
+  var allSubjs=st.subjects||[];
+  var activeSubjs=allSubjs.filter(function(s){return!s.paused;});
+  if(allSubjs.length===0||activeSubjs.length===0){
+    st.paused=true;st.pauseDate=pauseDate;st.pauseReason=reason;st.returnDate=returnDate;
+  }
   if(!isEdit){
     S.pauseHistory.push({id:nid(),sid:sid,subj:subjName,type:'paused',date:pauseDate,reason:reason,returnDate:returnDate});
     if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName)S.sel=null;
@@ -816,10 +824,11 @@ function pauseSubj(sid,subjName,isEdit){
 function resumeSubj(sid,subjName){
   var st=S.students.find(function(s){return s.id===sid;});
   var subj=(st.subjects||[]).find(function(s){return s.name===subjName;});
-  if(!subj)return;
   if(!confirm(st.name+' · '+subjName+'\n재원 복귀 처리할까요?'))return;
   var today=new Date().toISOString().slice(0,10);
-  subj.paused=false;subj.pauseDate='';subj.pauseReason='';subj.returnDate='';
+  if(subj){subj.paused=false;subj.pauseDate='';subj.pauseReason='';subj.returnDate='';}
+  // 학생 자체 paused 해제
+  st.paused=false;st.pauseDate='';st.pauseReason='';st.returnDate='';
   S.pauseHistory.push({id:nid(),sid:sid,subj:subjName,type:'resumed',date:today,reason:'재원 복귀'});
   save();closeModal();renderSidebar();
   if(S.sel&&S.sel.sid===sid&&S.sel.subj===subjName){S.tab='detail';renderMain();}
@@ -900,11 +909,12 @@ function renderOverview(){
     if(!map[key])map[key]={st:st,rows:[],go:gradeOrder(st.grade||'')};
     var allSubjs=st.subjects||[];
     var activeSubjs=allSubjs.filter(function(s){return!s.paused;});
-    // 학생 자체가 휴회이거나, 과목이 있는데 전부 휴회면 전체현황에서 제외
-    if(st.paused) return;
-    if(allSubjs.length > 0 && activeSubjs.length === 0) return;
+    // 학생 자체 paused 플래그 OR 과목이 있는데 전부 휴회면 제외
+    if(st.paused===true) return;
+    if(allSubjs.length>0 && activeSubjs.length===0) return;
     var tcName=getTcName(st);
     if(activeSubjs.length===0){
+      // 과목 없는 학생 - 전체현황에 표시 (과목 추가 유도)
       map[key].rows.push({subjName:'—',tcName:tcName,sid:st.id,tid:st.tid,acAvg:null,scAvg:null,aEx:[],sEx:[]});
     } else {
       activeSubjs.forEach(function(subj){
