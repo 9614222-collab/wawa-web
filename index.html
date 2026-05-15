@@ -1237,6 +1237,17 @@ async function saveReportImage() {
   document.body.removeChild(iframe);
 }
 
+// ── 구버전 호환: fixTeachers 함수 (구버전 HTML에 이 버튼이 있음) ──
+function fixTeachers() {
+  var seen = {};
+  S.teachers = S.teachers.filter(function(t) {
+    if (seen[t.name]) return false;
+    seen[t.name] = true;
+    return true;
+  });
+  save(); renderSidebar(); showToast('✅ 중복 강사 제거됐어요');
+}
+
 // ── INIT ──
 renderSidebar();
 renderMain();
