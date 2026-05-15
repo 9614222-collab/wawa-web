@@ -1137,11 +1137,15 @@ function renderOverview() {
           '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;font-size:12px;color:var(--muted);">' + (r.tc ? r.tc.name + ' 선생님' : '—') + '</td>'
         : '';
       var hasRealSubj = r.subjData[0].subj.name !== '—';
+      var hasRealSubj = r.subjData[0].subj.name !== '—';
       var lastCol = i === 0
         ? '<td rowspan="' + r.subjData.length + '" style="vertical-align:middle;border-bottom:2px solid #e2e8f0;">' +
-            (hasRealSubj
-              ? '<button class="ov-edit-btn" onclick="goToStudent(' + r.st.tid + ',' + r.st.id + ',\'' + r.subjData[0].subj.name + '\')">상세 →</button>'
-              : '<button class="ov-edit-btn" style="border-color:#f59e0b;color:#d97706;" onclick="openAddSubj(' + r.st.id + ')">+ 과목 추가</button>') +
+            '<div style="display:flex;flex-direction:column;gap:5px;">' +
+              (hasRealSubj
+                ? '<button class="ov-edit-btn" onclick="goToStudent(' + r.st.tid + ',' + r.st.id + ',\'' + r.subjData[0].subj.name + '\')">상세 →</button>'
+                : '<button class="ov-edit-btn" style="border-color:#f59e0b;color:#d97706;" onclick="openAddSubj(' + r.st.id + ')">+ 과목 추가</button>') +
+              '<button class="ov-edit-btn" style="border-color:#fca5a5;color:#dc2626;" onclick="delStudentFromOverview(' + r.st.id + ')">🗑 삭제</button>' +
+            '</div>' +
           '</td>'
         : '';
       return '<tr>' + firstCols +
@@ -1175,6 +1179,17 @@ function renderOverview() {
         '<th>비교</th><th>등급</th><th></th>' +
       '</tr></thead><tbody>' + tableRows + '</tbody></table>') +
   '</div>';
+}
+
+function delStudentFromOverview(id) {
+  var st = S.students.find(function(s) { return s.id === id; });
+  if (!st) return;
+  if (!confirm(st.name + ' 학생을 삭제할까요?\n(시험 기록도 모두 삭제됩니다)')) return;
+  S.students = S.students.filter(function(s) { return s.id !== id; });
+  S.exams = S.exams.filter(function(e) { return e.sid !== id; });
+  S.pauseHistory = S.pauseHistory.filter(function(h) { return h.sid !== id; });
+  if (S.sel && S.sel.sid === id) S.sel = null;
+  save(); renderSidebar(); renderOverview(); showToast('🗑 ' + st.name + ' 삭제됐어요');
 }
 
 function setOvFilter(type, val) { if (type === 'grade') OV.gradeF = val; else OV.subjF = val; renderOverview(); }
