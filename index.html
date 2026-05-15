@@ -898,10 +898,11 @@ function renderOverview(){
   S.students.forEach(function(st){
     var key=st.name+'__'+(st.school||'')+'__'+(st.grade||'');
     if(!map[key])map[key]={st:st,rows:[],go:gradeOrder(st.grade||'')};
-    // 휴회 중이 아닌 과목만
-    var activeSubjs=(st.subjects||[]).filter(function(s){return!s.paused;});
-    // 모든 과목이 휴회 중이면 전체현황에서 제외
-    if((st.subjects||[]).length > 0 && activeSubjs.length === 0) return;
+    var allSubjs=st.subjects||[];
+    var activeSubjs=allSubjs.filter(function(s){return!s.paused;});
+    // 학생 자체가 휴회이거나, 과목이 있는데 전부 휴회면 전체현황에서 제외
+    if(st.paused) return;
+    if(allSubjs.length > 0 && activeSubjs.length === 0) return;
     var tcName=getTcName(st);
     if(activeSubjs.length===0){
       map[key].rows.push({subjName:'—',tcName:tcName,sid:st.id,tid:st.tid,acAvg:null,scAvg:null,aEx:[],sEx:[]});
