@@ -909,14 +909,11 @@ function renderOverview(){
     if(!map[key])map[key]={st:st,rows:[],go:gradeOrder(st.grade||'')};
     var allSubjs=st.subjects||[];
     var activeSubjs=allSubjs.filter(function(s){return!s.paused;});
-    // 학생 자체 paused 플래그 OR 과목이 있는데 전부 휴회면 제외
+    // 학생 자체 paused 플래그 OR 과목 없음 OR 과목 전부 휴회면 전체현황 제외
     if(st.paused===true) return;
+    if(allSubjs.length===0) return;
     if(allSubjs.length>0 && activeSubjs.length===0) return;
     var tcName=getTcName(st);
-    if(activeSubjs.length===0){
-      // 과목 없는 학생 - 전체현황에 표시 (과목 추가 유도)
-      map[key].rows.push({subjName:'—',tcName:tcName,sid:st.id,tid:st.tid,acAvg:null,scAvg:null,aEx:[],sEx:[]});
-    } else {
       activeSubjs.forEach(function(subj){
         var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name;});
         var aEx=exams.filter(function(e){return(e.examType||'academy')==='academy';});
@@ -976,6 +973,7 @@ function renderOverview(){
       '<td style="vertical-align:middle;">'+
         '<div style="display:flex;flex-direction:column;gap:5px;">'+
           (firstRow&&firstRow.subjName!=='—'?'<button class="ov-eb" onclick="goToStudent('+firstRow.tid+','+firstRow.sid+',\''+firstRow.subjName+'\')">상세 →</button>':'')+
+          '<button class="ov-eb" style="border-color:#f59e0b;color:#d97706;" onclick="pauseStudentDirect('+r.st.id+')">⏸ 휴회</button>'+
           '<button class="ov-eb" style="border-color:#fca5a5;color:#dc2626;" onclick="delStudentFromOv('+r.st.id+')">🗑 삭제</button>'+
         '</div>'+
       '</td>'+
@@ -1006,6 +1004,38 @@ function renderOverview(){
 function setOvF(type,val){if(type==='grade')OV.gradeF=val;else OV.subjF=val;renderOverview();}
 function setOvSort(k){if(OV.sort.key===k)OV.sort.dir*=-1;else{OV.sort.key=k;OV.sort.dir=1;}renderOverview();}
 function goToStudent(tid,sid,subj){S.sel={tid:tid,sid:sid,subj:subj};S.tab='detail';S.examFilter='all';renderSidebar();renderMain();}
+function pauseStudentDirect(sid){
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  var today=new Date().toISOString().slice(0,10);
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#dc2626,#ef4444);">⏸</div>휴회 처리</div>'+
+    '<div style="padding:10px 14px;background:#fff5f5;border:1px solid #fca5a5;border-radius:10px;margin-bottom:14px;font-size:13px;"><strong style="color:#dc2626;">'+st.name+'</strong> 학생을 휴회 처리합니다</div>'+
+    '<div class="ml">휴회 시작일</div><input class="mi" id="pause-date" type="date" value="'+today+'"/>'+
+    '<div class="ml">휴회 사유</div><input class="mi" id="pause-reason" placeholder="예: 이사, 개인 사정"/>'+
+    '<div class="ml">복귀 예정일 (선택)</div><input class="mi" id="pause-return" type="date" value=""/>'+
+    '<div class="modal-actions">'+
+      '<button class="btn-g" onclick="closeModal()">취소</button>'+
+      '<button class="btn-p" style="background:linear-gradient(135deg,#dc2626,#ef4444);" onclick="confirmPauseStudentDirect('+sid+')">휴회 처리</button>'+
+    '</div>'
+  );
+}
+function confirmPauseStudentDirect(sid){
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  var pauseDate=document.getElementById('pause-date').value;
+  var reason=document.getElementById('pause-reason').value.trim()||'사유 없음';
+  var returnDate=document.getElementById('pause-return').value||'';
+  // 학생 자체 paused 플래그 설정
+  st.paused=true;st.pauseDate=pauseDate;st.pauseReason=reason;st.returnDate=returnDate;
+  // 과목이 있으면 모든 과목도 휴회
+  (st.subjects||[]).forEach(function(subj){
+    subj.paused=true;subj.pauseDate=pauseDate;subj.pauseReason=reason;subj.returnDate=returnDate;
+  });
+  S.pauseHistory.push({id:nid(),sid:sid,subj:'전체',type:'paused',date:pauseDate,reason:reason,returnDate:returnDate});
+  save();closeModal();renderSidebar();renderOverview();showToast('⏸ '+st.name+' 휴회 처리됐어요');
+}
+
 function delStudentFromOv(id){
   var st=S.students.find(function(s){return s.id===id;});if(!st)return;
   if(!confirm(st.name+' 학생을 삭제할까요?\n(시험 기록도 모두 삭제됩니다)'))return;
