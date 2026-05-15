@@ -1073,6 +1073,21 @@ function resumeSubjFromOverview(sid, subjName) {
 }
 
 // ── 전체 현황 ──
+function getTeacherName(tid) {
+  if (!tid && tid !== 0) return '—';
+  for (var i = 0; i < S.teachers.length; i++) {
+    var t = S.teachers[i];
+    if (t.id == tid || String(t.id) === String(tid)) return t.name;
+  }
+  // 못 찾으면 전체 선생님 목록 출력용으로 이름 반환 시도
+  if (S.teachers.length > 0) {
+    // tid가 인덱스일 수도 있으니 시도
+    var idx = parseInt(tid, 10);
+    if (!isNaN(idx) && S.teachers[idx]) return S.teachers[idx].name;
+  }
+  return '—';
+}
+
 function showOverview() {
   S.sel = null;
   document.getElementById('h-tabs').style.display = 'none';
