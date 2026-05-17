@@ -1182,7 +1182,49 @@ function renderCounselPage(){
   var selOpts='<option value="">-- 학생 선택 --</option>'+activeStudents.map(function(st){
     return '<option value="'+st.id+'">'+st.name+(st.grade?' ('+st.grade+')':'')+'</option>';
   }).join('');
+
+  // 최근 상담 내역 수집 (전체 학생)
+  var recentItems=[];
+  activeStudents.forEach(function(st){
+    var sid=String(st.id);
+    var cd=counselData[sid]||{};
+    (cd.tr||[]).forEach(function(r){
+      recentItems.push({type:'tr', date:r.dt, studentName:st.name, grade:st.grade||'', tc:r.tc, content:r.f2||r.f3||'', sid:st.id});
+    });
+    (cd.dc||[]).forEach(function(r){
+      recentItems.push({type:'dc', date:r.dt, studentName:st.name, grade:st.grade||'', tc:r.wh, content:r.ct||'', method:r.mt, sid:st.id});
+    });
+  });
+  // 날짜순 정렬 (최신순)
+  recentItems.sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+  var recent5=recentItems.slice(0,5);
+
+  var recentHTML=recent5.length?recent5.map(function(r){
+    var typeLabel=r.type==='tr'?'강사 보고서':'원장 상담';
+    var typeColor=r.type==='tr'?'#C85A2A':'#185FA5';
+    var typeBg=r.type==='tr'?'#fff5f0':'#f0f6ff';
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:10px;background:'+typeBg+';border:1px solid '+(r.type==='tr'?'#f5c4a8':'#bdd4f0')+';margin-bottom:8px;cursor:pointer;" onclick="jumpToCounsel('+r.sid+')">'+
+      '<div style="flex-shrink:0;">'+
+        '<div style="font-size:10px;font-weight:700;color:'+typeColor+';background:#fff;padding:2px 8px;border-radius:10px;border:1px solid '+typeColor+';white-space:nowrap;">'+typeLabel+'</div>'+
+      '</div>'+
+      '<div style="flex:1;min-width:0;">'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">'+
+          '<span style="font-size:13px;font-weight:700;">'+r.studentName+'</span>'+
+          '<span style="font-size:11px;color:var(--muted);">'+r.grade+'</span>'+
+          '<span style="font-size:11px;color:var(--muted);">· '+r.tc+'</span>'+
+          (r.method?'<span style="font-size:10px;background:#E6F1FB;color:#185FA5;padding:2px 7px;border-radius:10px;">'+r.method+'</span>':'')+
+        '</div>'+
+        '<div style="font-size:12px;color:#555;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'+( r.content||'내용 없음')+'</div>'+
+      '</div>'+
+      '<div style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0;">'+r.date+'</div>'+
+    '</div>';
+  }).join(''):'<div style="text-align:center;color:var(--muted);padding:20px;">아직 상담 기록이 없어요</div>';
+
   document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="card">'+
+      '<div class="card-title">최근 상담 내역</div>'+
+      recentHTML+
+    '</div>'+
     '<div class="card">'+
       '<div class="card-title">상담일지</div>'+
       '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
@@ -1203,6 +1245,19 @@ function renderCounselPage(){
       '</div>'+
     '</div>'+
   '</div>';
+}
+
+function jumpToCounsel(sid){
+  var sel=document.getElementById('cn-sel');
+  if(sel){
+    sel.value=String(sid);
+    loadCounselStudent();
+    // 스크롤
+    setTimeout(function(){
+      var cc=document.getElementById('counsel-content');
+      if(cc)cc.scrollIntoView({behavior:'smooth'});
+    },200);
+  }
 }
 function loadCounselStudent(){
   var sid=document.getElementById('cn-sel').value;
