@@ -503,7 +503,6 @@ function renderDetail(st,subj){
       '<button class="btn-ep" onclick="openPauseSubj('+st.id+',\''+subj.name+'\',true)">📝 수정</button>'+
       '</div></div>';
   }
-  // 학생 상세 정보 카드
   var infoHTML='<div class="card"><div class="card-title">학생 기본 정보</div>'+
     '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">'+
       '<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);">'+
@@ -523,19 +522,15 @@ function renderDetail(st,subj){
         '<div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">정기결제</div>'+
         '<div style="font-size:13px;font-weight:700;">'+(st.autoPay?'✅ 설정됨':'미설정')+'</div>'+
       '</div>'+
-      (st.webId?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);">'+
-        '<div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 아이디</div>'+
-        '<div style="font-size:13px;font-weight:700;">'+st.webId+'</div>'+
-      '</div>':'<div></div>')+
-      (st.webPw?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);">'+
-        '<div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 비밀번호</div>'+
-        '<div style="font-size:13px;font-weight:700;">'+st.webPw+'</div>'+
-      '</div>':'<div></div>')+
+      (st.webId?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 아이디</div><div style="font-size:13px;font-weight:700;">'+st.webId+'</div></div>':'<div></div>')+
+      (st.webPw?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 비밀번호</div><div style="font-size:13px;font-weight:700;">'+st.webPw+'</div></div>':'<div></div>')+
     '</div>'+
     '<div style="margin-top:12px;text-align:right;"><button class="btn-g" onclick="openEditStudentInfo('+st.id+')" style="font-size:11px;">✏️ 정보 수정</button></div>'+
   '</div>';
 
   document.getElementById('content').innerHTML='<div class="ci">'+pbHTML+infoHTML+
+    '<div class="sc-grid">'+
+    '<div class="sc-grid">'+
     '<div class="sc-grid">'+
       '<div class="sc sc1"><div class="sc-lbl">최근 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(latest!==null?latest:'—')+'<span class="sc-unit">'+unit+'</span></div><div class="sc-sub">'+(exams.length?exams[exams.length-1].name:'')+'</div></div>'+
       '<div class="sc sc2"><div class="sc-lbl">최고 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(maxVal!==null?maxVal:'—')+'<span class="sc-unit">'+unit+'</span></div></div>'+
@@ -924,6 +919,221 @@ function resumeSubj(sid,subjName){
 }
 
 // ── 휴회 현황 ──
+// ── 카카오톡 안내문 ──
+function showKakao(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='카카오톡 안내문';
+  document.getElementById('h-meta').textContent='학생 선택 후 안내문을 생성하세요';
+  renderKakao();
+}
+function renderKakao(){
+  var activeStudents=S.students.filter(function(s){return !s.paused;});
+  var btnHTML=activeStudents.map(function(st){
+    return '<button onclick="selectKakaoStudent('+st.id+')" style="padding:5px 12px;border-radius:18px;border:1.5px solid #e8ddd8;background:#fff;font-size:12px;color:#888;cursor:pointer;" id="kk-btn-'+st.id+'">'+st.name+'</button>';
+  }).join('');
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="card">'+
+      '<div class="card-title">카카오톡 안내문</div>'+
+      '<div style="margin-bottom:14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;">'+
+        '<span style="font-size:12px;color:var(--muted);">학생 선택:</span>'+btnHTML+
+      '</div>'+
+      '<div style="background:#FEE500;border-radius:12px;padding:18px;max-width:460px;">'+
+        '<div style="font-size:13px;color:#3C1E1E;line-height:1.9;white-space:pre-wrap;word-break:break-all;" id="kk-txt">학생을 선택하면 안내문이 생성됩니다.</div>'+
+      '</div>'+
+      '<button onclick="copyKakao()" style="display:flex;align-items:center;justify-content:center;margin:12px 0 0;padding:9px 20px;background:#3C1E1E;color:#FEE500;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;">📋 복사하기</button>'+
+    '</div>'+
+  '</div>';
+}
+function selectKakaoStudent(sid){
+  document.querySelectorAll('[id^="kk-btn-"]').forEach(function(b){b.style.background='#fff';b.style.color='#888';b.style.borderColor='#e8ddd8';});
+  var btn=document.getElementById('kk-btn-'+sid);
+  if(btn){btn.style.background='#FEE500';btn.style.color='#3C1E1E';btn.style.borderColor='#FEE500';}
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  var nm=st.name||'(학생 이름)';
+  var hid=st.webId||'(아이디)';
+  var hpw=st.webPw||'(비밀번호)';
+  // 과목/강사 정보
+  var subjLines=(st.subjects||[]).map(function(s){return '  '+s.name+' : '+(s.tcName||'담당강사');}).join('\n')||'  (과목 정보 없음)';
+  var msg='[WAWA 코칭학원 수업 및 학원비 납부안내]\n\n'
+    +'이름 : '+nm+'\n'
+    +'담당강사\n'+subjLines+'\n'
+    +'홈페이지 \n   www.sscoaching.co.kr\n - 회원아이디 : '+hid+'\n - 비밀번호 : '+hpw
+    +'\n\n결제 방식\n>> 정기결제\n  상상코칭 홈페이지 접속 -> 로그인 -> 마이페이지 -> 결제 -> 정기결제 신청'
+    +'\n\n정기결제 등록 방법 영상\nhttps://www.youtube.com/watch?app=desktop&v=IU3t3kwDtAM'
+    +'\n(영상을 참고하여 등록해주시면, 매번 접속하실 필요 없이 결제 가능하십니다)'
+    +'\n*회원정보수정에서 현금영수증 등록가능\n카드결제 안될시 고객센터 1899-2277\n'
+    +'--------------------------------------------\n'
+    +'*결강 시 사전에 미리 말씀 부탁드립니다.\n*지각 및 무단 결강은 학습습관 형성에 좋지 않습니다.\n*수업중에는 빠른 답변이 어려울 수 있으니 양해 바랍니다.';
+  var el=document.getElementById('kk-txt');
+  if(el)el.textContent=msg;
+}
+function copyKakao(){
+  var el=document.getElementById('kk-txt');
+  if(!el||el.textContent==='학생을 선택하면 안내문이 생성됩니다.'){showToast('학생을 먼저 선택해주세요');return;}
+  navigator.clipboard.writeText(el.textContent).then(function(){showToast('📋 복사됐어요! 카카오톡에 붙여넣기 하세요.');});
+}
+
+// ── 상담일지 ──
+var counselData=JSON.parse(localStorage.getItem('wawa_counsel')||'{}');
+function saveCounsel(){localStorage.setItem('wawa_counsel',JSON.stringify(counselData));}
+
+function showCounsel(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='상담일지';
+  document.getElementById('h-meta').textContent='학생별 강사 보고서 및 원장 상담 기록';
+  renderCounselPage();
+}
+function renderCounselPage(){
+  var activeStudents=S.students.filter(function(s){return !s.paused;});
+  var selOpts='<option value="">-- 학생 선택 --</option>'+activeStudents.map(function(st){
+    return '<option value="'+st.id+'">'+st.name+(st.grade?' ('+st.grade+')':'')+'</option>';
+  }).join('');
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="card">'+
+      '<div class="card-title">상담일지</div>'+
+      '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
+        '<span style="font-size:12px;color:var(--muted);">학생 선택:</span>'+
+        '<select id="cn-sel" onchange="loadCounselStudent()" style="font-size:13px;padding:7px 10px;border:1.5px solid var(--border);border-radius:7px;background:#faf8f6;font-family:inherit;min-width:150px;">'+selOpts+'</select>'+
+      '</div>'+
+    '</div>'+
+    '<div id="counsel-content" style="display:none;">'+
+      '<div class="card">'+
+        '<div class="card-title">강사 상담 보고서</div>'+
+        '<div id="tr-list"></div>'+
+        '<button class="btn-g" style="margin-top:7px;" onclick="openTRModal()">+ 강사 보고서 추가</button>'+
+      '</div>'+
+      '<div class="card">'+
+        '<div class="card-title">원장 상담일지</div>'+
+        '<div id="dc-list"></div>'+
+        '<button class="btn-g" style="margin-top:7px;" onclick="openDCModal()">+ 원장 상담 추가</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+function loadCounselStudent(){
+  var sid=document.getElementById('cn-sel').value;
+  var cc=document.getElementById('counsel-content');
+  if(!sid){cc.style.display='none';return;}
+  window._cnSid=parseInt(sid);
+  if(!counselData[sid])counselData[sid]={tr:[],dc:[]};
+  cc.style.display='block';
+  renderTRList();renderDCList();
+}
+function rRow(l,val){if(!val)return '';return '<div style="margin-bottom:6px;"><div style="font-size:11px;font-weight:700;color:#C85A2A;margin-bottom:2px;">'+l+'</div><div style="font-size:12px;color:#333;line-height:1.6;background:#fff;border-radius:6px;padding:7px 9px;border:1px solid #f0e4de;">'+val.replace(/\n/g,'<br>')+'</div></div>';}
+function renderTRList(){
+  var sid=String(window._cnSid);
+  var list=(counselData[sid]||{}).tr||[];
+  var el=document.getElementById('tr-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;">작성된 강사 보고서가 없습니다.</div>';return;}
+  el.innerHTML=list.map(function(r,i){
+    return '<div style="border:1.5px solid #f0e4de;border-radius:10px;padding:14px;margin-bottom:10px;background:#fdf9f7;">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'+
+        '<div><span style="font-size:12px;font-weight:700;color:#C85A2A;">'+r.dt+'</span><span style="font-size:11px;color:#888;margin-left:7px;">'+r.tc+'</span></div>'+
+        '<button onclick="delTR('+i+')" style="background:none;border:none;color:#e08080;cursor:pointer;font-size:16px;">x</button>'+
+      '</div>'+
+      rRow('1. 이름',r.f1)+rRow('2. 교재 및 진도 사항',r.f2)+rRow('3. 잘하고 있는 점',r.f3)+
+      rRow('4. 아쉬운 점',r.f4)+rRow('5. 더 끌어주고 싶은 부분',r.f5)+
+      rRow('6. 칭찬하고 싶은 부분',r.f6)+rRow('7. 성장에 도움을 줄 수 있는 방법',r.f7)+
+    '</div>';
+  }).join('');
+}
+function renderDCList(){
+  var sid=String(window._cnSid);
+  var list=(counselData[sid]||{}).dc||[];
+  var el=document.getElementById('dc-list');if(!el)return;
+  if(!list.length){el.innerHTML='<div style="text-align:center;color:var(--muted);padding:20px;">작성된 원장 상담일지가 없습니다.</div>';return;}
+  el.innerHTML=list.map(function(r,i){
+    return '<div style="border:1.5px solid #e8ddd8;border-radius:10px;padding:14px;margin-bottom:10px;background:#fafafa;">'+
+      '<div style="display:flex;justify-content:space-between;margin-bottom:8px;">'+
+        '<div><span style="font-size:12px;font-weight:700;color:#4A90D9;">'+r.dt+'</span><span style="font-size:11px;color:#888;margin-left:7px;">'+r.wh+'</span><span style="font-size:10px;background:#E6F1FB;color:#185FA5;padding:2px 7px;border-radius:18px;margin-left:5px;">'+r.mt+'</span></div>'+
+        '<button onclick="delDC('+i+')" style="background:none;border:none;color:#e08080;cursor:pointer;font-size:16px;">x</button>'+
+      '</div>'+
+      rRow('상담 내용',r.ct)+rRow('학부모 반응',r.pt)+rRow('향후 계획',r.pl)+
+    '</div>';
+  }).join('');
+}
+function openTRModal(){
+  var sid=window._cnSid;if(!sid){showToast('학생을 먼저 선택해주세요');return;}
+  var st=S.students.find(function(s){return s.id===sid;});
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#C85A2A,#e07040);">📝</div>강사 상담 보고서</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;">'+
+      '<div><div class="ml">작성일</div><input class="mi" id="tr-dt" type="date" value="'+new Date().toISOString().slice(0,10)+'"/></div>'+
+      '<div><div class="ml">강사명</div><input class="mi" id="tr-tc" placeholder="강사명"/></div>'+
+    '</div>'+
+    '<div class="ml">1. 이름</div><input class="mi" id="tr-f1" value="'+(st?st.name:'')+'" readonly/>'+
+    '<div class="ml">2. 교재 및 진도 사항</div><textarea class="mi" id="tr-f2" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">3. 잘하고 있는 점</div><textarea class="mi" id="tr-f3" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">4. 아쉬운 점</div><textarea class="mi" id="tr-f4" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">5. 더 끌어주고 싶은 부분</div><textarea class="mi" id="tr-f5" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">6. 칭찬하고 싶은 부분</div><textarea class="mi" id="tr-f6" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">7. 성장에 도움을 줄 수 있는 방법</div><textarea class="mi" id="tr-f7" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveTR()">저장</button></div>'
+  );
+}
+function saveTR(){
+  var sid=String(window._cnSid);if(!sid)return;
+  if(!counselData[sid])counselData[sid]={tr:[],dc:[]};
+  counselData[sid].tr.push({
+    dt:document.getElementById('tr-dt').value,
+    tc:document.getElementById('tr-tc').value,
+    f1:document.getElementById('tr-f1').value,
+    f2:document.getElementById('tr-f2').value,
+    f3:document.getElementById('tr-f3').value,
+    f4:document.getElementById('tr-f4').value,
+    f5:document.getElementById('tr-f5').value,
+    f6:document.getElementById('tr-f6').value,
+    f7:document.getElementById('tr-f7').value
+  });
+  saveCounsel();closeModal();renderTRList();showToast('✅ 보고서가 저장됐어요');
+}
+function delTR(i){
+  if(!confirm('삭제할까요?'))return;
+  var sid=String(window._cnSid);
+  counselData[sid].tr.splice(i,1);
+  saveCounsel();renderTRList();
+}
+function openDCModal(){
+  var sid=window._cnSid;if(!sid){showToast('학생을 먼저 선택해주세요');return;}
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#185FA5,#4A90D9);">📋</div>원장 상담일지</div>'+
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px;">'+
+      '<div><div class="ml">상담일</div><input class="mi" id="dc-dt" type="date" value="'+new Date().toISOString().slice(0,10)+'"/></div>'+
+      '<div><div class="ml">상담자</div><input class="mi" id="dc-wh" value="원장"/></div>'+
+    '</div>'+
+    '<div class="ml">상담 방법</div>'+
+    '<select class="mi" id="dc-mt"><option>대면 상담</option><option>전화 상담</option><option>문자/카카오톡</option><option>기타</option></select>'+
+    '<div class="ml">상담 내용</div><textarea class="mi" id="dc-ct" rows="3" style="min-height:70px;resize:vertical;"></textarea>'+
+    '<div class="ml">학부모 반응 / 요청 사항</div><textarea class="mi" id="dc-pt" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="ml">향후 계획 / 메모</div><textarea class="mi" id="dc-pl" rows="2" style="min-height:60px;resize:vertical;"></textarea>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveDC()">저장</button></div>'
+  );
+}
+function saveDC(){
+  var sid=String(window._cnSid);if(!sid)return;
+  if(!counselData[sid])counselData[sid]={tr:[],dc:[]};
+  counselData[sid].dc.push({
+    dt:document.getElementById('dc-dt').value,
+    wh:document.getElementById('dc-wh').value,
+    mt:document.getElementById('dc-mt').value,
+    ct:document.getElementById('dc-ct').value,
+    pt:document.getElementById('dc-pt').value,
+    pl:document.getElementById('dc-pl').value
+  });
+  saveCounsel();closeModal();renderDCList();showToast('✅ 상담일지가 저장됐어요');
+}
+function delDC(i){
+  if(!confirm('삭제할까요?'))return;
+  var sid=String(window._cnSid);
+  counselData[sid].dc.splice(i,1);
+  saveCounsel();renderDCList();
+}
+
 function showPausedOv(){
   S.sel=null;
   document.getElementById('h-tabs').style.display='none';
