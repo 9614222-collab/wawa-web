@@ -530,6 +530,22 @@ function renderDetail(st,subj){
 
   document.getElementById('content').innerHTML='<div class="ci">'+pbHTML+infoHTML+
     '<div class="sc-grid">'+
+      '<div class="sc sc1"><div class="sc-lbl">최근 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(latest!==null?latest:'—')+'<span class="sc-unit">'+unit+'</span></div><div class="sc-sub">'+(exams.length?exams[exams.length-1].name:'')+'</div></div>'+
+      '<div class="sc sc2"><div class="sc-lbl">최고 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(maxVal!==null?maxVal:'—')+'<span class="sc-unit">'+unit+'</span></div></div>'+
+      '<div class="sc sc3"><div class="sc-lbl">시험 횟수</div><div class="sc-val">'+vals.length+'<span class="sc-unit">회</span></div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-title">시험 기록</div>'+filterTabsHTML()+
+      (rows||'<div style="text-align:center;color:var(--muted);padding:28px;">아직 시험 기록이 없어요</div>')+
+      '<div class="add-form"><div class="form-row">'+
+        '<div class="fg"><div class="fl">구분</div><select class="fs" id="ei-type" style="width:80px;"><option value="academy">학원</option><option value="school">학교</option></select></div>'+
+        '<div class="fg"><div class="fl">시험명</div><input class="fi" id="ei-name" placeholder="예: 4월 단원평가" style="width:140px;"/></div>'+
+        '<div class="fg"><div class="fl">날짜</div><input class="fi" id="ei-date" type="date" value="'+new Date().toISOString().slice(0,10)+'" style="width:130px;"/></div>'+
+        '<div class="fg"><div class="fl">'+(type==='count'?'갯수':'점수')+'</div><input class="fi" id="ei-score" type="number" min="0" placeholder="예: 85" style="width:80px;"/></div>'+
+        '<div class="fg" style="justify-content:flex-end;"><button class="btn-p" onclick="addExam()">+ 추가</button></div>'+
+      '</div></div>'+
+    '</div>'+
+    '<div class="card"><div class="card-title">휴회 / 재원 이력</div>'+histHTML+'</div>'+
+  '</div>';
     '<div class="sc-grid">'+
     '<div class="sc-grid">'+
       '<div class="sc sc1"><div class="sc-lbl">최근 '+(unit==='개'?'갯수':'점수')+'</div><div class="sc-val">'+(latest!==null?latest:'—')+'<span class="sc-unit">'+unit+'</span></div><div class="sc-sub">'+(exams.length?exams[exams.length-1].name:'')+'</div></div>'+
