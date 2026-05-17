@@ -1217,11 +1217,8 @@ function renderOverview(){
     if(!map[key])map[key]={st:st,rows:[],go:gradeOrder(st.grade||'')};
     var allSubjs=st.subjects||[];
     var activeSubjs=allSubjs.filter(function(s){return!s.paused;});
-    // 학생 자체 paused이거나 과목 전부 휴회면 전체현황 제외
     if(st.paused===true)return;
     if(allSubjs.length>0&&activeSubjs.length===0)return;
-    // 과목 없는 학생도 제외 (휴회탭에서만 관리)
-    if(allSubjs.length===0)return;
     activeSubjs.forEach(function(subj){
       var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name;});
       var aEx=exams.filter(function(e){return(e.examType||'academy')==='academy';});
@@ -1231,7 +1228,7 @@ function renderOverview(){
       map[key].rows.push({subjName:subj.name,tcName:subjTcName,sid:st.id,tid:subj.tid||st.tid,acAvg:avg(aEx),scAvg:avg(sEx),aEx:aEx,sEx:sEx});
     });
   });
-  var all=Object.keys(map).map(function(k){return map[k];}).filter(function(r){return r.rows.length>0;});
+  var all=Object.keys(map).map(function(k){return map[k];});
   var gf=OV.gradeF,sf=OV.subjF;
   var rows=all.filter(function(r){
     if(gf!=='all'&&!(r.st.grade&&r.st.grade.startsWith(gf)))return false;
