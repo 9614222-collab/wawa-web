@@ -955,6 +955,203 @@ var SLOTS = [
   {l:'4교시', t:'20:20~22:00', bg:'#F0E8FA'}
 ];
 
+// ── 일정 관리 ──
+var scheduleData = JSON.parse(localStorage.getItem('wawa_schedule_events')||'[]');
+function saveScheduleData(){ localStorage.setItem('wawa_schedule_events', JSON.stringify(scheduleData)); }
+
+var calYear = new Date().getFullYear();
+var calMonth = new Date().getMonth(); // 0-based
+
+var EVENT_TYPES = [
+  {key:'exam', label:'시험', color:'#dc2626', bg:'#fee2e2'},
+  {key:'boost', label:'보강', color:'#d97706', bg:'#fef3c7'},
+  {key:'holiday', label:'휴일', color:'#6b7280', bg:'#f3f4f6'},
+  {key:'event', label:'행사', color:'#7c3aed', bg:'#ede9fe'},
+  {key:'other', label:'기타', color:'#059669', bg:'#d1fae5'}
+];
+
+function getEventType(key){
+  return EVENT_TYPES.find(function(t){return t.key===key;})||EVENT_TYPES[4];
+}
+
+function showCalendar(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='일정 관리';
+  document.getElementById('h-meta').textContent='시험기간, 보강, 행사 등 일정을 관리하세요';
+  calYear=new Date().getFullYear();
+  calMonth=new Date().getMonth();
+  renderCalendar();
+}
+
+function renderCalendar(){
+  var today=new Date();
+  var todayStr=today.toISOString().slice(0,10);
+  var firstDay=new Date(calYear,calMonth,1);
+  var lastDay=new Date(calYear,calMonth+1,0);
+  var startDow=firstDay.getDay(); // 0=일
+  var totalDays=lastDay.getDate();
+  var monthStr=calYear+'-'+(String(calMonth+1).padStart(2,'0'));
+
+  // 이번달 이벤트
+  var monthEvents=scheduleData.filter(function(e){return e.date&&e.date.startsWith(monthStr);});
+
+  // 앞으로 일정 (D-day)
+  var upcoming=scheduleData.filter(function(e){return e.date>=todayStr;})
+    .sort(function(a,b){return a.date.localeCompare(b.date);}).slice(0,5);
+
+  // 오늘 일정
+  var todayEvents=scheduleData.filter(function(e){return e.date===todayStr;});
+
+  // 달력 셀 생성
+  var cells='';
+  var dow=['일','월','화','수','목','금','토'];
+  var headers=dow.map(function(d,i){
+    return '<div style="text-align:center;font-size:12px;font-weight:700;padding:8px 0;color:'+(i===0?'#dc2626':i===6?'#2563eb':'#666')+';">'+d+'</div>';
+  }).join('');
+
+  // 빈 셀
+  for(var i=0;i<startDow;i++) cells+='<div></div>';
+
+  for(var d=1;d<=totalDays;d++){
+    var dateStr=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    var dayEvents=monthEvents.filter(function(e){return e.date===dateStr;});
+    var isToday=dateStr===todayStr;
+    var dow2=new Date(calYear,calMonth,d).getDay();
+    var isWeekend=dow2===0||dow2===6;
+    var evHTML=dayEvents.slice(0,2).map(function(e){
+      var t=getEventType(e.type);
+      return '<div style="font-size:9px;padding:1px 5px;border-radius:4px;background:'+t.bg+';color:'+t.color+';font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:1px;">'+e.title+'</div>';
+    }).join('');
+    if(dayEvents.length>2) evHTML+='<div style="font-size:9px;color:#999;margin-top:1px;">+'+( dayEvents.length-2)+'개</div>';
+    cells+='<div onclick="openDayModal(\''+dateStr+'\')" style="min-height:70px;border:1px solid #f0f0f0;border-radius:8px;padding:5px;cursor:pointer;background:'+(isToday?'#fef9c3':'#fff')+';'+(isToday?'border:2px solid #f59e0b;':'')+'transition:background .15s;" onmouseover="this.style.background=\'#f8f9fc\'" onmouseout="this.style.background=\''+(isToday?'#fef9c3':'#fff')+'\'">'+
+      '<div style="font-size:13px;font-weight:'+(isToday?'800':'600')+';color:'+(isToday?'#d97706':isWeekend?(dow2===0?'#dc2626':'#2563eb'):'#333')+';margin-bottom:2px;">'+d+'</div>'+
+      evHTML+
+    '</div>';
+  }
+
+  // 우측 패널
+  var upcomingHTML=upcoming.length?upcoming.map(function(e){
+    var t=getEventType(e.type);
+    var diff=Math.ceil((new Date(e.date)-new Date(todayStr))/(1000*60*60*24));
+    var dLabel=diff===0?'D-DAY':diff>0?'D-'+diff:'D+'+Math.abs(diff);
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:#f8f9fc;margin-bottom:7px;">'+
+      '<div style="flex:1;">'+
+        '<div style="font-size:12px;font-weight:700;color:#333;">'+e.title+'</div>'+
+        '<div style="font-size:10px;color:#999;margin-top:2px;">'+e.date+(e.desc?' · '+e.desc:'')+'</div>'+
+        '<div style="display:inline-block;font-size:10px;padding:1px 7px;border-radius:10px;background:'+t.bg+';color:'+t.color+';font-weight:700;margin-top:3px;">'+t.label+'</div>'+
+      '</div>'+
+      '<div style="font-size:13px;font-weight:800;color:'+(diff<=7?'#dc2626':'#7c3aed')+';background:'+(diff<=7?'#fee2e2':'#ede9fe')+';padding:4px 10px;border-radius:20px;white-space:nowrap;">'+dLabel+'</div>'+
+    '</div>';
+  }).join(''):'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">예정된 일정이 없어요</div>';
+
+  var todayHTML=todayEvents.length?todayEvents.map(function(e){
+    var t=getEventType(e.type);
+    return '<div style="padding:6px 10px;border-radius:8px;background:'+t.bg+';margin-bottom:5px;">'+
+      '<div style="font-size:12px;font-weight:700;color:'+t.color+';">'+t.label+' · '+e.title+'</div>'+
+      (e.desc?'<div style="font-size:11px;color:#666;margin-top:2px;">'+e.desc+'</div>':'')+
+    '</div>';
+  }).join(''):'<div style="text-align:center;color:var(--muted);font-size:12px;padding:12px;">오늘 일정 없음</div>';
+
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div style="display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;">'+
+      // 달력
+      '<div class="card" style="padding:20px;">'+
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'+
+          '<button onclick="changeMonth(-1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">◀</button>'+
+          '<div style="font-size:18px;font-weight:800;flex:1;text-align:center;">'+calYear+'년 '+(calMonth+1)+'월</div>'+
+          '<button onclick="changeMonth(1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">▶</button>'+
+          '<button onclick="openAddEventModal(\'\')" style="padding:6px 14px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">+ 일정 추가</button>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;">'+headers+'</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">'+cells+'</div>'+
+        // 범례
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">'+
+          EVENT_TYPES.map(function(t){return '<div style="display:flex;align-items:center;gap:4px;font-size:11px;"><div style="width:10px;height:10px;border-radius:3px;background:'+t.bg+';border:1px solid '+t.color+';"></div>'+t.label+'</div>';}).join('')+
+        '</div>'+
+      '</div>'+
+      // 사이드 패널
+      '<div style="display:flex;flex-direction:column;gap:12px;">'+
+        '<div class="card">'+
+          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📋 오늘 일정 <span style="font-size:11px;color:var(--muted);font-weight:400;">'+todayStr+'</span></div>'+
+          todayHTML+
+        '</div>'+
+        '<div class="card">'+
+          '<div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📅 예정 일정</div>'+
+          upcomingHTML+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function changeMonth(dir){
+  calMonth+=dir;
+  if(calMonth<0){calMonth=11;calYear--;}
+  if(calMonth>11){calMonth=0;calYear++;}
+  renderCalendar();
+}
+
+function openDayModal(dateStr){
+  var dayEvents=scheduleData.filter(function(e){return e.date===dateStr;});
+  var evHTML=dayEvents.length?dayEvents.map(function(e,i){
+    var t=getEventType(e.type);
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:'+t.bg+';margin-bottom:6px;">'+
+      '<div style="flex:1;">'+
+        '<div style="font-size:13px;font-weight:700;color:'+t.color+';">'+t.label+' · '+e.title+'</div>'+
+        (e.desc?'<div style="font-size:11px;color:#666;margin-top:2px;">'+e.desc+'</div>':'')+
+      '</div>'+
+      '<button onclick="deleteEvent(\''+e.id+'\')" style="background:none;border:none;color:#e08080;cursor:pointer;font-size:16px;">x</button>'+
+    '</div>';
+  }).join(''):'<div style="text-align:center;color:var(--muted);padding:12px;font-size:13px;">이 날 일정이 없어요</div>';
+
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#059669,#34d399);">🗓</div>'+dateStr+'</div>'+
+    '<div style="margin-bottom:12px;">'+evHTML+'</div>'+
+    '<button onclick="closeModal();openAddEventModal(\''+dateStr+'\')" style="width:100%;padding:9px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">+ 이 날 일정 추가</button>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">닫기</button></div>'
+  );
+}
+
+function openAddEventModal(dateStr){
+  var typeOpts=EVENT_TYPES.map(function(t){return '<option value="'+t.key+'">'+t.label+'</option>';}).join('');
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#059669,#34d399);">🗓</div>일정 추가</div>'+
+    '<div class="ml">날짜</div><input class="mi" id="ev-date" type="date" value="'+(dateStr||new Date().toISOString().slice(0,10))+'"/>'+
+    '<div class="ml">종류</div><select class="mi" id="ev-type">'+typeOpts+'</select>'+
+    '<div class="ml">제목</div><input class="mi" id="ev-title" placeholder="예: 1학기 중간고사, 보강 수업"/>'+
+    '<div class="ml">메모 (선택)</div><input class="mi" id="ev-desc" placeholder="추가 설명"/>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveEvent()">저장</button></div>'
+  );
+}
+
+function saveEvent(){
+  var title=document.getElementById('ev-title').value.trim();
+  if(!title){showToast('제목을 입력해주세요');return;}
+  var ev={
+    id:'ev-'+Date.now(),
+    date:document.getElementById('ev-date').value,
+    type:document.getElementById('ev-type').value,
+    title:title,
+    desc:document.getElementById('ev-desc').value.trim()
+  };
+  scheduleData.push(ev);
+  saveScheduleData();
+  closeModal();
+  renderCalendar();
+  showToast('✅ 일정이 추가됐어요');
+}
+
+function deleteEvent(id){
+  if(!confirm('일정을 삭제할까요?'))return;
+  scheduleData=scheduleData.filter(function(e){return e.id!==id;});
+  saveScheduleData();
+  closeModal();
+  renderCalendar();
+  showToast('🗑 삭제됐어요');
+}
+
 function showTimetable(){
   S.sel=null;
   document.getElementById('h-tabs').style.display='none';
