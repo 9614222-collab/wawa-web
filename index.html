@@ -763,7 +763,6 @@ function addStudent(){
   if(!name){showToast('이름을 입력해주세요');return;}
   var tc=S.teachers.find(function(t){return t.id===tid;});
   var tcName=tc?tc.name:'';
-  // 새 필드들
   var joinDate=((document.getElementById('new-joindate')||{}).value||'');
   var regDate=((document.getElementById('new-regdate')||{}).value||'');
   var payment=((document.getElementById('new-payment')||{}).value||'미입금');
@@ -771,12 +770,16 @@ function addStudent(){
   var autoPay=document.getElementById('new-autopay')?document.getElementById('new-autopay').checked:false;
   var webId=((document.getElementById('new-webid')||{}).value||'').trim();
   var webPw=((document.getElementById('new-webpw')||{}).value||'').trim();
+  var newId=nid();
   S.students.push({
-    id:nid(), tid:tid, tcName:tcName, name:name, grade:grade, school:school, subjects:[],
+    id:newId, tid:tid, tcName:tcName, name:name, grade:grade, school:school, subjects:[],
     joinDate:joinDate, regDate:regDate, payment:payment, payDate:payDate,
     autoPay:autoPay, webId:webId, webPw:webPw
   });
-  save();closeModal();SB.tcF='all';renderSidebar();showToast('✅ '+name+' 추가됐어요');
+  save();closeModal();SB.tcF='all';renderSidebar();
+  showToast('✅ '+name+' 추가됐어요! 이제 과목을 추가해주세요.');
+  // 바로 과목 추가 모달 열기
+  setTimeout(function(){ openAddSubj(newId); }, 300);
 }
 function openEditStudentInfo(sid){
   var st=S.students.find(function(s){return s.id===sid;});
