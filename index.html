@@ -525,7 +525,10 @@ function renderDetail(st,subj){
       (st.webId?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 아이디</div><div style="font-size:13px;font-weight:700;">'+st.webId+'</div></div>':'<div></div>')+
       (st.webPw?'<div style="padding:12px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><div style="font-size:10px;color:var(--muted);font-weight:600;margin-bottom:4px;">홈페이지 비밀번호</div><div style="font-size:13px;font-weight:700;">'+st.webPw+'</div></div>':'<div></div>')+
     '</div>'+
-    '<div style="margin-top:12px;text-align:right;"><button class="btn-g" onclick="openEditStudentInfo('+st.id+')" style="font-size:11px;">✏️ 정보 수정</button></div>'+
+    '<div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end;">'+
+      '<button class="btn-g" onclick="openTimetableEditor('+st.id+')" style="font-size:11px;">📅 시간표 편집</button>'+
+      '<button class="btn-g" onclick="openEditStudentInfo('+st.id+')" style="font-size:11px;">✏️ 정보 수정</button>'+
+    '</div>'+
   '</div>';
 
   document.getElementById('content').innerHTML='<div class="ci">'+pbHTML+infoHTML+
@@ -939,6 +942,167 @@ function resumeSubj(sid,subjName){
 
 // ── 휴회 현황 ──
 // ── 카카오톡 안내문 ──
+// ── 시간표 ──
+var DAYS_KR = ['월','화','수','목','금','토'];
+var SLOT_COLORS = ['#4A90D9','#2DAA72','#9B59B6','#E67E22','#E84393','#16A085'];
+var DAY_COLORS = ['#4A90D9','#2DAA72','#9B59B6','#E67E22','#E84393','#16A085'];
+var SLOTS = [
+  {l:'1교시', t:'14:00~15:10', bg:'#FEF3E2'},
+  {l:'1.5교시', t:'16:00~17:40', bg:'#FFE8D6'},
+  {l:'2교시', t:'16:40~18:20', bg:'#EAF3DE'},
+  {l:'3교시', t:'18:40~20:20', bg:'#E6F1FB'},
+  {l:'4교시', t:'20:20~22:00', bg:'#F0E8FA'}
+];
+
+function showTimetable(){
+  S.sel=null;
+  document.getElementById('h-tabs').style.display='none';
+  document.getElementById('save-btn').style.display='none';
+  document.getElementById('h-name').textContent='시간표 카드';
+  document.getElementById('h-meta').textContent='학생별 수업 시간표를 확인하세요';
+  renderTimetablePage();
+}
+
+function renderTimetablePage(){
+  // 시간표 데이터가 있는 학생만 버튼 생성
+  var students = S.students.filter(function(s){ return !s.paused && (s.timetable||[]).length > 0; });
+  var btnHTML = students.map(function(st){
+    return '<button onclick="selectTimetableStudent('+st.id+')" id="tt-btn-'+st.id+'" style="padding:5px 14px;border-radius:18px;border:1.5px solid #e8ddd8;background:#fff;font-size:12px;color:#888;cursor:pointer;">'+st.name+'</button>';
+  }).join('');
+
+  document.getElementById('content').innerHTML='<div class="ci">'+
+    '<div class="card">'+
+      '<div class="card-title">시간표 카드</div>'+
+      '<div style="margin-bottom:14px;display:flex;gap:7px;flex-wrap:wrap;align-items:center;">'+
+        '<span style="font-size:12px;color:var(--muted);">학생:</span>'+
+        (btnHTML || '<span style="font-size:12px;color:var(--muted);">시간표가 등록된 학생이 없어요. 학생 상세에서 시간표를 추가해주세요.</span>')+
+      '</div>'+
+      '<div id="tt-card-wrap"><div style="text-align:center;color:var(--muted);padding:40px;">학생을 선택하면 시간표가 나타납니다.</div></div>'+
+      '<div style="margin-top:12px;display:flex;justify-content:flex-end;"><button class="btn-g" onclick="printTimetable()">🖨️ 인쇄</button></div>'+
+    '</div>'+
+  '</div>';
+}
+
+function selectTimetableStudent(sid){
+  document.querySelectorAll('[id^="tt-btn-"]').forEach(function(b){
+    b.style.background='#fff'; b.style.color='#888'; b.style.borderColor='#e8ddd8';
+  });
+  var btn=document.getElementById('tt-btn-'+sid);
+  if(btn){btn.style.background='#C85A2A';btn.style.color='#fff';btn.style.borderColor='#C85A2A';}
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  var wrap=document.getElementById('tt-card-wrap');
+  if(!wrap)return;
+  var rtt=st.timetable||[];
+  if(!rtt.length){wrap.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;">등록된 시간표가 없어요.</div>';return;}
+  // 사용된 교시만 표시
+  var usedSlots=[];
+  SLOTS.forEach(function(sl,si){
+    if(rtt.some(function(r){return r.slt===si;})) usedSlots.push(si);
+  });
+  var ths='<th style="background:#f5ede8;color:#C85A2A;border-radius:9px 0 0 9px;padding:7px;">교시</th>';
+  DAYS_KR.forEach(function(d,i){ths+='<th style="background:'+DAY_COLORS[i]+';color:#fff;padding:7px;'+(i===5?'border-radius:0 9px 9px 0;':'')+'">'+ d+'</th>';});
+  var tbR='';
+  usedSlots.forEach(function(si){
+    var sl=SLOTS[si];
+    var row='<td style="background:'+sl.bg+';border-radius:7px 0 0 7px;padding:6px 8px;white-space:nowrap;"><div style="font-size:11px;font-weight:700;color:#444;">'+sl.l+'</div><div style="font-size:9px;color:#999;">'+sl.t+'</div></td>';
+    DAYS_KR.forEach(function(d,di){
+      var cls=rtt.filter(function(r){return r.slt===si&&r.day===di;});
+      var cell=cls.length?cls.map(function(c){
+        return '<span style="display:inline-block;padding:3px 8px;border-radius:5px;color:#fff;font-size:11px;font-weight:600;background:'+SLOT_COLORS[si%SLOT_COLORS.length]+';margin:1px;">'+c.cn+(c.time?'<br><span style="font-size:9px;opacity:.85;">'+c.time+'</span>':'')+'</span>';
+      }).join(' '):'<span style="color:#ddd;font-size:11px;">-</span>';
+      row+='<td style="background:#fff;'+(di===5?'border-radius:0 7px 7px 0;':'')+';text-align:center;padding:6px 4px;">'+cell+'</td>';
+    });
+    tbR+='<tr>'+row+'</tr>';
+  });
+  wrap.innerHTML='<div id="tt-print-card" style="background:linear-gradient(135deg,#fff5f0,#fff 55%,#eef4ff);border-radius:16px;padding:20px;max-width:520px;margin:0 auto;box-shadow:0 0 0 3px #C8A84B,0 0 0 5px #F0D080,0 0 0 7px #C8A84B;">'+
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">'+
+      '<div style="width:46px;height:46px;background:#C85A2A;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;">'+
+        '<span style="color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;">WAWA</span>'+
+        '<small style="color:#fff;font-size:5px;">와와학습코칭센터</small>'+
+      '</div>'+
+      '<div>'+
+        '<div style="font-size:17px;font-weight:700;color:#C85A2A;">'+(st.ttName||st.name+' 학생')+'</div>'+
+        '<div style="font-size:11px;color:#aaa;">'+(st.school||'')+' '+(st.grade||'')+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="overflow-x:auto;">'+
+      '<table style="width:100%;border-collapse:separate;border-spacing:0 4px;min-width:360px;">'+
+        '<thead><tr>'+ths+'</tr></thead>'+
+        '<tbody>'+tbR+'</tbody>'+
+      '</table>'+
+    '</div>'+
+    '<div style="margin-top:12px;display:flex;justify-content:space-between;padding-top:10px;border-top:1.5px dashed #e8d5cc;">'+
+      '<span style="font-size:11px;color:#C85A2A;font-weight:700;">와와학습코칭센터</span>'+
+      '<span style="font-size:10px;color:#bbb;">COACHING CENTER</span>'+
+    '</div>'+
+  '</div>';
+}
+
+function printTimetable(){
+  var card=document.getElementById('tt-print-card');
+  if(!card){showToast('시간표를 먼저 선택해주세요');return;}
+  var w=window.open('','_blank');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><style>body{font-family:"Malgun Gothic",sans-serif;display:flex;justify-content:center;padding:20px;}@media print{body{padding:0;}}</style></head><body>'+card.outerHTML+'<script>window.onload=function(){window.print();}<\/script></body></html>');
+  w.document.close();
+}
+
+// 학생 상세에 시간표 편집 기능 추가
+function openTimetableEditor(sid){
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  var rtt=st.timetable||[];
+  var rows=rtt.map(function(r,i){
+    var dOpts=DAYS_KR.map(function(d,di){return '<option value="'+di+'"'+(di===r.day?' selected':'')+'>'+d+'요일</option>';}).join('');
+    var sOpts=SLOTS.map(function(sl,si){return '<option value="'+si+'"'+(si===r.slt?' selected':'')+'>'+sl.l+'</option>';}).join('');
+    return '<div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:7px;align-items:center;margin-bottom:7px;padding:9px;background:#fdf9f7;border:1.5px solid #f0e4de;border-radius:9px;" id="tt-row-'+i+'">'+
+      '<input type="text" value="'+r.cn+'" placeholder="수업명 (예: 수학)" style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+
+      '<select style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+dOpts+'</select>'+
+      '<select style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+sOpts+'</select>'+
+      '<button onclick="document.getElementById(\'tt-row-'+i+'\').remove()" style="background:none;border:none;color:#e08080;cursor:pointer;font-size:18px;padding:0;">x</button>'+
+    '</div>';
+  }).join('');
+
+  var dOpts0=DAYS_KR.map(function(d,di){return '<option value="'+di+'">'+d+'요일</option>';}).join('');
+  var sOpts0=SLOTS.map(function(sl,si){return '<option value="'+si+'">'+sl.l+'</option>';}).join('');
+
+  showModal(
+    '<div class="modal-title"><div class="modal-icon" style="background:linear-gradient(135deg,#9B59B6,#a78bfa);">📅</div>수업 시간표 편집</div>'+
+    '<div class="ml">시간표 표시용 이름</div>'+
+    '<input class="mi" id="tt-name" value="'+(st.ttName||st.name+' 학생')+'" placeholder="예: 김서준 학생"/>'+
+    '<div class="ml">수업 목록</div>'+
+    '<div id="tt-rows">'+rows+'</div>'+
+    '<button onclick="addTTRow()" style="padding:6px 13px;border:1.5px solid #C85A2A;color:#C85A2A;border-radius:7px;background:#fff;cursor:pointer;font-size:12px;margin-bottom:12px;">+ 수업 추가</button>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveTimetable('+sid+')">저장</button></div>'
+  );
+  window._ttDOpts=dOpts0; window._ttSOpts=sOpts0;
+}
+
+function addTTRow(){
+  var i=Date.now();
+  var row=document.createElement('div');
+  row.style.cssText='display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:7px;align-items:center;margin-bottom:7px;padding:9px;background:#fdf9f7;border:1.5px solid #f0e4de;border-radius:9px;';
+  row.id='tt-row-'+i;
+  row.innerHTML=
+    '<input type="text" placeholder="수업명 (예: 수학)" style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+
+    '<select style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+window._ttDOpts+'</select>'+
+    '<select style="font-size:12px;padding:6px 8px;border:1.5px solid #e8ddd8;border-radius:6px;background:#fff;font-family:inherit;width:100%">'+window._ttSOpts+'</select>'+
+    '<button onclick="this.parentElement.remove()" style="background:none;border:none;color:#e08080;cursor:pointer;font-size:18px;padding:0;">x</button>';
+  document.getElementById('tt-rows').appendChild(row);
+}
+
+function saveTimetable(sid){
+  var st=S.students.find(function(s){return s.id===sid;});
+  if(!st)return;
+  st.ttName=document.getElementById('tt-name').value.trim();
+  var rows=Array.from(document.getElementById('tt-rows').querySelectorAll('div[id^="tt-row-"]'));
+  st.timetable=rows.map(function(r){
+    var ins=r.querySelectorAll('input,select');
+    return {cn:ins[0].value.trim(), day:parseInt(ins[1].value), slt:parseInt(ins[2].value)};
+  }).filter(function(r){return r.cn;});
+  save();closeModal();renderMain();showToast('✅ 시간표가 저장됐어요');
+}
+
 function showKakao(){
   S.sel=null;
   document.getElementById('h-tabs').style.display='none';
@@ -976,8 +1140,11 @@ function selectKakaoStudent(sid){
   var hpw=st.webPw||'(비밀번호)';
   // 과목/강사 정보
   var subjLines=(st.subjects||[]).map(function(s){return '  '+s.name+' : '+(s.tcName||'담당강사');}).join('\n')||'  (과목 정보 없음)';
+  // 시간표에서 회비 정보
+  var rtt=st.timetable||[];
+  var feeInfo=rtt.length?rtt.map(function(r){return r.cn+(r.time?' '+r.time:'');}).join('/ '):'(시간표 정보 없음)';
   var msg='[WAWA 코칭학원 수업 및 학원비 납부안내]\n\n'
-    +'이름 : '+nm+'\n'
+    +'이름 : '+nm+'\n회비: '+feeInfo+'\n'
     +'담당강사\n'+subjLines+'\n'
     +'홈페이지 \n   www.sscoaching.co.kr\n - 회원아이디 : '+hid+'\n - 비밀번호 : '+hpw
     +'\n\n결제 방식\n>> 정기결제\n  상상코칭 홈페이지 접속 -> 로그인 -> 마이페이지 -> 결제 -> 정기결제 신청'
