@@ -1669,7 +1669,10 @@ function renderOverview(){
   var all=Object.keys(map).map(function(k){return map[k];});
   var gf=OV.gradeF,sf=OV.subjF;
   var rows=all.filter(function(r){
-    if(gf!=='all'&&!(r.st.grade&&r.st.grade.startsWith(gf)))return false;
+    if(gf!=='all'){
+      var grade=r.st.grade||'';
+      if(grade!==gf && !grade.startsWith(gf)) return false;
+    }
     if(sf!=='all'&&!r.rows.find(function(x){return x.subjName===sf;}))return false;
     return true;
   }).map(function(r){return Object.assign({},r,{rows:sf==='all'?r.rows:r.rows.filter(function(x){return x.subjName===sf;})});});
