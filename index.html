@@ -1515,11 +1515,17 @@ function renderOverview(){
   document.getElementById('content').innerHTML='<div class="ci">'+
     '<div style="font-size:14px;font-weight:700;margin-bottom:14px;">전체 학생 <span style="color:var(--muted);font-weight:400;font-size:12px;">('+rows.length+'명)</span></div>'+
     '<div class="ov-fb">'+
-      '<div class="ov-fg"><button class="ov-btn'+(OV.gradeF==='all'?' on':'')+'" onclick="setOvF(\'grade\',\'all\')">전체</button>'+
+      '<div class="ov-fg">'+
+        '<button class="ov-btn'+(OV.gradeF==='all'?' on':'')+'" onclick="setOvF(\'grade\',\'all\')">전체</button>'+
         gg.map(function(g){var lb=g==='초'?'초등':g==='중'?'중학':g==='고'?'고등':g;return'<button class="ov-btn'+(OV.gradeF===g?' on':'')+'" onclick="setOvF(\'grade\',\''+g+'\')">'+lb+'</button>';}).join('')+
       '</div>'+
-      '<div class="ov-fg"><button class="ov-btn'+(OV.subjF==='all'?' on':'')+'" onclick="setOvF(\'subj\',\'all\')">전체</button>'+
+      '<div class="ov-fg">'+
+        '<button class="ov-btn'+(OV.subjF==='all'?' on':'')+'" onclick="setOvF(\'subj\',\'all\')">전체</button>'+
         allSubjs.map(function(s){return'<button class="ov-btn'+(OV.subjF===s?' on':'')+'" onclick="setOvF(\'subj\',\''+s+'\')">'+s+'</button>';}).join('')+
+      '</div>'+
+      '<div class="ov-fg" style="margin-left:auto;">'+
+        '<button class="ov-btn'+(OV.sort.key==='grade'?' on':'')+'" onclick="setOvSort(\'grade\')">학년순 '+(OV.sort.key==='grade'?(OV.sort.dir===1?'↑':'↓'):'')+'</button>'+
+        '<button class="ov-btn'+(OV.sort.key==='name'?' on':'')+'" onclick="setOvSort(\'name\')">이름순 '+(OV.sort.key==='name'?(OV.sort.dir===1?'↑':'↓'):'')+'</button>'+
       '</div>'+
     '</div>'+
     (rows.length===0?'<div style="text-align:center;padding:48px;color:var(--muted);">📭 학생이 없어요</div>':
