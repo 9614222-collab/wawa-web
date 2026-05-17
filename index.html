@@ -1673,7 +1673,11 @@ function renderOverview(){
     if(sf!=='all'&&!r.rows.find(function(x){return x.subjName===sf;}))return false;
     return true;
   }).map(function(r){return Object.assign({},r,{rows:sf==='all'?r.rows:r.rows.filter(function(x){return x.subjName===sf;})});});
-  rows.sort(function(a,b){if(OV.sort.key==='name')return OV.sort.dir*a.st.name.localeCompare(b.st.name);return OV.sort.dir*(a.go-b.go);});
+  rows.sort(function(a,b){
+    if(OV.sort.key==='name')return OV.sort.dir*a.st.name.localeCompare(b.st.name);
+    if(OV.sort.key==='school')return OV.sort.dir*(a.st.school||'').localeCompare(b.st.school||'');
+    return OV.sort.dir*(a.go-b.go);
+  });
   var allGrades=[];S.students.forEach(function(s){if(s.grade&&allGrades.indexOf(s.grade)<0)allGrades.push(s.grade);});
   allGrades.sort(function(a,b){return gradeOrder(a)-gradeOrder(b);});
   var gg=[];allGrades.forEach(function(g){var k=g.replace(/[0-9]/g,'');if(gg.indexOf(k)<0)gg.push(k);});
@@ -1723,6 +1727,7 @@ function renderOverview(){
       '<div class="ov-fg" style="margin-left:auto;">'+
         '<button class="ov-btn'+(OV.sort.key==='grade'?' on':'')+'" onclick="setOvSort(\'grade\')">학년순 '+(OV.sort.key==='grade'?(OV.sort.dir===1?'↑':'↓'):'')+'</button>'+
         '<button class="ov-btn'+(OV.sort.key==='name'?' on':'')+'" onclick="setOvSort(\'name\')">이름순 '+(OV.sort.key==='name'?(OV.sort.dir===1?'↑':'↓'):'')+'</button>'+
+        '<button class="ov-btn'+(OV.sort.key==='school'?' on':'')+'" onclick="setOvSort(\'school\')">학교순 '+(OV.sort.key==='school'?(OV.sort.dir===1?'↑':'↓'):'')+'</button>'+
       '</div>'+
     '</div>'+
     (rows.length===0?'<div style="text-align:center;padding:48px;color:var(--muted);">📭 학생이 없어요</div>':
