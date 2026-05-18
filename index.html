@@ -649,7 +649,7 @@ async function autoMsg(){
   try{
     var res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01'},
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
       body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,
         messages:[{role:'user',content:'아래 선생님 메모를 바탕으로 학부모 안내 메시지를 JSON 형식으로만 작성해줘.\n학생: '+st.name+'('+(st.grade||'')+') / 과목: '+S.sel.subj+' / 담당: '+(tc?tc.name:'선생님')+' / 최근성적: '+(latest!==null?latest:'없음')+unit+'\n[메모] '+memo+'\nJSON: {"greeting":"인사+강사소개","good":"잘한점","bad":"보완점","next":"학습방향","closing":"마무리"}'}]})
     });
