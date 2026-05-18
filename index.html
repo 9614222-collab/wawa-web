@@ -364,7 +364,7 @@ function renderSidebar(){
       var ip=!!(subj.paused||st.paused);
       if(S.sbTab==='paused'&&!ip)return;
       if(S.sbTab==='active'&&ip)return;
-      if(SB.tcF!=='all'&&String(st.tid)!==String(SB.tcF))return;
+      if(SB.tcF!=='all'&&String(subj.tid||st.tid)!==String(SB.tcF))return;
       if(SB.subjF!=='all'&&subj.name!==SB.subjF)return;
       var exams=S.exams.filter(function(e){return e.sid===st.id&&e.subj===subj.name&&(e.examType||'academy')==='academy';});
       var avg=exams.length?Math.round(exams.reduce(function(a,e){return a+e.score;},0)/exams.length*10)/10:null;
