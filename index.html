@@ -844,46 +844,58 @@ function renderCalendar(){
         '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📅 예정 일정</div>'+upcomingHTML+'</div>'+
       '</div>'+
     '</div>'+
-    // 상담 완료 체크
+    // 상담 완료 체크 - 직접 입력 방식
     '<div class="card" style="margin-top:16px;">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
-        '<div style="font-size:13px;font-weight:700;color:#333;">📞 이번달 상담 완료 체크 <span style="font-size:12px;color:#059669;font-weight:700;">'+checkedCount+'/'+activeStudents.length+'명</span></div>'+
+        '<div style="font-size:13px;font-weight:700;color:#333;">📞 이번달 상담 완료 <span style="font-size:12px;color:#059669;font-weight:700;">'+checkedCount+'명</span></div>'+
         '<button onclick="resetCounselCheck(\''+counselCheckKey+'\')" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);font-size:11px;cursor:pointer;">초기화</button>'+
       '</div>'+
-      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">'+
-        activeStudents.map(function(st){
-          var checked=!!counselChecks[st.id];
-          return'<div style="display:flex;align-items:center;gap:7px;padding:7px 10px;border-radius:8px;background:'+(checked?'#f0fdf4':'#fafafa')+';border:1px solid '+(checked?'#bbf7d0':'var(--border)')+';">'+
-            '<input type="checkbox" '+(checked?'checked':'')+' onchange="toggleCounselCheck('+st.id+',\''+counselCheckKey+'\')" style="width:15px;height:15px;accent-color:#059669;cursor:pointer;flex-shrink:0;"/>'+
-            '<div style="min-width:0;"><div style="font-size:12px;font-weight:'+(checked?'400':'600')+';color:'+(checked?'var(--muted)':'var(--text)')+';text-decoration:'+(checked?'line-through':'none')+';overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'+st.name+'</div>'+
-            '<div style="font-size:10px;color:var(--muted);">'+(st.grade||'')+'</div></div>'+
-          '</div>';
-        }).join('')+
+      // 입력창
+      '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
+        '<input id="counsel-input" placeholder="학생 이름 입력..." onkeydown="if(event.key===\'Enter\')addCounselName(\''+counselCheckKey+'\')" style="flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;"/>'+
+        '<button onclick="addCounselName(\''+counselCheckKey+'\')" style="padding:9px 16px;background:#059669;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">+ 추가</button>'+
       '</div>'+
+      // 완료된 학생 목록
+      (checkedCount>0
+        ?'<div style="display:flex;flex-wrap:wrap;gap:6px;">'+
+          Object.keys(counselChecks).filter(function(k){return counselChecks[k];}).map(function(name){
+            return'<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#f0fdf4;border:1px solid #bbf7d0;">'+
+              '<span style="font-size:13px;font-weight:600;color:#059669;">✅ '+name+'</span>'+
+              '<button onclick="removeCounselName(\''+counselCheckKey+'\',\''+name+'\')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0;line-height:1;">×</button>'+
+            '</div>';
+          }).join('')+
+        '</div>'
+        :'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">아직 상담 완료된 학생이 없어요</div>'
+      )+
     '</div>'+
   '</div>';
+}
+function addCounselName(key){
+  var input=document.getElementById('counsel-input');
+  if(!input)return;
+  var name=input.value.trim();
+  if(!name){showToast('이름을 입력해주세요');return;}
+  var checks=JSON.parse(localStorage.getItem(key)||'{}');
+  checks[name]=true;
+  localStorage.setItem(key,JSON.stringify(checks));
+  input.value='';
+  renderCalendar();showToast('✅ '+name+' 추가됐어요');
+}
+function removeCounselName(key,name){
+  var checks=JSON.parse(localStorage.getItem(key)||'{}');
+  delete checks[name];
+  localStorage.setItem(key,JSON.stringify(checks));
+  renderCalendar();showToast('🗑 삭제됐어요');
 }
 function toggleCounselCheck(sid,key){
   var checks=JSON.parse(localStorage.getItem(key)||'{}');
   checks[sid]=!checks[sid];
   localStorage.setItem(key,JSON.stringify(checks));
-  if(window.fbSave){window.fbSave({teachers:S.teachers,students:S.students,exams:S.exams,pauseHistory:S.pauseHistory,scheduleEvents:scheduleData,counselData:counselData,nextId:nextId,counselChecks:checks,counselCheckKey:key});}
   renderCalendar();
 }
 function resetCounselCheck(key){
   if(!confirm('이번달 상담 체크를 전부 초기화할까요?'))return;
   localStorage.removeItem(key);renderCalendar();showToast('초기화됐어요');
-}
-function addNewStudentQuick(){
-  var name=document.getElementById('new-st-name').value.trim();
-  var grade=document.getElementById('new-st-grade').value.trim();
-  if(!name){showToast('학생 이름을 입력해주세요');return;}
-  if(S.teachers.length===0){showToast('강사를 먼저 추가해주세요');return;}
-  var newId=nid();
-  var today=new Date().toISOString().slice(0,10);
-  S.students.push({id:newId,tid:S.teachers[0].id,tcName:S.teachers[0].name,name:name,grade:grade,school:'',subjects:[],joinDate:today,regDate:today,payment:'미입금',payDate:'',autoPay:false,webId:'',webPw:''});
-  save();renderSidebar();renderCalendar();showToast('✅ '+name+' 추가됐어요! 과목을 추가해주세요.');
-  setTimeout(function(){openAddSubj(newId);},300);
 }
 function openDayModal(dateStr){
   var dayEvents=scheduleData.filter(function(e){return e.date===dateStr;});
