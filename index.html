@@ -637,9 +637,22 @@ function addStudent(){
 }
 function openEditStudentInfo(sid){
   var st=S.students.find(function(s){return s.id===sid;});if(!st)return;
-  showModal('<div class="modal-title"><div class="modal-icon">✏️</div>학생 정보 수정</div><div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">입회일</div><input class="mi" id="edit-joindate" type="date" value="'+(st.joinDate||'')+'"/></div><div style="flex:1;"><div class="ml">첫 등록일</div><input class="mi" id="edit-regdate" type="date" value="'+(st.regDate||'')+'"/></div></div><div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">입금 여부</div><select class="mi" id="edit-payment"><option value="미입금"'+(st.payment!=='입금완료'?' selected':'')+'>미입금</option><option value="입금완료"'+(st.payment==='입금완료'?' selected':'')+'>입금완료</option></select></div><div style="flex:1;"><div class="ml">입금일</div><input class="mi" id="edit-paydate" type="date" value="'+(st.payDate||'')+'"/></div></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 14px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><input type="checkbox" id="edit-autopay"'+(st.autoPay?' checked':'')+' style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;"/><label for="edit-autopay" style="font-size:13px;font-weight:600;cursor:pointer;">정기결제 설정</label></div><div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">홈페이지 아이디</div><input class="mi" id="edit-webid" value="'+(st.webId||'')+'"/></div><div style="flex:1;"><div class="ml">홈페이지 비밀번호</div><input class="mi" id="edit-webpw" value="'+(st.webPw||'')+'"/></div></div><div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveStudentInfo('+sid+')">저장</button></div>');
+  showModal(
+    '<div class="modal-title"><div class="modal-icon">✏️</div>학생 정보 수정</div>'+
+    '<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ede9fe;">📋 기본 정보</div>'+
+    '<div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">학년</div><input class="mi" id="edit-grade" value="'+(st.grade||'')+'" placeholder="예: 중2"/></div><div style="flex:1;"><div class="ml">학교</div><input class="mi" id="edit-school" value="'+(st.school||'')+'" placeholder="예: 광주중학교"/></div></div>'+
+    '<div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">입회일</div><input class="mi" id="edit-joindate" type="date" value="'+(st.joinDate||'')+'"/></div><div style="flex:1;"><div class="ml">첫 등록일</div><input class="mi" id="edit-regdate" type="date" value="'+(st.regDate||'')+'"/></div></div>'+
+    '<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ede9fe;">💰 납부 정보</div>'+
+    '<div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">입금 여부</div><select class="mi" id="edit-payment"><option value="미입금"'+(st.payment!=='입금완료'?' selected':'')+'>미입금</option><option value="입금완료"'+(st.payment==='입금완료'?' selected':'')+'>입금완료</option></select></div><div style="flex:1;"><div class="ml">입금일</div><input class="mi" id="edit-paydate" type="date" value="'+(st.payDate||'')+'"/></div></div>'+
+    '<div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 14px;background:#f8f9fc;border-radius:10px;border:1px solid var(--border);"><input type="checkbox" id="edit-autopay"'+(st.autoPay?' checked':'')+' style="width:16px;height:16px;accent-color:#7c3aed;cursor:pointer;"/><label for="edit-autopay" style="font-size:13px;font-weight:600;cursor:pointer;">정기결제 설정</label></div>'+
+    '<div style="font-size:11px;font-weight:700;color:#7c3aed;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid #ede9fe;">🌐 홈페이지 정보</div>'+
+    '<div style="display:flex;gap:8px;"><div style="flex:1;"><div class="ml">홈페이지 아이디</div><input class="mi" id="edit-webid" value="'+(st.webId||'')+'"/></div><div style="flex:1;"><div class="ml">홈페이지 비밀번호</div><input class="mi" id="edit-webpw" value="'+(st.webPw||'')+'"/></div></div>'+
+    '<div class="modal-actions"><button class="btn-g" onclick="closeModal()">취소</button><button class="btn-p" onclick="saveStudentInfo('+sid+')">저장</button></div>'
+  );
 }
-function saveStudentInfo(sid){var st=S.students.find(function(s){return s.id===sid;});if(!st)return;st.joinDate=document.getElementById('edit-joindate').value||'';st.regDate=document.getElementById('edit-regdate').value||'';st.payment=document.getElementById('edit-payment').value||'미입금';st.payDate=document.getElementById('edit-paydate').value||'';st.autoPay=document.getElementById('edit-autopay').checked;st.webId=document.getElementById('edit-webid').value.trim()||'';st.webPw=document.getElementById('edit-webpw').value.trim()||'';save();closeModal();renderMain();showToast('✅ 정보가 수정됐어요');}
+function saveStudentInfo(sid){var st=S.students.find(function(s){return s.id===sid;});if(!st)return;  st.grade=document.getElementById('edit-grade').value.trim()||st.grade||'';
+  st.school=document.getElementById('edit-school').value.trim()||'';
+  st.joinDate=document.getElementById('edit-joindate').value||'';st.regDate=document.getElementById('edit-regdate').value||'';st.payment=document.getElementById('edit-payment').value||'미입금';st.payDate=document.getElementById('edit-paydate').value||'';st.autoPay=document.getElementById('edit-autopay').checked;st.webId=document.getElementById('edit-webid').value.trim()||'';st.webPw=document.getElementById('edit-webpw').value.trim()||'';save();closeModal();renderMain();showToast('✅ 정보가 수정됐어요');}
 function delStudent(id){if(!confirm('학생과 모든 데이터가 삭제됩니다'))return;S.students=S.students.filter(function(s){return s.id!==id;});S.exams=S.exams.filter(function(e){return e.sid!==id;});S.pauseHistory=S.pauseHistory.filter(function(h){return h.sid!==id;});if(S.sel&&S.sel.sid===id)S.sel=null;save();renderSidebar();renderMain();}
 
 function openAddSubj(sid){
@@ -876,28 +889,46 @@ function addCounselName(key){
   var input=document.getElementById('counsel-input');
   if(!input)return;
   var name=input.value.trim();
-  if(!name){showToast('이름을 입력해주세요');return;}
+  if(!name){showToast('내용을 입력해주세요');return;}
   var checks=JSON.parse(localStorage.getItem(key)||'{}');
-  checks[name]=true;
+  checks[name]=false;
   localStorage.setItem(key,JSON.stringify(checks));
   input.value='';
-  renderCalendar();showToast('✅ '+name+' 추가됐어요');
+  fbSaveAll();
+  renderCalendar();showToast('✅ 추가됐어요');
 }
 function removeCounselName(key,name){
   var checks=JSON.parse(localStorage.getItem(key)||'{}');
   delete checks[name];
   localStorage.setItem(key,JSON.stringify(checks));
+  fbSaveAll();
   renderCalendar();showToast('🗑 삭제됐어요');
 }
 function toggleCounselNameCheck(key,name){
   var checks=JSON.parse(localStorage.getItem(key)||'{}');
   checks[name]=!checks[name];
   localStorage.setItem(key,JSON.stringify(checks));
+  fbSaveAll();
   renderCalendar();
 }
 function resetCounselCheck(key){
-  if(!confirm('이번달 상담 체크를 전부 초기화할까요?'))return;
-  localStorage.removeItem(key);renderCalendar();showToast('초기화됐어요');
+  if(!confirm('체크리스트를 전부 삭제할까요?'))return;
+  localStorage.removeItem(key);
+  fbSaveAll();
+  renderCalendar();showToast('초기화됐어요');
+}
+function fbSaveAll(){
+  if(window.fbSave){
+    var thisMonthStr=new Date().toISOString().slice(0,7);
+    var key='wawa_counsel_check_'+thisMonthStr;
+    var checks=JSON.parse(localStorage.getItem(key)||'{}');
+    window.fbSave({
+      teachers:S.teachers,students:S.students,exams:S.exams,
+      pauseHistory:S.pauseHistory,scheduleEvents:scheduleData,
+      counselData:counselData,nextId:nextId,
+      checklistKey:key,checklist:checks
+    });
+  }
 }
 function openDayModal(dateStr){
   var dayEvents=scheduleData.filter(function(e){return e.date===dateStr;});
