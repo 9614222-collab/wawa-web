@@ -825,27 +825,8 @@ function renderCalendar(){
   var checkedCount=Object.values(counselChecks).filter(Boolean).length;
 
   document.getElementById('content').innerHTML='<div class="ci">'+
-    '<div style="display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;">'+
-      '<div class="card" style="padding:20px;">'+
-        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'+
-          '<button onclick="changeMonth(-1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">◀</button>'+
-          '<div style="font-size:18px;font-weight:800;flex:1;text-align:center;">'+calYear+'년 '+(calMonth+1)+'월</div>'+
-          '<button onclick="changeMonth(1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">▶</button>'+
-          '<button onclick="openAddEventModal(\'\')" style="padding:6px 14px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">+ 일정 추가</button>'+
-        '</div>'+
-        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;">'+headers+'</div>'+
-        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">'+cells+'</div>'+
-        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">'+
-          EVENT_TYPES.map(function(t){return'<div style="display:flex;align-items:center;gap:4px;font-size:11px;"><div style="width:10px;height:10px;border-radius:3px;background:'+t.bg+';border:1px solid '+t.color+';"></div>'+t.label+'</div>';}).join('')+
-        '</div>'+
-      '</div>'+
-      '<div style="display:flex;flex-direction:column;gap:12px;">'+
-        '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📋 오늘 일정 <span style="font-size:11px;color:var(--muted);font-weight:400;">'+todayStr+'</span></div>'+todayHTML+'</div>'+
-        '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📅 예정 일정</div>'+upcomingHTML+'</div>'+
-      '</div>'+
-    '</div>'+
-    // 체크리스트
-    '<div class="card" style="margin-top:16px;">'+
+    // 체크리스트 (맨 위)
+    '<div class="card" style="margin-bottom:16px;">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
         '<div style="font-size:13px;font-weight:700;color:#333;">✅ 체크리스트 <span style="font-size:12px;color:#059669;font-weight:700;">'+checkedCount+'/'+Object.keys(counselChecks).length+'</span></div>'+
         '<button onclick="resetCounselCheck(\''+counselCheckKey+'\')" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);font-size:11px;cursor:pointer;">전체 삭제</button>'+
@@ -868,7 +849,28 @@ function renderCalendar(){
         :'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">+ 버튼으로 항목을 추가해보세요</div>'
       )+
     '</div>'+
-  '</div>';
+    // 달력 + 우측 패널
+    '<div style="display:grid;grid-template-columns:1fr 280px;gap:16px;align-items:start;">'+
+      '<div class="card" style="padding:20px;">'+
+        '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">'+
+          '<button onclick="changeMonth(-1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">◀</button>'+
+          '<div style="font-size:18px;font-weight:800;flex:1;text-align:center;">'+calYear+'년 '+(calMonth+1)+'월</div>'+
+          '<button onclick="changeMonth(1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:16px;">▶</button>'+
+          '<button onclick="openAddEventModal(\'\')" style="padding:6px 14px;background:#7c3aed;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">+ 일정 추가</button>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:8px;">'+headers+'</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">'+cells+'</div>'+
+        '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">'+
+          EVENT_TYPES.map(function(t){return'<div style="display:flex;align-items:center;gap:4px;font-size:11px;"><div style="width:10px;height:10px;border-radius:3px;background:'+t.bg+';border:1px solid '+t.color+';"></div>'+t.label+'</div>';}).join('')+
+        '</div>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:12px;">'+
+        '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📋 오늘 일정 <span style="font-size:11px;color:var(--muted);font-weight:400;">'+todayStr+'</span></div>'+todayHTML+'</div>'+
+        '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📅 예정 일정</div>'+upcomingHTML+'</div>'+
+      '</div>'+
+    '</div>'+
+    // 체크리스트 (하단) 제거 - 맨 위로 이동됨
+    '</div>';
 }
 function addCounselName(key){
   var input=document.getElementById('counsel-input');
