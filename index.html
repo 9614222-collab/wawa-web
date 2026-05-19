@@ -844,28 +844,28 @@ function renderCalendar(){
         '<div class="card"><div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📅 예정 일정</div>'+upcomingHTML+'</div>'+
       '</div>'+
     '</div>'+
-    // 상담 완료 체크 - 직접 입력 방식
+    // 체크리스트
     '<div class="card" style="margin-top:16px;">'+
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'+
-        '<div style="font-size:13px;font-weight:700;color:#333;">📞 이번달 상담 완료 <span style="font-size:12px;color:#059669;font-weight:700;">'+checkedCount+'명</span></div>'+
-        '<button onclick="resetCounselCheck(\''+counselCheckKey+'\')" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);font-size:11px;cursor:pointer;">초기화</button>'+
+        '<div style="font-size:13px;font-weight:700;color:#333;">✅ 체크리스트 <span style="font-size:12px;color:#059669;font-weight:700;">'+checkedCount+'/'+Object.keys(counselChecks).length+'</span></div>'+
+        '<button onclick="resetCounselCheck(\''+counselCheckKey+'\')" style="padding:5px 10px;border:1.5px solid var(--border);border-radius:7px;background:#fff;color:var(--muted);font-size:11px;cursor:pointer;">전체 삭제</button>'+
       '</div>'+
-      // 입력창
-      '<div style="display:flex;gap:8px;margin-bottom:14px;">'+
-        '<input id="counsel-input" placeholder="학생 이름 입력..." onkeydown="if(event.key===\'Enter\')addCounselName(\''+counselCheckKey+'\')" style="flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;"/>'+
-        '<button onclick="addCounselName(\''+counselCheckKey+'\')" style="padding:9px 16px;background:#059669;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">+ 추가</button>'+
+      '<div style="display:flex;gap:8px;margin-bottom:12px;">'+
+        '<input id="counsel-input" placeholder="할 일 입력..." onkeydown="if(event.key===\'Enter\')addCounselName(\''+counselCheckKey+'\')" style="flex:1;padding:9px 14px;border:1.5px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;outline:none;"/>'+
+        '<button onclick="addCounselName(\''+counselCheckKey+'\')" style="padding:9px 16px;background:#7c3aed;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;">+ 추가</button>'+
       '</div>'+
-      // 완료된 학생 목록
-      (checkedCount>0
-        ?'<div style="display:flex;flex-wrap:wrap;gap:6px;">'+
-          Object.keys(counselChecks).filter(function(k){return counselChecks[k];}).map(function(name){
-            return'<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;background:#f0fdf4;border:1px solid #bbf7d0;">'+
-              '<span style="font-size:13px;font-weight:600;color:#059669;">✅ '+name+'</span>'+
-              '<button onclick="removeCounselName(\''+counselCheckKey+'\',\''+name+'\')" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:14px;padding:0;line-height:1;">×</button>'+
+      (Object.keys(counselChecks).length>0
+        ?'<div style="display:flex;flex-direction:column;gap:6px;">'+
+          Object.keys(counselChecks).map(function(name){
+            var checked=!!counselChecks[name];
+            return'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:'+(checked?'#f0fdf4':'#fafafa')+';border:1px solid '+(checked?'#bbf7d0':'var(--border)')+';">'+
+              '<input type="checkbox" '+(checked?'checked':'')+' onchange="toggleCounselNameCheck(\''+counselCheckKey+'\',\''+name+'\')" style="width:17px;height:17px;accent-color:#059669;cursor:pointer;flex-shrink:0;"/>'+
+              '<span style="flex:1;font-size:13px;font-weight:500;color:'+(checked?'var(--muted)':'var(--text)')+';text-decoration:'+(checked?'line-through':'none')+';">'+name+'</span>'+
+              '<button onclick="removeCounselName(\''+counselCheckKey+'\',\''+name+'\')" style="background:none;border:none;color:#cbd5e1;cursor:pointer;font-size:16px;padding:0;line-height:1;">×</button>'+
             '</div>';
           }).join('')+
         '</div>'
-        :'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">아직 상담 완료된 학생이 없어요</div>'
+        :'<div style="text-align:center;color:var(--muted);padding:20px;font-size:13px;">+ 버튼으로 항목을 추가해보세요</div>'
       )+
     '</div>'+
   '</div>';
@@ -887,9 +887,9 @@ function removeCounselName(key,name){
   localStorage.setItem(key,JSON.stringify(checks));
   renderCalendar();showToast('🗑 삭제됐어요');
 }
-function toggleCounselCheck(sid,key){
+function toggleCounselNameCheck(key,name){
   var checks=JSON.parse(localStorage.getItem(key)||'{}');
-  checks[sid]=!checks[sid];
+  checks[name]=!checks[name];
   localStorage.setItem(key,JSON.stringify(checks));
   renderCalendar();
 }
