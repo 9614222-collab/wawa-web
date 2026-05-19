@@ -6,6 +6,57 @@
 <title>WAWA 코칭센터</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyARSCvWy-4rPONDUbmecpbI1_rePtI65IU",
+  authDomain: "wawa-coaching.firebaseapp.com",
+  databaseURL: "https://wawa-coaching-default-rtdb.firebaseio.com",
+  projectId: "wawa-coaching",
+  storageBucket: "wawa-coaching.firebasestorage.app",
+  messagingSenderId: "789353102120",
+  appId: "1:789353102120:web:e5328ad6d5deeafb5b6e1d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Firebase에 저장
+window.fbSave = function(data) {
+  set(ref(db, 'wawa'), data);
+};
+
+// Firebase에서 실시간 수신
+onValue(ref(db, 'wawa'), function(snapshot) {
+  var data = snapshot.val();
+  if (!data) return;
+  var changed = false;
+  if (data.teachers) { S.teachers = data.teachers; changed = true; }
+  if (data.students) { S.students = data.students; changed = true; }
+  if (data.exams) { S.exams = data.exams; changed = true; }
+  if (data.pauseHistory) { S.pauseHistory = data.pauseHistory; changed = true; }
+  if (data.scheduleEvents) { scheduleData = data.scheduleEvents; changed = true; }
+  if (data.counselData) { counselData = data.counselData; changed = true; }
+  if (data.nextId) { nextId = data.nextId; }
+  if (changed) {
+    // localStorage에도 동기화
+    localStorage.setItem('wawa_teachers', JSON.stringify(S.teachers));
+    localStorage.setItem('wawa_students', JSON.stringify(S.students));
+    localStorage.setItem('wawa_exams', JSON.stringify(S.exams));
+    localStorage.setItem('wawa_pause_history', JSON.stringify(S.pauseHistory));
+    localStorage.setItem('wawa_schedule_events', JSON.stringify(scheduleData));
+    localStorage.setItem('wawa_counsel', JSON.stringify(counselData));
+    renderSidebar();
+    if (S.sel) renderMain();
+    showToast('🔄 데이터 동기화됨');
+  }
+});
+
+window.fbReady = true;
+console.log('✅ Firebase 연결됨');
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -307,9 +358,27 @@ function save(){
   localStorage.setItem('wawa_students',JSON.stringify(S.students));
   localStorage.setItem('wawa_exams',JSON.stringify(S.exams));
   localStorage.setItem('wawa_pause_history',JSON.stringify(S.pauseHistory));
+  // Firebase에도 저장
+  if(window.fbSave){
+    window.fbSave({
+      teachers:S.teachers,
+      students:S.students,
+      exams:S.exams,
+      pauseHistory:S.pauseHistory,
+      scheduleEvents:scheduleData,
+      counselData:counselData,
+      nextId:nextId
+    });
+  }
 }
-function saveScheduleData(){localStorage.setItem('wawa_schedule_events',JSON.stringify(scheduleData));}
-function saveCounsel(){localStorage.setItem('wawa_counsel',JSON.stringify(counselData));}
+function saveScheduleData(){
+  localStorage.setItem('wawa_schedule_events',JSON.stringify(scheduleData));
+  if(window.fbSave){window.fbSave({teachers:S.teachers,students:S.students,exams:S.exams,pauseHistory:S.pauseHistory,scheduleEvents:scheduleData,counselData:counselData,nextId:nextId});}
+}
+function saveCounsel(){
+  localStorage.setItem('wawa_counsel',JSON.stringify(counselData));
+  if(window.fbSave){window.fbSave({teachers:S.teachers,students:S.students,exams:S.exams,pauseHistory:S.pauseHistory,scheduleEvents:scheduleData,counselData:counselData,nextId:nextId});}
+}
 function gradeScore(v){if(v>=90)return'A';if(v>=80)return'B';if(v>=70)return'C';if(v>=60)return'D';return'F';}
 function showToast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2300);}
 function showModal(html){document.getElementById('modal-root').innerHTML='<div class="overlay" onclick="if(event.target===this)closeModal()"><div class="modal">'+html+'</div></div>';}
@@ -635,29 +704,40 @@ function ttClick(sid){
   if(!wrap){showToast('오류: 시간표 영역을 찾을 수 없어요');return;}
   var st=S.students.find(function(s){return s.id===sid;});
   if(!st){wrap.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;">학생을 찾을 수 없어요.</div>';return;}
-  var rtt=st.timetable||[];
+  // Firebase에서 오면 숫자/문자 혼용 가능 → 강제 변환
+  var rtt=(st.timetable||[]).map(function(r){return{cn:r.cn,day:parseInt(r.day,10),slt:parseInt(r.slt,10)};});
   if(!rtt.length){wrap.innerHTML='<div style="text-align:center;color:var(--muted);padding:40px;">등록된 시간표가 없어요.</div>';return;}
   // 사용된 요일(0=월~5=토), 교시 추출
   var usedDays=[],usedSlots=[];
   for(var di=0;di<6;di++){for(var ri=0;ri<rtt.length;ri++){if(rtt[ri].day===di){usedDays.push(di);break;}}}
   for(var si=0;si<SLOTS.length;si++){for(var ri2=0;ri2<rtt.length;ri2++){if(rtt[ri2].slt===si){usedSlots.push(si);break;}}}
-  // 테이블
-  var t='<table style="width:100%;border-collapse:separate;border-spacing:0 4px;">';
-  t+='<tr><th style="background:#f5ede8;color:#C85A2A;padding:7px;border-radius:9px 0 0 9px;text-align:center;">교시</th>';
-  for(var h=0;h<usedDays.length;h++){t+='<th style="background:'+DAY_COLORS[usedDays[h]]+';color:#fff;padding:7px;text-align:center;'+(h===usedDays.length-1?'border-radius:0 9px 9px 0;':'')+'>'+DAYS_KR[usedDays[h]]+'</th>';}
-  t+='</tr>';
-  for(var s=0;s<usedSlots.length;s++){
-    var sIdx=usedSlots[s];var sl=SLOTS[sIdx];
-    t+='<tr><td style="background:'+sl.bg+';padding:6px 8px;border-radius:7px 0 0 7px;text-align:center;white-space:nowrap;"><div style="font-size:11px;font-weight:700;color:#444;">'+sl.l+'</div><div style="font-size:9px;color:#999;">'+sl.t+'</div></td>';
-    for(var c=0;c<usedDays.length;c++){
-      var dIdx=usedDays[c];var items=[];
-      for(var k=0;k<rtt.length;k++){if(rtt[k].slt===sIdx&&rtt[k].day===dIdx)items.push(rtt[k]);}
-      var cell=items.length?items.map(function(x){return'<span style="display:inline-block;padding:3px 8px;border-radius:5px;color:#fff;font-size:11px;font-weight:600;background:'+SLOT_COLORS[sIdx%SLOT_COLORS.length]+';">'+x.cn+'</span>';}).join(' '):'<span style="color:#ddd;">-</span>';
-      t+='<td style="background:#fff;text-align:center;padding:6px 4px;'+(c===usedDays.length-1?'border-radius:0 7px 7px 0;':'')+'>'+cell+'</td>';
-    }
-    t+='</tr>';
+  // div 기반 그리드로 시간표 렌더링
+  var colCount=usedDays.length+1; // 교시 열 + 요일 열들
+  var gridStyle='display:grid;grid-template-columns:90px '+usedDays.map(function(){return'1fr';}).join(' ')+';gap:4px;';
+  var t='<div style="'+gridStyle+'">';
+  // 헤더행
+  t+='<div style="background:#f5ede8;color:#C85A2A;padding:8px;border-radius:9px;text-align:center;font-weight:700;font-size:12px;">교시</div>';
+  for(var h=0;h<usedDays.length;h++){
+    t+='<div style="background:'+DAY_COLORS[usedDays[h]]+';color:#fff;padding:8px;border-radius:9px;text-align:center;font-weight:700;font-size:13px;">'+DAYS_KR[usedDays[h]]+'</div>';
   }
-  t+='</table>';
+  // 데이터행
+  for(var s=0;s<usedSlots.length;s++){
+    var sIdx=usedSlots[s];
+    var sl=SLOTS[sIdx];
+    t+='<div style="background:'+sl.bg+';padding:8px;border-radius:9px;text-align:center;"><div style="font-size:11px;font-weight:700;color:#444;">'+sl.l+'</div><div style="font-size:9px;color:#999;">'+sl.t+'</div></div>';
+    for(var c=0;c<usedDays.length;c++){
+      var dIdx=usedDays[c];
+      var items=[];
+      for(var k=0;k<rtt.length;k++){
+        if(rtt[k].slt===sIdx&&rtt[k].day===dIdx)items.push(rtt[k]);
+      }
+      var cell=items.length
+        ?items.map(function(x){return'<span style="display:inline-block;padding:3px 8px;border-radius:5px;color:#fff;font-size:11px;font-weight:600;background:'+SLOT_COLORS[sIdx%SLOT_COLORS.length]+';">'+x.cn+'</span>';}).join(' ')
+        :'<span style="color:#ccc;font-size:12px;">-</span>';
+      t+='<div style="background:#fff;padding:8px;border-radius:9px;text-align:center;">'+cell+'</div>';
+    }
+  }
+  t+='</div>';
   wrap.innerHTML='<div id="tt-print-card" style="background:linear-gradient(135deg,#fff5f0,#fff 55%,#eef4ff);border-radius:16px;padding:20px;max-width:520px;margin:0 auto;box-shadow:0 0 0 3px #C8A84B,0 0 0 5px #F0D080,0 0 0 7px #C8A84B;">'+
     '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><div style="width:46px;height:46px;background:#C85A2A;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;"><span style="color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;">WAWA</span><small style="color:#fff;font-size:5px;">와와학습코칭센터</small></div>'+
     '<div><div style="font-size:17px;font-weight:700;color:#C85A2A;">'+(st.ttName||st.name+' 학생')+'</div><div style="font-size:11px;color:#aaa;">'+(st.school||'')+' '+(st.grade||'')+'</div></div></div>'+
